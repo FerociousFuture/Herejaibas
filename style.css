@@ -2,11 +2,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap');
 
 :root {
-    --bg-dark: #060a1d;       /* Azul marino profundo */
-    --bg-card: #0c122b;       /* Azul marino medio */
-    --accent-cyan: #00d2ff;   /* Cian del logo */
-    --accent-purple: #c175ff; /* Púrpura del logo */
-    --text-main: #f0f4f8;     /* Blanco hueso */
+    --bg-dark: #060a1d;
+    --bg-card: #0c122b;
+    --accent-cyan: #00d2ff;
+    --accent-purple: #c175ff;
+    --text-main: #f0f4f8;
     --nav-height: 80px;
 }
 
@@ -19,24 +19,25 @@
 
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden; /* Evita scroll horizontal */
 }
 
 body {
     background-color: var(--bg-dark);
     color: var(--text-main);
     font-family: 'Rajdhani', sans-serif;
-    overflow-x: hidden;
     line-height: 1.6;
+    width: 100%;
 }
 
-/* --- BARRA DE NAVEGACIÓN (NAVBAR) --- */
+/* --- BARRA DE NAVEGACIÓN --- */
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     background-color: rgba(6, 10, 29, 0.95);
     height: var(--nav-height);
-    padding: 0 50px;
+    padding: 0 5%;
     position: fixed;
     width: 100%;
     top: 0;
@@ -45,46 +46,32 @@ body {
     backdrop-filter: blur(10px);
 }
 
-/* CONTENEDOR DEL LOGO CIRCULAR */
 .logo-container {
-    position: absolute;
-    top: 10px; /* Sobresale un poco hacia abajo */
-    left: 40px;
-    width: 140px; /* Tamaño del marco */
-    height: 140px;
+    position: relative;
+    width: 100px; /* Tamaño adaptado para móvil */
+    height: 100px;
     background-color: var(--bg-dark);
-    border: 4px solid var(--accent-cyan);
+    border: 3px solid var(--accent-cyan);
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
-    transition: all 0.3s ease;
+    box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
     z-index: 1001;
     overflow: hidden;
-}
-
-.logo-container:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 30px rgba(0, 210, 255, 0.7);
-    border-color: var(--accent-purple);
+    top: 20px; /* Ajuste para que sobresalga */
 }
 
 .logo {
-    width: 90%;
-    height: 90%;
+    width: 85%;
+    height: 85%;
     object-fit: contain;
-}
-
-/* ENLACES DE NAV */
-nav {
-    margin-left: auto; /* Empuja los links a la derecha para no chocar con el logo */
 }
 
 .nav-links {
     list-style: none;
     display: flex;
-    gap: 40px;
+    gap: 20px;
 }
 
 .nav-links a {
@@ -92,21 +79,21 @@ nav {
     color: var(--text-main);
     font-family: 'Orbitron', sans-serif;
     font-weight: 700;
-    font-size: 1.1rem;
-    letter-spacing: 1px;
+    font-size: 0.9rem;
     transition: 0.3s;
 }
 
 .nav-links a:hover, .nav-links a.active {
     color: var(--accent-cyan);
-    text-shadow: 0 0 10px var(--accent-cyan);
+    text-shadow: 0 0 8px var(--accent-cyan);
 }
 
-/* --- CARRUSEL HERO (INICIO) --- */
+/* --- HERO CAROUSEL --- */
 .hero-carousel {
     width: 100%;
     height: 100vh;
     position: relative;
+    overflow: hidden;
 }
 
 .carousel-bg {
@@ -116,7 +103,8 @@ nav {
     background-position: center;
     display: flex;
     align-items: center;
-    padding-left: 10%;
+    justify-content: center;
+    padding: 20px;
     transition: background-image 0.6s ease-in-out;
 }
 
@@ -126,28 +114,26 @@ nav {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, rgba(6,10,29,0.9) 0%, rgba(6,10,29,0.4) 60%, transparent 100%);
+    background: radial-gradient(circle, rgba(6,10,29,0.5) 0%, rgba(6,10,29,0.9) 100%);
 }
 
 .carousel-content {
     position: relative;
     z-index: 2;
-    max-width: 700px;
+    text-align: center;
+    max-width: 90%;
 }
 
 .carousel-content h1 {
     font-family: 'Orbitron', sans-serif;
-    font-size: 4.5rem;
-    font-weight: 900;
-    line-height: 1;
-    margin-bottom: 20px;
-    color: #ffffff;
+    font-size: 2.5rem; /* Adaptado móvil */
+    line-height: 1.2;
+    margin-bottom: 15px;
 }
 
 .carousel-content p {
-    font-size: 1.5rem;
-    margin-bottom: 40px;
-    color: #cbd5e1;
+    font-size: 1.1rem;
+    margin-bottom: 25px;
 }
 
 .cta-btn {
@@ -155,220 +141,108 @@ nav {
     background-color: var(--accent-cyan);
     color: var(--bg-dark);
     font-family: 'Orbitron', sans-serif;
-    font-size: 1.2rem;
     font-weight: bold;
-    padding: 18px 45px;
+    padding: 12px 30px;
     text-decoration: none;
     border-radius: 4px;
-    transition: 0.3s;
-    box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+    font-size: 1rem;
 }
 
-.cta-btn:hover {
-    background-color: var(--accent-purple);
-    color: #fff;
-    transform: translateY(-3px);
-    box-shadow: 0 0 25px rgba(193, 117, 255, 0.6);
-}
-
-.carousel-indicators {
-    position: absolute;
-    bottom: 40px;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    z-index: 3;
-}
-
-.dot {
-    width: 15px;
-    height: 15px;
-    background-color: rgba(255,255,255,0.2);
-    border: 2px solid var(--accent-cyan);
-    border-radius: 50%;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.dot.active {
-    background-color: var(--accent-cyan);
-    box-shadow: 0 0 10px var(--accent-cyan);
-    width: 40px;
-    border-radius: 10px;
-}
-
-/* --- SECCIONES DE PÁGINAS (Comunidad, Galería, Torneos) --- */
+/* --- SECCIONES COMUNES --- */
 .page-header {
     margin-top: var(--nav-height);
-    padding: 100px 10%;
-    background: linear-gradient(rgba(6, 10, 29, 0.8), rgba(6, 10, 29, 0.8)), url('https://images.unsplash.com/photo-1615678815958-5d11ccfa4e75?q=80&w=1200');
-    background-size: cover;
-    background-position: center;
+    padding: 60px 5%;
     text-align: center;
-    border-bottom: 2px solid var(--accent-purple);
-}
-
-.page-header h1 {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 3.5rem;
-    color: var(--accent-cyan);
+    background-color: var(--bg-card);
 }
 
 .main-content {
-    padding: 80px 10%;
+    padding: 40px 5%;
 }
 
-.content-section {
-    margin-bottom: 80px;
+/* --- RESPONSIVIDAD (Media Queries) --- */
+
+/* Ajustes para Tablets y PC */
+@media (min-width: 768px) {
+    .logo-container {
+        width: 140px;
+        height: 140px;
+        top: 30px;
+        left: 40px;
+        position: absolute;
+    }
+    
+    .carousel-content {
+        text-align: left;
+        max-width: 700px;
+        margin-left: 10%;
+    }
+    
+    .carousel-content h1 {
+        font-size: 4.5rem;
+    }
+    
+    .nav-links {
+        gap: 40px;
+    }
+    
+    .nav-links a {
+        font-size: 1.1rem;
+    }
+    
+    .location-container {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 30px;
+    }
 }
 
-.content-section h2 {
-    font-family: 'Orbitron', sans-serif;
-    color: var(--accent-purple);
-    margin-bottom: 30px;
-    font-size: 2rem;
-    border-left: 5px solid var(--accent-cyan);
-    padding-left: 15px;
+/* Ajustes para Móvil (específico para evitar zoom) */
+@media (max-width: 767px) {
+    .navbar {
+        padding: 0 15px;
+    }
+    
+    .nav-links {
+        gap: 10px;
+    }
+    
+    .nav-links a {
+        font-size: 0.7rem; /* Texto pequeño para que quepa en una fila */
+    }
+
+    .location-container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .image-box img {
+        width: 100%;
+        height: auto;
+    }
+
+    .community-grid, .gallery-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
 }
 
-/* --- GRID DE COMUNIDAD --- */
-.community-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-}
-
-.community-card {
-    background-color: var(--bg-card);
-    padding: 40px;
-    border-radius: 10px;
-    border: 1px solid rgba(0, 210, 255, 0.2);
-    text-align: center;
-    transition: 0.3s;
-}
-
-.community-card:hover {
-    border-color: var(--accent-cyan);
-    transform: translateY(-10px);
-}
-
-.community-card i {
-    font-size: 3.5rem;
-    color: var(--accent-cyan);
-    margin-bottom: 20px;
-}
-
-/* --- GRID DE GALERÍA --- */
-.gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
-}
-
-.gallery-item {
-    position: relative;
-    border-radius: 8px;
-    overflow: hidden;
-    height: 300px;
-    border: 1px solid rgba(255,255,255,0.1);
-}
-
-.gallery-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s;
-}
-
-.gallery-item:hover img {
-    transform: scale(1.1);
-}
-
-.gallery-caption {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    background: rgba(6, 10, 29, 0.85);
-    padding: 10px;
-    font-size: 0.9rem;
-    text-align: center;
-    border-top: 1px solid var(--accent-cyan);
-}
-
-/* --- LISTA DE TORNEOS --- */
+/* Grid de Torneos/Galería */
 .tournament-card {
     display: flex;
+    flex-wrap: wrap; /* Permite que el contenido baje si no hay espacio */
     background-color: var(--bg-card);
     margin-bottom: 20px;
     border-radius: 8px;
     overflow: hidden;
-    border-left: 5px solid var(--accent-cyan);
 }
 
 .tournament-date {
     background-color: var(--accent-cyan);
     color: var(--bg-dark);
-    padding: 25px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-width: 120px;
-}
-
-.tournament-date .day { font-size: 2.5rem; font-weight: 900; }
-.tournament-date .month { font-size: 1.2rem; font-weight: 700; }
-
-.tournament-details {
-    padding: 25px;
-    flex: 1;
-}
-
-.tournament-details h3 { color: #fff; margin-bottom: 10px; }
-
-/* --- SECCIÓN UBICACIÓN (INDEX) --- */
-.location-section {
-    padding: 100px 10%;
-    background-color: #040714;
-}
-
-.location-container {
-    display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    gap: 50px;
-    align-items: center;
-    background: var(--bg-card);
-    padding: 50px;
-    border-radius: 15px;
-    box-shadow: 0 0 40px rgba(0,0,0,0.5);
-}
-
-.ubi-img {
-    width: 100%;
-    border-radius: 10px;
-    border: 2px solid var(--accent-cyan);
-}
-
-.info-list {
-    list-style: none;
-    margin: 20px 0;
-}
-
-.info-list li {
-    margin-bottom: 15px;
-    font-size: 1.2rem;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.info-list i { color: var(--accent-cyan); }
-
-/* --- RESPONSIVO --- */
-@media (max-width: 992px) {
-    .location-container { grid-template-columns: 1fr; }
-    .navbar { padding: 0 20px; }
-    .nav-links { gap: 15px; }
-    .carousel-content h1 { font-size: 3rem; }
+    padding: 15px;
+    min-width: 100px;
+    text-align: center;
 }
