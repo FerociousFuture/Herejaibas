@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Herejaibas | Comunidad Warhammer Veracruz</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="logo-container">
+            <img src="logo.png" alt="Logo Herejaibas" class="logo">
+        </div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">INICIO</a></li>
+                <li><a href="comunidad.html">COMUNIDAD</a></li>
+                <li><a href="galeria.html">GALERÍA</a></li>
+                <li><a href="torneos.html">TORNEOS</a></li>
+            </ul>
+        </nav>
+        <div class="nav-spacer"></div>
+    </header>
+
+    <section id="inicio" class="hero-carousel">
+        <div id="carousel-bg" class="carousel-bg">
+            <div class="overlay"></div>
+            <div class="carousel-content">
+                <h1 id="carousel-title">UNETE A LA COMUNIDAD</h1>
+                <p id="carousel-text">Prepara a tu ejercito para la lucha en el Puerto de Veracruz.</p>
+                <a href="torneos.html" id="carousel-btn" class="cta-btn">UNIRSE A LA BATALLA</a>
+            </div>
+        </div>
+        
+        <div class="carousel-indicators">
+            <span class="dot active" onclick="goToSlide(0)"></span>
+            <span class="dot" onclick="goToSlide(1)"></span>
+            <span class="dot" onclick="goToSlide(2)"></span>
+        </div>
+    </section>
+
+    <section id="ubicacion" class="location-section">
+        <div class="section-title">
+            <h2>BASE DE OPERACIONES</h2>
+            <div class="underline"></div>
+        </div>
+        
+        <div class="location-container">
+            <div class="image-box">
+                <img src="ubi.jpeg" alt="Ubicación Herejaibas" class="ubi-img">
+            </div>
+            
+            <div class="info-box">
+                <h3>Coordenadas de Asalto</h3>
+                <p>Nuestras mesas en Veracruz están listas para la guerra. Aquí nos reunimos para pintar, armar listas y lanzar dados.</p>
+                
+                <ul class="info-list">
+                    <li><i class="fas fa-clock"></i> <strong>Horario:</strong> Sábados a las 5:00 PM</li>
+                    <li><i class="fas fa-map-marker-alt"></i> <strong>Lugar:</strong> [UBICACION]</li>
+                    <li><i class="fas fa-dice-d20"></i> <strong>Mesas:</strong> Escenografía disponible para 40k.</li>
+                </ul>
+
+                <div class="future-additions">
+                    <h4>Avisos de la Inquisición</h4>
+                    <p>Espacio reservado para próximas reglas de la tienda, cuotas o eventos especiales que agregaremos después.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>
