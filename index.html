@@ -3,68 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Herejaibas | Comunidad Warhammer Veracruz</title>
+    <title>Herejaibas | Club de Wargames · Veracruz</title>
+    <meta name="description" content="Comunidad de wargames en el Puerto de Veracruz. Warhammer 40K, Age of Sigmar y más. Torneos, partidas y pintura de miniaturas.">
     <link rel="icon" type="image/png" href="jaiba.png">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
+    <!-- NAVBAR -->
     <header class="navbar">
         <a href="index.html" class="logo-container">
-            <img src="logo.png" alt="Logo Herejaibas" class="logo">
+            <div class="logo-emblem">
+                <img src="logo.png" alt="Herejaibas Logo">
+            </div>
+            <div class="logo-text">
+                <span class="logo-name">Herejaibas</span>
+                <span class="logo-sub">Club de Wargames · Veracruz</span>
+            </div>
         </a>
-        <nav>
+        <nav id="main-nav">
             <ul class="nav-links">
-                <li><a href="#inicio" class="active">INICIO</a></li>
-                <li><a href="comunidad.html">COMUNIDAD</a></li>
-                <li><a href="galeria.html">GALERÍA</a></li>
-                <li><a href="torneos.html">TORNEOS</a></li>
+                <li><a href="index.html" class="active">Inicio</a></li>
+                <li><a href="comunidad.html">Comunidad</a></li>
+                <li><a href="galeria.html">Galería</a></li>
+                <li><a href="torneos.html">Torneos</a></li>
             </ul>
         </nav>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Menú">
+            <i class="fas fa-bars"></i>
+        </button>
         <div class="nav-spacer"></div>
     </header>
 
-    <section id="inicio" class="hero-carousel">
+    <!-- HERO CAROUSEL -->
+    <section class="hero-carousel">
         <div id="carousel-bg" class="carousel-bg">
-            <div class="overlay"></div>
+            <div class="carousel-overlay"></div>
             <div class="carousel-content">
-                <h1 id="carousel-title">UNETE A LA COMUNIDAD</h1>
-                <p id="carousel-text">Prepara a tu ejercito para la lucha en el Puerto de Veracruz.</p>
-                <a href="#torneos" id="carousel-btn" class="cta-btn">UNIRSE A LA BIOMASA</a>
-            </div>
-        </div>
-        <div class="carousel-indicators">
-            <span class="dot active" onclick="goToSlide(0)"></span>
-            <span class="dot" onclick="goToSlide(1)"></span>
-            <span class="dot" onclick="goToSlide(2)"></span>
-        </div>
-    </section>
-
-    <section id="ubicacion" class="location-section">
-        <div class="section-title">
-            <h2>BASE DE OPERACIONES</h2>
-            <div class="underline"></div>
-        </div>
-        <div class="location-container">
-            <div class="image-box">
-                <img src="ubi.jpeg" alt="Ubicación Herejaibas" class="ubi-img">
-            </div>
-            <div class="info-box">
-                <h3>Coordenadas de Asalto</h3>
-                <p>Nuestras mesas en Veracruz están listas para la guerra. Aquí nos reunimos para pintar, armar listas y lanzar dados.</p>
-                <ul class="info-list">
-                    <li><i class="fas fa-clock"></i> <strong>Horario:</strong> Sábados a las 5:00 PM</li>
-                    <li><i class="fas fa-map-marker-alt"></i> <strong>Lugar:</strong> [UBICACION]</li>
-                    <li><i class="fas fa-dice-d20"></i> <strong>Mesas:</strong> Escenografía disponible para 40k.</li>
-                </ul>
-                <div class="future-additions">
-                    <h4>Avisos de la Inquisición</h4>
-                    <p>Espacio reservado para próximas reglas de la tienda, cuotas o eventos especiales que agregaremos después.</p>
+                <div class="carousel-eyebrow" id="carousel-eyebrow">Club de Wargames · Veracruz</div>
+                <h1 id="carousel-title">ÚNETE A LA <span id="carousel-title-accent">LEGIÓN</span></h1>
+                <p id="carousel-text">Prepara a tu ejército para la guerra en el Puerto de Veracruz. Partidas, torneos y comunidad.</p>
+                <div class="carousel-actions">
+                    <a href="comunidad.html" id="carousel-btn-primary" class="btn-primary">Unirse ahora</a>
+                    <a href="torneos.html" id="carousel-btn-secondary" class="btn-outline">Ver torneos</a>
                 </div>
             </div>
         </div>
+        <div class="carousel-indicators">
+            <button class="dot active" onclick="goToSlide(0)" aria-label="Slide 1"></button>
+            <button class="dot" onclick="goToSlide(1)" aria-label="Slide 2"></button>
+            <button class="dot" onclick="goToSlide(2)" aria-label="Slide 3"></button>
+        </div>
+        <div class="scroll-hint">
+            <div class="scroll-line"></div>
+            <span>Scroll</span>
+        </div>
     </section>
+
+    <!-- STATS BAR -->
+    <div class="stats-bar">
+        <div class="stats-inner">
+            <div class="stat-item">
+                <span class="stat-number">40+</span>
+                <span class="stat-label">Miembros Activos</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">Sábados</span>
+                <span class="stat-label">Reuniones Semanales</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">4 PM</span>
+                <span class="stat-label">Hora de Inicio</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- UBICACIÓN -->
+    <section id="ubicacion" class="location-section">
+        <div class="section-header">
+            <div class="section-eyebrow">Base de Operaciones</div>
+            <h2>Nuestro <em>Cuartel General</em></h2>
+            <div class="section-rule"></div>
+        </div>
+        <div class="location-grid">
+            <div class="location-media">
+                <img src="ubi.jpeg" alt="Ubicación Herejaibas Veracruz" class="location-img">
+            </div>
+            <div class="location-info">
+                <p class="info-lead">
+                    Nuestras mesas en Veracruz están listas para la guerra. Aquí nos reunimos cada semana para pintar, armar listas y lanzar dados en un ambiente de camaradería.
+                </p>
+                <div class="info-items">
+                    <div class="info-item">
+                        <div class="info-icon"><i class="fas fa-clock"></i></div>
+                        <div class="info-item-content">
+                            <span class="info-item-label">Horario Regular</span>
+                            <span class="info-item-value">Sábados a las 4:00 PM</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
+                        <div class="info-item-content">
+                            <span class="info-item-label">Ubicación</span>
+                            <span class="info-item-value">Calz Juan Pablo II 545, Col. Nueva Era, Boca del Río, Ver.</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon"><i class="fas fa-chess-board"></i></div>
+                        <div class="info-item-content">
+                            <span class="info-item-label">Sistemas de Juego</span>
+                            <span class="info-item-value">Warhammer 40K · Age of Sigmar</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon"><i class="fas fa-mountain"></i></div>
+                        <div class="info-item-content">
+                            <span class="info-item-label">Instalaciones</span>
+                            <span class="info-item-value">Mesas con escenografía disponible</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="notice-box">
+                    <div class="notice-box-title"><i class="fas fa-scroll"></i> Avisos de la Inquisición</div>
+                    <p>Espacio reservado para reglas de la tienda, cuotas de membresía y eventos especiales que se confirmarán próximamente.</p>
+                </div>
+                <a href="comunidad.html" class="btn-primary" style="align-self: flex-start;">Unirse a la comunidad</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- JOIN STRIP -->
+    <div class="join-strip">
+        <div class="join-inner">
+            <h2>¿Listo para la batalla?</h2>
+            <p>Ya seas veterano de mil campañas o apenas estés ensamblando tu primer escuadrón, en Herejaibas hay un lugar para ti.</p>
+            <div class="join-actions">
+                <a href="comunidad.html" class="btn-primary">Unirse al Discord</a>
+                <a href="torneos.html" class="btn-outline">Ver próximos torneos</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <div class="footer-logo-emblem"><img src="logo.png" alt="Herejaibas"></div>
+                    <span class="footer-logo-text">Herejaibas</span>
+                </div>
+                <p class="footer-desc">Club de wargames en el Puerto de Veracruz. Reuniones semanales, torneos y comunidad para todos los niveles.</p>
+                <div class="footer-socials">
+                    <a href="#" class="footer-social-btn" aria-label="Discord"><i class="fab fa-discord"></i></a>
+                    <a href="#" class="footer-social-btn" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="footer-social-btn" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Navegación</h4>
+                <div class="footer-links">
+                    <a href="index.html">Inicio</a>
+                    <a href="comunidad.html">Comunidad</a>
+                    <a href="galeria.html">Galería</a>
+                    <a href="torneos.html">Torneos</a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Contacto</h4>
+                <div class="footer-links">
+                    <a href="https://discord.gg/HbMyzKFqzc">Discord</a>
+                    <a href="https://www.instagram.com/herejaibas/">Instagram</a>
+                    <a href="#">WhatsApp</a>
+                    <a href="mailto:hola@herejaibas.com">hola@herejaibas.com</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Herejaibas · Club de Wargames · Veracruz, México</p>
+            <span class="footer-badge">herejaibas.com</span>
+        </div>
+    </footer>
 
     <script src="script.js"></script>
 </body>

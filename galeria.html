@@ -3,62 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galería | Herejaibas Veracruz</title>
+    <title>Galería | Herejaibas · Wargames Veracruz</title>
+    <meta name="description" content="Galería de miniaturas pintadas por la comunidad Herejaibas de Veracruz.">
     <link rel="icon" type="image/png" href="jaiba.png">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
     <header class="navbar">
         <a href="index.html" class="logo-container">
-            <img src="logo.png" alt="Herejaibas Logo" class="logo">
+            <div class="logo-emblem">
+                <img src="logo.png" alt="Herejaibas Logo">
+            </div>
+            <div class="logo-text">
+                <span class="logo-name">Herejaibas</span>
+                <span class="logo-sub">Club de Wargames · Veracruz</span>
+            </div>
         </a>
-        <nav>
+        <nav id="main-nav">
             <ul class="nav-links">
-                <li><a href="index.html">INICIO</a></li>
-                <li><a href="comunidad.html">COMUNIDAD</a></li>
-                <li><a href="galeria.html" class="active">GALERÍA</a></li>
-                <li><a href="torneos.html">TORNEOS</a></li>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="comunidad.html">Comunidad</a></li>
+                <li><a href="galeria.html" class="active">Galería</a></li>
+                <li><a href="torneos.html">Torneos</a></li>
             </ul>
         </nav>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Menú">
+            <i class="fas fa-bars"></i>
+        </button>
         <div class="nav-spacer"></div>
     </header>
 
-    <section class="page-header">
+    <section class="page-header page-header-bg" style="background-image: url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=1600');">
         <div class="container">
-            <h1>ARS HEREJAIBAS</h1>
-            <p>Una muestra del talento y la dedicación de nuestra comunidad.</p>
+            <div class="page-header-eyebrow">Arte y Modelismo · Herejaibas</div>
+            <h1>ARMY <span>HEREJAIBAS</span></h1>
+            <p>Una muestra del talento y la dedicación de nuestra comunidad. Cada miniatura, una obra de guerra.</p>
         </div>
     </section>
 
     <main class="main-content">
-        <section class="content-section">
-            <h2>ÚLTIMAS OBRAS</h2>
+
+        <!-- GALERÍA PRINCIPAL -->
+        <section>
+            <div class="content-section-header">
+                <h2>Últimas <span>Obras</span></h2>
+                <div class="gallery-filters">
+                    <button class="gallery-filter-btn active">Todos</button>
+                    <button class="gallery-filter-btn">40K</button>
+                    <button class="gallery-filter-btn">AoS</button>
+                    <button class="gallery-filter-btn">Otros</button>
+                </div>
+            </div>
             <div class="gallery-grid">
                 <div class="gallery-item">
-                    <img src="https://via.placeholder.com/400x300?text=Miniatura+1" alt="Miniatura Pintada 1">
-                    <div class="gallery-caption">PENDIENTE</div>
+                    <div class="gallery-placeholder">
+                        <i class="fas fa-image"></i>
+                        <span>Pendiente</span>
+                    </div>
+                    <div class="gallery-caption">
+                        <div class="gallery-caption-title">Miniatura por publicar</div>
+                        <div class="gallery-caption-sub">Warhammer 40K</div>
+                    </div>
                 </div>
                 <div class="gallery-item">
-                    <img src="https://via.placeholder.com/400x300?text=Miniatura+2" alt="Miniatura Pintada 2">
-                    <div class="gallery-caption">PENDIENTE</div>
+                    <div class="gallery-placeholder">
+                        <i class="fas fa-image"></i>
+                        <span>Pendiente</span>
+                    </div>
+                    <div class="gallery-caption">
+                        <div class="gallery-caption-title">Miniatura por publicar</div>
+                        <div class="gallery-caption-sub">Age of Sigmar</div>
+                    </div>
                 </div>
                 <div class="gallery-item">
-                    <img src="https://via.placeholder.com/400x300?text=Miniatura+3" alt="Miniatura Pintada 3">
-                    <div class="gallery-caption">PENDIENTE</div>
+                    <div class="gallery-placeholder">
+                        <i class="fas fa-image"></i>
+                        <span>Pendiente</span>
+                    </div>
+                    <div class="gallery-caption">
+                        <div class="gallery-caption-title">Miniatura por publicar</div>
+                        <div class="gallery-caption-sub">Warhammer 40K</div>
+                    </div>
                 </div>
                 <div class="gallery-item">
-                    <img src="https://via.placeholder.com/400x300?text=Miniatura+4" alt="Miniatura Pintada 4">
-                    <div class="gallery-caption">PENDIENTE</div>
+                    <div class="gallery-placeholder">
+                        <i class="fas fa-image"></i>
+                        <span>Pendiente</span>
+                    </div>
+                    <div class="gallery-caption">
+                        <div class="gallery-caption-title">Miniatura por publicar</div>
+                        <div class="gallery-caption-sub">Warhammer 40K</div>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <div class="gallery-placeholder">
+                        <i class="fas fa-image"></i>
+                        <span>Pendiente</span>
+                    </div>
+                    <div class="gallery-caption">
+                        <div class="gallery-caption-title">Miniatura por publicar</div>
+                        <div class="gallery-caption-sub">Age of Sigmar</div>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <div class="gallery-placeholder">
+                        <i class="fas fa-image"></i>
+                        <span>Pendiente</span>
+                    </div>
+                    <div class="gallery-caption">
+                        <div class="gallery-caption-title">Miniatura por publicar</div>
+                        <div class="gallery-caption-sub">Otros</div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section class="content-section" style="text-align: center;">
-            <p>¿Quieres ver tu miniatura aquí? Compártela en nuestro Discord en el canal #galeria.</p>
+        <!-- CTA SUBIR OBRA -->
+        <section>
+            <div class="gallery-cta-box">
+                <i class="fas fa-camera" style="font-size: 2rem; color: var(--accent-gold); opacity: 0.6; margin-bottom: 16px;"></i>
+                <p>¿Quieres ver tu miniatura aquí? Comparte tus obras en nuestro servidor de Discord en el canal <strong style="color: var(--accent-gold);">#painting-🎨</strong> y las añadiremos.</p>
+                <a href="comunidad.html" class="cta-button">Ir al Discord</a>
+            </div>
         </section>
+
     </main>
 
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <div class="footer-logo-emblem"><img src="logo.png" alt="Herejaibas"></div>
+                    <span class="footer-logo-text">Herejaibas</span>
+                </div>
+                <p class="footer-desc">Club de wargames en el Puerto de Veracruz. Reuniones semanales, torneos y comunidad para todos los niveles.</p>
+                <div class="footer-socials">
+                    <a href="#" class="footer-social-btn" aria-label="Discord"><i class="fab fa-discord"></i></a>
+                    <a href="https://www.instagram.com/herejaibas/" class="footer-social-btn" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="footer-social-btn" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Navegación</h4>
+                <div class="footer-links">
+                    <a href="index.html">Inicio</a>
+                    <a href="comunidad.html">Comunidad</a>
+                    <a href="galeria.html">Galería</a>
+                    <a href="torneos.html">Torneos</a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Contacto</h4>
+                <div class="footer-links">
+                    <a href="https://discord.gg/HbMyzKFqzc">Discord</a>
+                    <a href="https://www.instagram.com/herejaibas/">Instagram</a>
+                    <a href="#">WhatsApp</a>
+                    <a href="mailto:hola@herejaibas.com">hola@herejaibas.com</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Herejaibas · Club de Wargames · Veracruz, México</p>
+            <span class="footer-badge">herejaibas.com</span>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>

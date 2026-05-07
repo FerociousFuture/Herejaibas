@@ -3,65 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comunidad | Herejaibas Veracruz</title>
+    <title>Comunidad | Herejaibas · Wargames Veracruz</title>
+    <meta name="description" content="Únete a la comunidad Herejaibas en Veracruz. Discord, Instagram y WhatsApp y reuniones semanales de Warhammer.">
     <link rel="icon" type="image/png" href="jaiba.png">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
     <header class="navbar">
         <a href="index.html" class="logo-container">
-            <img src="logo.png" alt="Herejaibas Logo" class="logo">
+            <div class="logo-emblem">
+                <img src="logo.png" alt="Herejaibas Logo">
+            </div>
+            <div class="logo-text">
+                <span class="logo-name">Herejaibas</span>
+                <span class="logo-sub">Club de Wargames · Veracruz</span>
+            </div>
         </a>
-        <nav>
+        <nav id="main-nav">
             <ul class="nav-links">
-                <li><a href="index.html">INICIO</a></li>
-                <li><a href="comunidad.html" class="active">COMUNIDAD</a></li>
-                <li><a href="galeria.html">GALERÍA</a></li>
-                <li><a href="torneos.html">TORNEOS</a></li>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="comunidad.html" class="active">Comunidad</a></li>
+                <li><a href="galeria.html">Galería</a></li>
+                <li><a href="torneos.html">Torneos</a></li>
             </ul>
         </nav>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Menú">
+            <i class="fas fa-bars"></i>
+        </button>
         <div class="nav-spacer"></div>
     </header>
 
-    <section class="page-header">
+    <section class="page-header page-header-bg" style="background-image: url('https://images.unsplash.com/photo-1542352467-f2730635d971?q=80&w=1600');">
         <div class="container">
-            <h1>LA LEGIÓN DE HEREJAIBAS</h1>
-            <p>Conecta con otros hobbistas en el Puerto de Veracruz.</p>
+            <div class="page-header-eyebrow">La Legión · Herejaibas</div>
+            <h1>NUESTRA <span>COMUNIDAD</span></h1>
+            <p>Conecta con otros hobbistas del Puerto de Veracruz. Aquí encontrarás compañeros de batalla, rivales y amigos.</p>
         </div>
     </section>
 
     <main class="main-content">
-        <section class="content-section">
-            <h2>NUESTRAS PLATAFORMAS</h2>
+
+        <!-- PLATAFORMAS -->
+        <section>
+            <div class="content-section-header">
+                <h2>Nuestras <span>Plataformas</span></h2>
+            </div>
             <div class="community-grid">
                 <div class="community-card">
-                    <i class="fab fa-discord"></i>
-                    <h3>SERVIDOR DE DISCORD</h3>
-                    <p>Coordina partidas, comparte tus avances de pintura y chatea en tiempo real.</p>
-                    <a href="#" class="cta-button">UNIRSE AL DISCORD</a>
+                    <div class="community-card-icon">
+                        <i class="fab fa-discord"></i>
+                    </div>
+                    <span class="platform-tag">Comunidad principal</span>
+                    <h3>Servidor de Discord</h3>
+                    <p>Coordina partidas, comparte tus avances de pintura, organiza torneos y chatea en tiempo real con toda la legión.</p>
+                    <a href="https://discord.gg/HbMyzKFqzc" class="cta-button">Unirse al Discord</a>
                 </div>
                 <div class="community-card">
-                    <i class="fab fa-facebook"></i>
-                    <h3>GRUPO DE FACEBOOK</h3>
-                    <p>Entérate de eventos oficiales, noticias y comparte contenido con la comunidad.</p>
-                    <a href="#" class="cta-button">IR AL GRUPO</a>
+                    <div class="community-card-icon">
+                        <i class="fab fa-instagram"></i>
+                    </div>
+                    <span class="platform-tag">Noticias y eventos</span>
+                    <h3>Instagram</h3>
+                    <p>Fotos de miniaturas pintadas, eventos, torneos y el día a día del hobby en Veracruz.</p>
+                    <a href="https://www.instagram.com/herejaibas/" class="cta-button">Seguirnos</a>
                 </div>
                 <div class="community-card">
-                    <i class="fab fa-whatsapp"></i>
-                    <h3>GRUPO DE WHATSAPP</h3>
-                    <p>Coordinación rápida para partidas rápidas y avisos urgentes de la tienda.</p>
-                    <a href="#" class="cta-button">PEDIR ACCESO</a>
+                    <div class="community-card-icon">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <span class="platform-tag">Coordinación rápida</span>
+                    <h3>Grupo de WhatsApp</h3>
+                    <p>Para coordinación rápida de partidas, avisos urgentes de la tienda y comunicación directa entre miembros.</p>
+                    <a href="#" class="cta-button">Pedir Acceso</a>
                 </div>
             </div>
         </section>
 
-        <section class="content-section">
-            <h2>REUNIONES SEMANALES</h2>
-            <p>Nos reunimos todos los sábados a partir de las 5:00 PM en nuestra ubicación para jugar, pintar y charlar. ¡Eres bienvenido, seas novato o veterano!</p>
+        <!-- REUNIONES -->
+        <section>
+            <div class="content-section-header">
+                <h2>Reuniones <span>Semanales</span></h2>
+            </div>
+            <div class="schedule-card">
+                <div class="schedule-day">
+                    <div class="schedule-day-name">Cada</div>
+                    <div class="schedule-day-num">Sáb</div>
+                </div>
+                <div class="schedule-vr"></div>
+                <div class="schedule-info">
+                    <h3>Game Night Herejaibas</h3>
+                    <p>
+                        Nos reunimos todos los sábados a partir de las <strong>4:00 PM</strong> en nuestra ubicación para jugar, pintar y charlar sobre el hobby. 
+                        No importa tu nivel de experiencia: ya seas novato armando tu primera miniatura o veterano con décadas de batallas, eres completamente bienvenido.
+                    </p>
+                </div>
+            </div>
         </section>
+
+        <!-- CÓDIGO DE CONDUCTA -->
+        <section>
+            <div class="content-section-header">
+                <h2>El <span>Código</span> del Club</h2>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+                <div class="info-item" style="background: var(--bg-card); border: 1px solid var(--border-gold); border-radius: var(--radius-lg); padding: 20px;">
+                    <div class="info-icon"><i class="fas fa-handshake"></i></div>
+                    <div class="info-item-content">
+                        <span class="info-item-label">Principio 01</span>
+                        <span class="info-item-value">Respeto ante todo</span>
+                    </div>
+                </div>
+                <div class="info-item" style="background: var(--bg-card); border: 1px solid var(--border-gold); border-radius: var(--radius-lg); padding: 20px;">
+                    <div class="info-icon"><i class="fas fa-users"></i></div>
+                    <div class="info-item-content">
+                        <span class="info-item-label">Principio 02</span>
+                        <span class="info-item-value">Todos son bienvenidos</span>
+                    </div>
+                </div>
+                <div class="info-item" style="background: var(--bg-card); border: 1px solid var(--border-gold); border-radius: var(--radius-lg); padding: 20px;">
+                    <div class="info-icon"><i class="fas fa-book-open"></i></div>
+                    <div class="info-item-content">
+                        <span class="info-item-label">Principio 03</span>
+                        <span class="info-item-value">Conoce las reglas</span>
+                    </div>
+                </div>
+                <div class="info-item" style="background: var(--bg-card); border: 1px solid var(--border-gold); border-radius: var(--radius-lg); padding: 20px;">
+                    <div class="info-icon"><i class="fas fa-paint-brush"></i></div>
+                    <div class="info-item-content">
+                        <span class="info-item-label">Principio 04</span>
+                        <span class="info-item-value">Pinta tus miniaturas</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </main>
 
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <div class="footer-logo-emblem"><img src="logo.png" alt="Herejaibas"></div>
+                    <span class="footer-logo-text">Herejaibas</span>
+                </div>
+                <p class="footer-desc">Club de wargames en el Puerto de Veracruz. Reuniones semanales, torneos y comunidad para todos los niveles.</p>
+                <div class="footer-socials">
+                    <a href="https://discord.gg/HbMyzKFqzc" class="footer-social-btn" aria-label="Discord"><i class="fab fa-discord"></i></a>
+                    <a href="https://www.instagram.com/herejaibas/" class="footer-social-btn" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="footer-social-btn" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Navegación</h4>
+                <div class="footer-links">
+                    <a href="index.html">Inicio</a>
+                    <a href="comunidad.html">Comunidad</a>
+                    <a href="galeria.html">Galería</a>
+                    <a href="torneos.html">Torneos</a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Contacto</h4>
+                <div class="footer-links">
+                    <a href="https://discord.gg/HbMyzKFqzc">Discord</a>
+                    <a href="https://www.instagram.com/herejaibas/">Instagram</a>
+                    <a href="#">WhatsApp</a>
+                    <a href="mailto:hola@herejaibas.com">hola@herejaibas.com</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Herejaibas · Club de Wargames · Veracruz, México</p>
+            <span class="footer-badge">herejaibas.com</span>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>

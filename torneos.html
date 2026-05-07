@@ -3,80 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Torneos | Herejaibas Veracruz</title>
+    <title>Torneos | Herejaibas · Wargames Veracruz</title>
+    <meta name="description" content="Próximos torneos y eventos de wargames organizados por Herejaibas en Veracruz.">
     <link rel="icon" type="image/png" href="jaiba.png">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
     <header class="navbar">
         <a href="index.html" class="logo-container">
-            <img src="logo.png" alt="Herejaibas Logo" class="logo">
+            <div class="logo-emblem">
+                <img src="logo.png" alt="Herejaibas Logo">
+            </div>
+            <div class="logo-text">
+                <span class="logo-name">Herejaibas</span>
+                <span class="logo-sub">Club de Wargames · Veracruz</span>
+            </div>
         </a>
-        <nav>
+        <nav id="main-nav">
             <ul class="nav-links">
-                <li><a href="index.html">INICIO</a></li>
-                <li><a href="comunidad.html">COMUNIDAD</a></li>
-                <li><a href="galeria.html">GALERÍA</a></li>
-                <li><a href="torneos.html" class="active">TORNEOS</a></li>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="comunidad.html">Comunidad</a></li>
+                <li><a href="galeria.html">Galería</a></li>
+                <li><a href="torneos.html" class="active">Torneos</a></li>
             </ul>
         </nav>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Menú">
+            <i class="fas fa-bars"></i>
+        </button>
         <div class="nav-spacer"></div>
     </header>
 
-    <section class="page-header">
+    <section class="page-header page-header-bg" style="background-image: url('https://4kwallpapers.com/images/wallpapers/warhammer-40k-space-3840x2160-22638.jpg');">
         <div class="container">
-            <h1>CAMPOS DE BATALLA</h1>
-            <p>PRÓXIMOS EVENTOS Y COMPETENCIAS EN EL PUERTO.</p>
+            <div class="page-header-eyebrow">Competencia · Herejaibas</div>
+            <h1>CAMPOS DE <span>BATALLA</span></h1>
+            <p>Próximos torneos y eventos competitivos en el Puerto de Veracruz. Forja tu legado en el tablero.</p>
         </div>
     </section>
 
     <main class="main-content">
-        <section class="content-section">
-            <h2>EVENTOS POR CONFIRMAR</h2>
+
+        <!-- PRÓXIMOS EVENTOS -->
+        <section>
+            <div class="content-section-header">
+                <h2>Próximos <span>Eventos</span></h2>
+            </div>
             <div class="tournament-list">
 
                 <div class="tournament-card">
                     <div class="tournament-date">
-                        <span class="day">X</span>
-                        <span class="month">MES</span>
+                        <span class="day">?</span>
+                        <span class="month">2025</span>
                     </div>
                     <div class="tournament-details">
-                        <h3>TORNEO SIN NOMBRE</h3>
-                        <p class="game-type">SISTEMA DE JUEGO POR DEFINIR</p>
-                        <p>📍 Nido Herejaibas - Veracruz, Ver.</p>
-                        <p>Detalles: Horarios, costos y bases del torneo sin confirmar.</p>
+                        <span class="tournament-badge">Por confirmar</span>
+                        <h3>Torneo Sin Nombre — Edición I</h3>
+                        <div class="tournament-meta">
+                            <span><i class="fas fa-gamepad"></i> Sistema por definir</span>
+                            <span><i class="fas fa-map-marker-alt"></i> Nido Herejaibas · Veracruz</span>
+                        </div>
+                        <p>Detalles, horarios, costos y bases del torneo en proceso de confirmación. Mantente al tanto en nuestro Discord.</p>
                     </div>
                     <div class="tournament-action">
-                        <button class="cta-button" style="opacity: 0.6; cursor: not-allowed;">PRÓXIMAMENTE</button>
+                        <span class="coming-soon">Próximamente</span>
                     </div>
                 </div>
 
                 <div class="tournament-card">
                     <div class="tournament-date">
-                        <span class="day">X</span>
-                        <span class="month">MES</span>
+                        <span class="day">?</span>
+                        <span class="month">2025</span>
                     </div>
                     <div class="tournament-details">
-                        <h3>TORNEO SIN NOMBRE</h3>
-                        <p class="game-type">SISTEMA DE JUEGO POR DEFINIR</p>
-                        <p>📍 Nido Herejaibas - Veracruz, Ver.</p>
-                        <p>Detalles: Información estratégica pendiente de despliegue por la Inquisición.</p>
+                        <span class="tournament-badge">Por confirmar</span>
+                        <h3>Torneo Sin Nombre — Edición II</h3>
+                        <div class="tournament-meta">
+                            <span><i class="fas fa-gamepad"></i> Sistema por definir</span>
+                            <span><i class="fas fa-map-marker-alt"></i> Nido Herejaibas · Veracruz</span>
+                        </div>
+                        <p>Información estratégica pendiente de despliegue. La Inquisición liberará los datos en su debido momento.</p>
                     </div>
                     <div class="tournament-action">
-                        <button class="cta-button" style="opacity: 0.6; cursor: not-allowed;">PRÓXIMAMENTE</button>
+                        <span class="coming-soon">Próximamente</span>
                     </div>
                 </div>
 
             </div>
         </section>
 
-        <section class="content-section">
-            <h2>ARCHIVO DE VICTORIAS</h2>
-            <p>Los registros de torneos pasados y el salón de la fama de Herejaibas se habilitarán una vez concluyan las campañas actuales.</p>
+        <!-- FORMATO GENERAL -->
+        <section>
+            <div class="content-section-header">
+                <h2>Formato <span>General</span></h2>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+                <div class="info-item" style="background: var(--bg-card); border: 1px solid var(--border-gold); border-radius: var(--radius-lg); padding: 20px 22px;">
+                    <div class="info-icon"><i class="fas fa-trophy"></i></div>
+                    <div class="info-item-content">
+                        <span class="info-item-label">Formato</span>
+                        <span class="info-item-value">Competitivo / Narrativo</span>
+                    </div>
+                </div>
+                <div class="info-item" style="background: var(--bg-card); border: 1px solid var(--border-gold); border-radius: var(--radius-lg); padding: 20px 22px;">
+                    <div class="info-icon"><i class="fas fa-paint-brush"></i></div>
+                    <div class="info-item-content">
+                        <span class="info-item-label">Requisito</span>
+                        <span class="info-item-value">Miniaturas pintadas</span>
+                    </div>
+                </div>
+                <div class="info-item" style="background: var(--bg-card); border: 1px solid var(--border-gold); border-radius: var(--radius-lg); padding: 20px 22px;">
+                    <div class="info-icon"><i class="fas fa-list-alt"></i></div>
+                    <div class="info-item-content">
+                        <span class="info-item-label">Listas</span>
+                        <span class="info-item-value">Puntos por confirmar</span>
+                    </div>
+                </div>
+                <div class="info-item" style="background: var(--bg-card); border: 1px solid var(--border-gold); border-radius: var(--radius-lg); padding: 20px 22px;">
+                    <div class="info-icon"><i class="fas fa-medal"></i></div>
+                    <div class="info-item-content">
+                        <span class="info-item-label">Premios</span>
+                        <span class="info-item-value">Por definir</span>
+                    </div>
+                </div>
+            </div>
         </section>
+
+        <!-- ARCHIVO -->
+        <section>
+            <div class="content-section-header">
+                <h2>Archivo de <span>Victorias</span></h2>
+            </div>
+            <div class="archive-empty">
+                <i class="fas fa-scroll"></i>
+                <p>Los registros de torneos pasados y el salón de la fama de Herejaibas se habilitarán una vez concluyan las primeras campañas.</p>
+            </div>
+        </section>
+
     </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <div class="footer-logo-emblem"><img src="logo.png" alt="Herejaibas"></div>
+                    <span class="footer-logo-text">Herejaibas</span>
+                </div>
+                <p class="footer-desc">Club de wargames en el Puerto de Veracruz. Reuniones semanales, torneos y comunidad para todos los niveles.</p>
+                <div class="footer-socials">
+                    <a href="#" class="footer-social-btn" aria-label="Discord"><i class="fab fa-discord"></i></a>
+                    <a href="#" class="footer-social-btn" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="footer-social-btn" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Navegación</h4>
+                <div class="footer-links">
+                    <a href="index.html">Inicio</a>
+                    <a href="comunidad.html">Comunidad</a>
+                    <a href="galeria.html">Galería</a>
+                    <a href="torneos.html">Torneos</a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Contacto</h4>
+                <div class="footer-links">
+                    <a href="https://discord.gg/HbMyzKFqzc">Discord</a>
+                    <a href="https://www.instagram.com/herejaibas/">Instagram</a>
+                    <a href="#">WhatsApp</a>
+                    <a href="mailto:hola@herejaibas.com">hola@herejaibas.com</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Herejaibas · Club de Wargames · Veracruz, México</p>
+            <span class="footer-badge">herejaibas.com</span>
+        </div>
+    </footer>
 
     <script src="script.js"></script>
 </body>
