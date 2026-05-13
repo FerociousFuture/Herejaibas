@@ -128,6 +128,67 @@
         #gallery-file-input, #tour-file-input { display: none; }
         .upload-preview { width: 80px; height: 60px; object-fit: cover; border-radius: var(--radius); border: 1px solid var(--border-gold); display: none; }
 
+        /* ---- PARTIDAS ---- */
+        .match-section-divider {
+            font-family: 'Cinzel', serif;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            border-top: 1px solid var(--border-gold);
+            padding-top: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .admin-stats-mini {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .admin-stat-card {
+            background: var(--bg-deep);
+            border: 1px solid var(--border-gold);
+            border-radius: var(--radius-lg);
+            padding: 14px;
+            text-align: center;
+        }
+
+        .admin-stat-num {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--accent-gold);
+            line-height: 1;
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .admin-stat-label {
+            font-size: 0.58rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-top: 5px;
+            display: block;
+        }
+
+        .score-display {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            font-weight: 900;
+            color: var(--accent-gold);
+            letter-spacing: 0.05em;
+        }
+
         @media (max-width: 640px) {
             .admin-table td:nth-child(1), .admin-table th:nth-child(1) { display: none; }
             .modal-box { padding: 24px 20px; }
@@ -176,6 +237,7 @@
         <div class="admin-tabs">
             <button class="tab-btn active" data-tab="galeria"><i class="fas fa-images"></i> Galería</button>
             <button class="tab-btn" data-tab="torneos"><i class="fas fa-trophy"></i> Torneos</button>
+            <button class="tab-btn" data-tab="partidas"><i class="fas fa-shield-alt"></i> Partidas</button>
         </div>
 
         <!-- ===== TAB GALERÍA ===== -->
@@ -218,6 +280,39 @@
                 </thead>
                 <tbody id="tour-tbody">
                     <tr><td colspan="5"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i>Cargando...</div></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ===== TAB PARTIDAS ===== -->
+        <div class="tab-panel" id="tab-partidas">
+            <div class="panel-section-header">
+                <h3><i class="fas fa-shield-alt" style="color:var(--accent-gold);margin-right:8px;"></i>Libro de Batallas</h3>
+                <button class="add-btn" id="add-match-btn"><i class="fas fa-plus"></i> Registrar partida</button>
+            </div>
+
+            <!-- Stats mini -->
+            <div class="admin-stats-mini" id="admin-match-stats">
+                <div class="admin-stat-card"><span class="admin-stat-num">—</span><span class="admin-stat-label">Partidas</span></div>
+                <div class="admin-stat-card"><span class="admin-stat-num">—</span><span class="admin-stat-label">40K</span></div>
+                <div class="admin-stat-card"><span class="admin-stat-num">—</span><span class="admin-stat-label">AoS</span></div>
+                <div class="admin-stat-card"><span class="admin-stat-num" style="font-size:0.85rem;">—</span><span class="admin-stat-label">MVP</span></div>
+            </div>
+
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Sistema</th>
+                        <th>Jugador 1</th>
+                        <th>Marcador</th>
+                        <th>Jugador 2</th>
+                        <th>Ganador</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="match-tbody">
+                    <tr><td colspan="7"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i>Cargando...</div></td></tr>
                 </tbody>
             </table>
         </div>
@@ -320,6 +415,99 @@
     </div>
 </div>
 
+<!-- ========= MODAL PARTIDAS ========= -->
+<div class="modal-overlay" id="match-modal">
+    <div class="modal-box" style="max-width:660px;">
+        <h3 id="match-modal-title">Registrar Partida</h3>
+
+        <!-- Fecha y Sistema -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="form-group">
+                <label class="form-label">Fecha *</label>
+                <input class="admin-input" type="date" id="m-fecha">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Sistema *</label>
+                <select class="admin-select" id="m-sistema">
+                    <option value="Warhammer 40K">Warhammer 40K</option>
+                    <option value="Age of Sigmar">Age of Sigmar</option>
+                    <option value="Otro">Otro</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Jugador 1 -->
+        <div class="match-section-divider">
+            <i class="fas fa-user"></i> Jugador 1
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="form-group">
+                <label class="form-label">Nombre *</label>
+                <input class="admin-input" type="text" id="m-j1" placeholder="Nombre del jugador">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Ejército / Facción *</label>
+                <input class="admin-input" type="text" id="m-e1" placeholder="Ej: Space Marines">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">URL imagen facción <span style="color:var(--text-dim);font-size:0.7rem;">(escudo, logo, insignia…)</span></label>
+            <input class="admin-input" type="url" id="m-img1" placeholder="https://...">
+        </div>
+
+        <!-- Jugador 2 -->
+        <div class="match-section-divider">
+            <i class="fas fa-user"></i> Jugador 2
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="form-group">
+                <label class="form-label">Nombre *</label>
+                <input class="admin-input" type="text" id="m-j2" placeholder="Nombre del jugador">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Ejército / Facción *</label>
+                <input class="admin-input" type="text" id="m-e2" placeholder="Ej: Necrones">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">URL imagen facción</label>
+            <input class="admin-input" type="url" id="m-img2" placeholder="https://...">
+        </div>
+
+        <!-- Resultado -->
+        <div class="match-section-divider">
+            <i class="fas fa-trophy"></i> Resultado final
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+            <div class="form-group">
+                <label class="form-label">Puntos J1</label>
+                <input class="admin-input" type="number" id="m-p1" placeholder="0" min="0" value="0">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Puntos J2</label>
+                <input class="admin-input" type="number" id="m-p2" placeholder="0" min="0" value="0">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Ganador</label>
+                <select class="admin-select" id="m-ganador">
+                    <option value="">— Empate —</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Notas -->
+        <div class="form-group">
+            <label class="form-label">Crónica / Notas <span style="color:var(--text-dim);font-size:0.7rem;">(opcional)</span></label>
+            <textarea class="admin-textarea" id="m-notas" placeholder="Momento épico, narrativa de la partida, observaciones..."></textarea>
+        </div>
+
+        <div class="modal-actions">
+            <button class="modal-cancel" id="match-modal-cancel">Cancelar</button>
+            <button class="modal-save" id="match-modal-save">Guardar partida</button>
+        </div>
+    </div>
+</div>
+
 <script>
 /* ============================================================
    INIT SUPABASE
@@ -362,6 +550,7 @@ function showDashboard(user) {
     document.getElementById('admin-user-label').textContent = user.email;
     loadGallery();
     loadTournaments();
+    loadMatches();
 }
 
 checkSession();
@@ -466,7 +655,6 @@ document.getElementById('gallery-modal-save').addEventListener('click', async ()
 
     let img_url = document.getElementById('g-img-url').value.trim();
 
-    // Si hay archivo, subirlo a Storage
     if (galleryUploadFile) {
         const ext  = galleryUploadFile.name.split('.').pop();
         const path = `gallery/${Date.now()}.${ext}`;
@@ -601,7 +789,194 @@ window.deleteTour = async function(id) {
     loadTournaments();
 };
 
-// Cerrar modales al click fuera
+/* ============================================================
+   PARTIDAS
+   ============================================================ */
+let matchEditId = null;
+
+/* Actualiza select de ganador según los nombres escritos */
+function updateGanadorSelect() {
+    const j1  = document.getElementById('m-j1').value.trim();
+    const j2  = document.getElementById('m-j2').value.trim();
+    const sel = document.getElementById('m-ganador');
+    const prev = sel.value;
+    sel.innerHTML = `
+        <option value="">— Empate —</option>
+        ${j1 ? `<option value="${j1}">${j1}</option>` : ''}
+        ${j2 ? `<option value="${j2}">${j2}</option>` : ''}
+    `;
+    if (prev) sel.value = prev;
+}
+
+document.getElementById('m-j1').addEventListener('input', updateGanadorSelect);
+document.getElementById('m-j2').addEventListener('input', updateGanadorSelect);
+
+async function loadMatches() {
+    const { data, error } = await sb.from('partidas').select('*').order('fecha', { ascending: false }).order('created_at', { ascending: false });
+    const tbody    = document.getElementById('match-tbody');
+    const statsDiv = document.getElementById('admin-match-stats');
+
+    if (error || !data) {
+        tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><i class="fas fa-exclamation-circle"></i>Error cargando partidas</div></td></tr>`;
+        return;
+    }
+
+    /* Stats */
+    if (data.length > 0) {
+        const wins = {};
+        data.forEach(m => { if (m.ganador) wins[m.ganador] = (wins[m.ganador] || 0) + 1; });
+        const mvp = Object.entries(wins).sort((a, b) => b[1] - a[1])[0];
+        statsDiv.innerHTML = `
+            <div class="admin-stat-card">
+                <span class="admin-stat-num">${data.length}</span>
+                <span class="admin-stat-label">Partidas</span>
+            </div>
+            <div class="admin-stat-card">
+                <span class="admin-stat-num">${data.filter(m => m.sistema === 'Warhammer 40K').length}</span>
+                <span class="admin-stat-label">40K</span>
+            </div>
+            <div class="admin-stat-card">
+                <span class="admin-stat-num">${data.filter(m => m.sistema === 'Age of Sigmar').length}</span>
+                <span class="admin-stat-label">AoS</span>
+            </div>
+            <div class="admin-stat-card">
+                <span class="admin-stat-num" style="font-size:${mvp && mvp[0].length > 8 ? '0.75rem' : '1rem'};">${mvp ? mvp[0] : '—'}</span>
+                <span class="admin-stat-label">MVP</span>
+            </div>
+        `;
+    }
+
+    if (data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><i class="fas fa-shield-alt"></i>No hay partidas registradas aún. ¡Empieza el libro de batallas!</div></td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = data.map(row => {
+        const fecha = row.fecha
+            ? new Date(row.fecha + 'T12:00:00').toLocaleDateString('es-MX', { day:'2-digit', month:'short', year:'numeric' })
+            : '?';
+        const ganadorCell = row.ganador
+            ? `<span style="color:var(--accent-gold);font-weight:600;"><i class="fas fa-crown" style="font-size:0.7rem;margin-right:4px;"></i>${row.ganador}</span>`
+            : `<span style="color:var(--accent-cyan);font-size:0.8rem;">Empate</span>`;
+        return `
+            <tr>
+                <td>${fecha}</td>
+                <td><span style="font-size:0.78rem;">${row.sistema}</span></td>
+                <td class="td-title">
+                    ${row.jugador1}
+                    <br><span style="font-weight:300;font-size:0.75rem;color:var(--text-muted);">${row.ejercito1}</span>
+                </td>
+                <td>
+                    <span class="score-display">${row.puntos1} — ${row.puntos2}</span>
+                </td>
+                <td class="td-title">
+                    ${row.jugador2}
+                    <br><span style="font-weight:300;font-size:0.75rem;color:var(--text-muted);">${row.ejercito2}</span>
+                </td>
+                <td>${ganadorCell}</td>
+                <td>
+                    <div class="action-row">
+                        <button class="edit-btn" onclick="editMatch(${JSON.stringify(row).replace(/"/g,'&quot;')})">Editar</button>
+                        <button class="del-btn" onclick="deleteMatch('${row.id}')">Borrar</button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+/* Abrir modal nuevo */
+document.getElementById('add-match-btn').addEventListener('click', () => {
+    matchEditId = null;
+    document.getElementById('match-modal-title').textContent = 'Registrar Partida';
+    ['m-j1','m-j2','m-e1','m-e2','m-img1','m-img2','m-notas'].forEach(id => {
+        document.getElementById(id).value = '';
+    });
+    document.getElementById('m-p1').value = '0';
+    document.getElementById('m-p2').value = '0';
+    document.getElementById('m-sistema').value = 'Warhammer 40K';
+    document.getElementById('m-ganador').innerHTML = '<option value="">— Empate —</option>';
+    document.getElementById('m-fecha').value = new Date().toISOString().split('T')[0];
+    document.getElementById('match-modal').classList.add('open');
+});
+
+/* Editar */
+window.editMatch = function(row) {
+    matchEditId = row.id;
+    document.getElementById('match-modal-title').textContent = 'Editar Partida';
+    document.getElementById('m-fecha').value    = row.fecha    || '';
+    document.getElementById('m-sistema').value  = row.sistema  || 'Warhammer 40K';
+    document.getElementById('m-j1').value       = row.jugador1 || '';
+    document.getElementById('m-e1').value       = row.ejercito1 || '';
+    document.getElementById('m-img1').value     = row.faccion1_img || '';
+    document.getElementById('m-j2').value       = row.jugador2 || '';
+    document.getElementById('m-e2').value       = row.ejercito2 || '';
+    document.getElementById('m-img2').value     = row.faccion2_img || '';
+    document.getElementById('m-p1').value       = row.puntos1 ?? 0;
+    document.getElementById('m-p2').value       = row.puntos2 ?? 0;
+    document.getElementById('m-notas').value    = row.notas    || '';
+    updateGanadorSelect();
+    document.getElementById('m-ganador').value  = row.ganador  || '';
+    document.getElementById('match-modal').classList.add('open');
+};
+
+/* Cancelar */
+document.getElementById('match-modal-cancel').addEventListener('click', () => {
+    document.getElementById('match-modal').classList.remove('open');
+});
+
+/* Guardar */
+document.getElementById('match-modal-save').addEventListener('click', async () => {
+    const j1    = document.getElementById('m-j1').value.trim();
+    const j2    = document.getElementById('m-j2').value.trim();
+    const e1    = document.getElementById('m-e1').value.trim();
+    const e2    = document.getElementById('m-e2').value.trim();
+    const fecha = document.getElementById('m-fecha').value;
+
+    if (!j1 || !j2) { toast('Ambos jugadores son obligatorios', 'err'); return; }
+    if (!e1 || !e2) { toast('Ambos ejércitos son obligatorios', 'err'); return; }
+    if (!fecha)     { toast('La fecha es obligatoria', 'err'); return; }
+
+    const payload = {
+        fecha,
+        sistema:      document.getElementById('m-sistema').value,
+        jugador1:     j1,
+        ejercito1:    e1,
+        faccion1_img: document.getElementById('m-img1').value.trim() || null,
+        jugador2:     j2,
+        ejercito2:    e2,
+        faccion2_img: document.getElementById('m-img2').value.trim() || null,
+        puntos1:      parseInt(document.getElementById('m-p1').value) || 0,
+        puntos2:      parseInt(document.getElementById('m-p2').value) || 0,
+        ganador:      document.getElementById('m-ganador').value || null,
+        notas:        document.getElementById('m-notas').value.trim() || null
+    };
+
+    let error;
+    if (matchEditId) {
+        ({ error } = await sb.from('partidas').update(payload).eq('id', matchEditId));
+    } else {
+        ({ error } = await sb.from('partidas').insert([payload]));
+    }
+
+    if (error) { toast('Error: ' + error.message, 'err'); return; }
+    toast(matchEditId ? 'Partida actualizada ⚔️' : 'Partida registrada ⚔️');
+    document.getElementById('match-modal').classList.remove('open');
+    loadMatches();
+});
+
+/* Borrar */
+window.deleteMatch = async function(id) {
+    if (!confirm('¿Eliminar esta partida del libro de batallas?')) return;
+    const { error } = await sb.from('partidas').delete().eq('id', id);
+    if (error) { toast('Error: ' + error.message, 'err'); return; }
+    toast('Partida eliminada');
+    loadMatches();
+};
+
+/* ============================================================
+   CERRAR MODALES AL CLICK FUERA
+   ============================================================ */
 document.querySelectorAll('.modal-overlay').forEach(m => {
     m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
 });

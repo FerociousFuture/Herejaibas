@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partidas | Herejaibas · Wargames Veracruz</title>
+    <meta name="description" content="Historial de partidas y marcadores del club Herejaibas en Veracruz.">
+    <link rel="icon" type="image/png" href="jaiba.png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <style>
+        /* ---- PARTIDAS ESPECÍFICO ---- */
+
+        /* Timeline container */
+        .timeline-wrap {
+            position: relative;
+        }
+
+        /* Línea central vertical */
+        .timeline-wrap::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0; bottom: 0;
+            width: 1px;
+            background: linear-gradient(to bottom, transparent, var(--accent-gold) 10%, var(--accent-gold) 90%, transparent);
+            transform: translateX(-50%);
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        @media (max-width: 720px) {
+            .timeline-wrap::before { display: none; }
+        }
+
+        /* Grupo por fecha */
+        .timeline-group {
+            margin-bottom: 48px;
+        }
+
+        .timeline-date-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .timeline-date-label::before,
+        .timeline-date-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border-gold);
+        }
+
+        .timeline-date-badge {
+            background: var(--bg-card);
+            border: 1px solid var(--accent-gold);
+            border-radius: var(--radius);
+            padding: 6px 18px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--accent-gold);
+            white-space: nowrap;
+            box-shadow: 0 0 20px rgba(200,168,75,0.12);
+        }
+
+        /* Cards de partida */
+        .match-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .match-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-gold);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+            position: relative;
+        }
+
+        .match-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .match-card:hover {
+            border-color: rgba(200,168,75,0.45);
+            box-shadow: 0 8px 40px rgba(200,168,75,0.1);
+            transform: translateY(-2px);
+        }
+
+        .match-card:hover::before { opacity: 1; }
+
+        /* Sistema tag */
+        .match-sistema-tag {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            border-bottom: 1px solid rgba(200,168,75,0.1);
+            background: rgba(200,168,75,0.03);
+        }
+
+        .match-sistema-name {
+            font-family: 'Exo 2', sans-serif;
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+        }
+
+        .match-sistema-icon {
+            font-size: 0.75rem;
+            color: var(--accent-gold);
+            opacity: 0.5;
+        }
+
+        /* Arena: los dos jugadores + marcador */
+        .match-arena {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            padding: 20px 24px;
+            gap: 16px;
+        }
+
+        @media (max-width: 520px) {
+            .match-arena {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .match-vs { order: 0; }
+            .match-player:last-child { order: 2; }
+        }
+
+        /* Jugador */
+        .match-player {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .match-player.right {
+            align-items: flex-end;
+            text-align: right;
+        }
+
+        .match-player.left {
+            align-items: flex-start;
+            text-align: left;
+        }
+
+        @media (max-width: 520px) {
+            .match-player.right,
+            .match-player.left {
+                align-items: center;
+                text-align: center;
+            }
+        }
+
+        .player-faction-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .match-player.right .player-faction-row {
+            flex-direction: row-reverse;
+        }
+
+        @media (max-width: 520px) {
+            .match-player.right .player-faction-row {
+                flex-direction: row;
+                justify-content: center;
+            }
+            .player-faction-row { justify-content: center; }
+        }
+
+        .faction-img {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-gold);
+            object-fit: cover;
+            background: var(--bg-elevated);
+        }
+
+        .faction-placeholder {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius);
+            border: 1px dashed var(--border-gold);
+            background: var(--bg-elevated);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dim);
+            font-size: 1rem;
+        }
+
+        .player-name {
+            font-family: 'Cinzel', serif;
+            font-size: 0.88rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            color: var(--text-main);
+        }
+
+        .player-name.winner {
+            color: var(--accent-gold);
+        }
+
+        .player-army {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 300;
+        }
+
+        .winner-crown {
+            font-size: 0.8rem;
+            color: var(--accent-gold);
+            margin: 0 4px;
+        }
+
+        /* Marcador central */
+        .match-vs {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .match-score {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .score-num {
+            font-family: 'Cinzel', serif;
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: var(--text-main);
+            line-height: 1;
+            min-width: 2ch;
+            text-align: center;
+        }
+
+        .score-num.winner-score { color: var(--accent-gold); }
+
+        .score-sep {
+            font-family: 'Cinzel', serif;
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--text-dim);
+            line-height: 1;
+        }
+
+        .match-vs-label {
+            font-size: 0.55rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+        }
+
+        /* Empate */
+        .draw-badge {
+            font-family: 'Cinzel', serif;
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--accent-cyan);
+            border: 1px solid rgba(0,191,255,0.3);
+            border-radius: 2px;
+            padding: 3px 10px;
+        }
+
+        /* Notas */
+        .match-notes {
+            padding: 0 24px 16px;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-weight: 300;
+            font-style: italic;
+            border-top: 1px solid rgba(200,168,75,0.07);
+            padding-top: 12px;
+        }
+
+        /* Filtros */
+        .match-filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .match-filter-select {
+            background: var(--bg-deep);
+            border: 1px solid var(--border-gold);
+            border-radius: var(--radius);
+            padding: 8px 14px;
+            color: var(--text-muted);
+            font-family: 'Exo 2', sans-serif;
+            font-size: 0.78rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .match-filter-select:focus { border-color: var(--accent-gold); }
+
+        /* Stats rápidos */
+        .match-stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
+            margin-bottom: 0;
+        }
+
+        .match-stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-gold);
+            border-radius: var(--radius-lg);
+            padding: 18px;
+            text-align: center;
+        }
+
+        .match-stat-num {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--accent-gold);
+            line-height: 1;
+            display: block;
+        }
+
+        .match-stat-label {
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-top: 6px;
+            display: block;
+        }
+
+        /* Empty state */
+        .matches-empty {
+            text-align: center;
+            padding: 60px 24px;
+            color: var(--text-dim);
+        }
+
+        .matches-empty i {
+            font-size: 2.5rem;
+            margin-bottom: 14px;
+            display: block;
+            opacity: 0.3;
+        }
+
+        .matches-empty p {
+            font-size: 0.9rem;
+            font-weight: 300;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <a href="index.html" class="logo-container">
+            <div class="logo-emblem">
+                <img src="logo.png" alt="Herejaibas Logo">
+            </div>
+            <div class="logo-text">
+                <span class="logo-name">Herejaibas</span>
+                <span class="logo-sub">Club de Wargames · Veracruz</span>
+            </div>
+        </a>
+        <nav id="main-nav">
+            <ul class="nav-links">
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="comunidad.html" class="active">Comunidad</a></li>
+                <li><a href="galeria.html">Galería</a></li>
+                <li><a href="torneos.html">Torneos</a></li>
+            </ul>
+        </nav>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Menú">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="nav-spacer"></div>
+    </header>
+
+    <section class="page-header page-header-bg" style="background-image: url('https://4kwallpapers.com/images/wallpapers/warhammer-40k-space-3840x2160-22638.jpg');">
+        <div class="container">
+            <div class="page-header-eyebrow">Crónicas de Batalla · Herejaibas</div>
+            <h1>LIBRO DE <span>BATALLAS</span></h1>
+            <p>El registro eterno de las guerras libradas en el Puerto de Veracruz. Cada partida, una historia.</p>
+        </div>
+    </section>
+
+    <main class="main-content">
+
+        <!-- ESTADÍSTICAS RÁPIDAS -->
+        <section>
+            <div class="content-section-header">
+                <h2>Estadísticas <span>Generales</span></h2>
+            </div>
+            <div class="match-stats-row" id="stats-row">
+                <div class="match-stat-card">
+                    <span class="match-stat-num" id="stat-total">—</span>
+                    <span class="match-stat-label">Partidas totales</span>
+                </div>
+                <div class="match-stat-card">
+                    <span class="match-stat-num" id="stat-40k">—</span>
+                    <span class="match-stat-label">Warhammer 40K</span>
+                </div>
+                <div class="match-stat-card">
+                    <span class="match-stat-num" id="stat-aos">—</span>
+                    <span class="match-stat-label">Age of Sigmar</span>
+                </div>
+                <div class="match-stat-card">
+                    <span class="match-stat-num" id="stat-mvp">—</span>
+                    <span class="match-stat-label">Jugador más victorioso</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- HISTORIAL -->
+        <section>
+            <div class="content-section-header">
+                <h2>Historial de <span>Partidas</span></h2>
+                <div class="match-filters">
+                    <select class="match-filter-select" id="filter-sistema">
+                        <option value="Todos">Todos los sistemas</option>
+                        <option value="Warhammer 40K">Warhammer 40K</option>
+                        <option value="Age of Sigmar">Age of Sigmar</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                    <select class="match-filter-select" id="filter-orden">
+                        <option value="desc">Más recientes primero</option>
+                        <option value="asc">Más antiguas primero</option>
+                    </select>
+                </div>
+            </div>
+            <div class="timeline-wrap" id="timeline-wrap">
+                <div class="matches-empty">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Cargando el libro de batallas...</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <div class="footer-logo-emblem"><img src="logo.png" alt="Herejaibas"></div>
+                    <span class="footer-logo-text">Herejaibas</span>
+                </div>
+                <p class="footer-desc">Club de wargames en el Puerto de Veracruz. Reuniones semanales, torneos y comunidad para todos los niveles.</p>
+                <div class="footer-socials">
+                    <a href="https://discord.gg/HbMyzKFqzc" class="footer-social-btn" aria-label="Discord"><i class="fab fa-discord"></i></a>
+                    <a href="https://www.instagram.com/herejaibas/" class="footer-social-btn" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="footer-social-btn" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Navegación</h4>
+                <div class="footer-links">
+                    <a href="index.html">Inicio</a>
+                    <a href="comunidad.html">Comunidad</a>
+                    <a href="galeria.html">Galería</a>
+                    <a href="torneos.html">Torneos</a>
+                    <a href="partidas.html">Libro de Batallas</a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Contacto</h4>
+                <div class="footer-links">
+                    <a href="https://discord.gg/HbMyzKFqzc">Discord</a>
+                    <a href="https://www.instagram.com/herejaibas/">Instagram</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Herejaibas · Club de Wargames · Veracruz, México</p>
+            <span class="footer-badge">herejaibas.com</span>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+    /* ============================================================
+       PARTIDAS PÚBLICAS
+    ============================================================ */
+    const { createClient } = supabase;
+    const sb = createClient(window._sbUrl, window._sbAnon);
+
+    let allMatches = [];
+
+    /* ---- Stats ---- */
+    function calcStats(data) {
+        document.getElementById('stat-total').textContent = data.length;
+        document.getElementById('stat-40k').textContent   = data.filter(m => m.sistema === 'Warhammer 40K').length;
+        document.getElementById('stat-aos').textContent   = data.filter(m => m.sistema === 'Age of Sigmar').length;
+
+        // MVP: jugador con más victorias
+        const wins = {};
+        data.forEach(m => {
+            if (m.ganador) {
+                wins[m.ganador] = (wins[m.ganador] || 0) + 1;
+            }
+        });
+        const sorted = Object.entries(wins).sort((a, b) => b[1] - a[1]);
+        document.getElementById('stat-mvp').textContent = sorted.length ? sorted[0][0] : '—';
+    }
+
+    /* ---- Render ---- */
+    function formatFechaLabel(fechaStr) {
+        const d = new Date(fechaStr + 'T12:00:00');
+        return d.toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    }
+
+    function renderFactionImg(url, side) {
+        if (url) return `<img class="faction-img" src="${url}" alt="Facción">`;
+        return `<div class="faction-placeholder"><i class="fas fa-shield-alt"></i></div>`;
+    }
+
+    function renderMatch(m) {
+        const isDraw  = !m.ganador;
+        const p1wins  = m.ganador === m.jugador1;
+        const p2wins  = m.ganador === m.jugador2;
+
+        const p1ScoreClass = p1wins ? 'winner-score' : '';
+        const p2ScoreClass = p2wins ? 'winner-score' : '';
+        const p1NameClass  = p1wins ? 'player-name winner' : 'player-name';
+        const p2NameClass  = p2wins ? 'player-name winner' : 'player-name';
+
+        const crownLeft  = p1wins ? `<i class="fas fa-crown winner-crown"></i>` : '';
+        const crownRight = p2wins ? `<i class="fas fa-crown winner-crown"></i>` : '';
+
+        const sistemaBadge = {
+            'Warhammer 40K': '<i class="fas fa-skull"></i>',
+            'Age of Sigmar':  '<i class="fas fa-dragon"></i>',
+            'Otro':           '<i class="fas fa-dice-d20"></i>'
+        }[m.sistema] || '<i class="fas fa-gamepad"></i>';
+
+        const notesHtml = m.notas
+            ? `<div class="match-notes"><i class="fas fa-scroll" style="margin-right:6px;opacity:0.5;"></i>${m.notas}</div>`
+            : '';
+
+        return `
+            <div class="match-card">
+                <div class="match-sistema-tag">
+                    <span class="match-sistema-name">${m.sistema}</span>
+                    <span class="match-sistema-icon">${sistemaBadge}</span>
+                </div>
+                <div class="match-arena">
+                    <!-- Jugador 1 -->
+                    <div class="match-player left">
+                        <div class="player-faction-row">
+                            ${renderFactionImg(m.faccion1_img)}
+                            <div>
+                                <div class="${p1NameClass}">${crownLeft}${m.jugador1}</div>
+                                <div class="player-army">${m.ejercito1}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Marcador -->
+                    <div class="match-vs">
+                        <div class="match-score">
+                            <span class="score-num ${p1ScoreClass}">${m.puntos1}</span>
+                            <span class="score-sep">—</span>
+                            <span class="score-num ${p2ScoreClass}">${m.puntos2}</span>
+                        </div>
+                        ${isDraw
+                            ? `<div class="draw-badge">Empate</div>`
+                            : `<div class="match-vs-label">Victoria</div>`
+                        }
+                    </div>
+
+                    <!-- Jugador 2 -->
+                    <div class="match-player right">
+                        <div class="player-faction-row">
+                            <div>
+                                <div class="${p2NameClass}">${m.jugador2}${crownRight}</div>
+                                <div class="player-army">${m.ejercito2}</div>
+                            </div>
+                            ${renderFactionImg(m.faccion2_img)}
+                        </div>
+                    </div>
+                </div>
+                ${notesHtml}
+            </div>
+        `;
+    }
+
+    function groupByDate(data, orden) {
+        const map = {};
+        data.forEach(m => {
+            if (!map[m.fecha]) map[m.fecha] = [];
+            map[m.fecha].push(m);
+        });
+        const keys = Object.keys(map).sort((a, b) => orden === 'asc'
+            ? a.localeCompare(b)
+            : b.localeCompare(a)
+        );
+        return { map, keys };
+    }
+
+    function renderTimeline() {
+        const sistema = document.getElementById('filter-sistema').value;
+        const orden   = document.getElementById('filter-orden').value;
+        const wrap    = document.getElementById('timeline-wrap');
+
+        let data = sistema === 'Todos'
+            ? allMatches
+            : allMatches.filter(m => m.sistema === sistema);
+
+        if (data.length === 0) {
+            wrap.innerHTML = `
+                <div class="matches-empty">
+                    <i class="fas fa-scroll"></i>
+                    <p>Aún no hay partidas registradas en esta categoría.<br>¡Las crónicas esperan ser escritas!</p>
+                </div>`;
+            return;
+        }
+
+        const { map, keys } = groupByDate(data, orden);
+
+        wrap.innerHTML = keys.map(fecha => `
+            <div class="timeline-group">
+                <div class="timeline-date-label">
+                    <div class="timeline-date-badge">
+                        <i class="fas fa-calendar-alt" style="margin-right:6px;opacity:0.7;"></i>
+                        ${formatFechaLabel(fecha)}
+                    </div>
+                </div>
+                <div class="match-cards">
+                    ${map[fecha].map(renderMatch).join('')}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    async function loadMatches() {
+        const { data, error } = await sb.from('partidas').select('*').order('fecha', { ascending: false }).order('created_at', { ascending: false });
+
+        if (error || !data) {
+            document.getElementById('timeline-wrap').innerHTML = `
+                <div class="matches-empty">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p>Error cargando las crónicas. Intenta de nuevo.</p>
+                </div>`;
+            return;
+        }
+
+        allMatches = data;
+        calcStats(data);
+        renderTimeline();
+    }
+
+    document.getElementById('filter-sistema').addEventListener('change', renderTimeline);
+    document.getElementById('filter-orden').addEventListener('change', renderTimeline);
+
+    loadMatches();
+    </script>
+</body>
+</html>
