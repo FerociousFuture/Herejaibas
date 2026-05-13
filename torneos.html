@@ -8,6 +8,8 @@
     <link rel="icon" type="image/png" href="jaiba.png">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
 </head>
 <body>
 
@@ -46,50 +48,15 @@
     <main class="main-content">
 
         <!-- PRÓXIMOS EVENTOS -->
-        <section>
+        <section id="section-proximos">
             <div class="content-section-header">
                 <h2>Próximos <span>Eventos</span></h2>
             </div>
-            <div class="tournament-list">
-
-                <div class="tournament-card">
-                    <div class="tournament-date">
-                        <span class="day">?</span>
-                        <span class="month">2025</span>
-                    </div>
-                    <div class="tournament-details">
-                        <span class="tournament-badge">Por confirmar</span>
-                        <h3>Torneo Sin Nombre — Edición I</h3>
-                        <div class="tournament-meta">
-                            <span><i class="fas fa-gamepad"></i> Sistema por definir</span>
-                            <span><i class="fas fa-map-marker-alt"></i> Nido Herejaibas · Veracruz</span>
-                        </div>
-                        <p>Detalles, horarios, costos y bases del torneo en proceso de confirmación. Mantente al tanto en nuestro Discord.</p>
-                    </div>
-                    <div class="tournament-action">
-                        <span class="coming-soon">Próximamente</span>
-                    </div>
+            <div class="tournament-list" id="proximos-list">
+                <div style="text-align:center;padding:40px 20px;color:var(--text-dim);">
+                    <i class="fas fa-spinner fa-spin" style="font-size:1.5rem;display:block;margin-bottom:8px;opacity:0.4;"></i>
+                    Cargando...
                 </div>
-
-                <div class="tournament-card">
-                    <div class="tournament-date">
-                        <span class="day">?</span>
-                        <span class="month">2025</span>
-                    </div>
-                    <div class="tournament-details">
-                        <span class="tournament-badge">Por confirmar</span>
-                        <h3>Torneo Sin Nombre — Edición II</h3>
-                        <div class="tournament-meta">
-                            <span><i class="fas fa-gamepad"></i> Sistema por definir</span>
-                            <span><i class="fas fa-map-marker-alt"></i> Nido Herejaibas · Veracruz</span>
-                        </div>
-                        <p>Información estratégica pendiente de despliegue. La Inquisición liberará los datos en su debido momento.</p>
-                    </div>
-                    <div class="tournament-action">
-                        <span class="coming-soon">Próximamente</span>
-                    </div>
-                </div>
-
             </div>
         </section>
 
@@ -131,13 +98,15 @@
         </section>
 
         <!-- ARCHIVO -->
-        <section>
+        <section id="section-archivo">
             <div class="content-section-header">
                 <h2>Archivo de <span>Victorias</span></h2>
             </div>
-            <div class="archive-empty">
-                <i class="fas fa-scroll"></i>
-                <p>Los registros de torneos pasados y el salón de la fama de Herejaibas se habilitarán una vez concluyan las primeras campañas.</p>
+            <div id="archivo-list">
+                <div class="archive-empty">
+                    <i class="fas fa-scroll"></i>
+                    <p>Los registros de torneos pasados y el salón de la fama de Herejaibas se habilitarán una vez concluyan las primeras campañas.</p>
+                </div>
             </div>
         </section>
 
@@ -152,8 +121,8 @@
                 </div>
                 <p class="footer-desc">Club de wargames en el Puerto de Veracruz. Reuniones semanales, torneos y comunidad para todos los niveles.</p>
                 <div class="footer-socials">
-                    <a href="#" class="footer-social-btn" aria-label="Discord"><i class="fab fa-discord"></i></a>
-                    <a href="#" class="footer-social-btn" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://discord.gg/HbMyzKFqzc" class="footer-social-btn" aria-label="Discord"><i class="fab fa-discord"></i></a>
+                    <a href="https://www.instagram.com/herejaibas/" class="footer-social-btn" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                     <a href="#" class="footer-social-btn" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
                 </div>
             </div>
@@ -181,5 +150,110 @@
     </footer>
 
     <script src="script.js"></script>
+    <script>
+    /* ---- TORNEOS DINÁMICOS ---- */
+    const { createClient } = supabase;
+    const sb = createClient(window._sbUrl, window._sbAnon);
+
+    function formatFecha(fechaStr) {
+        if (!fechaStr) return { dia: '?', mes: '??' };
+        const d = new Date(fechaStr + 'T12:00:00');
+        return {
+            dia: d.getDate().toString().padStart(2,'0'),
+            mes: d.toLocaleDateString('es-MX', { month: 'short', year: '2-digit' }).toUpperCase()
+        };
+    }
+
+    function renderTournamentCard(t) {
+        const { dia, mes } = formatFecha(t.fecha);
+        const badge = t.estado === 'confirmado'
+            ? `<span class="tournament-badge" style="border-color:rgba(0,191,255,0.4);color:var(--accent-cyan);">Confirmado</span>`
+            : `<span class="tournament-badge">Por confirmar</span>`;
+        const action = t.estado === 'confirmado'
+            ? `<a href="comunidad.html" class="cta-button">Inscribirse</a>`
+            : `<span class="coming-soon">Próximamente</span>`;
+
+        return `
+            <div class="tournament-card${t.estado === 'confirmado' ? ' upcoming' : ''}">
+                <div class="tournament-date">
+                    <span class="day">${dia}</span>
+                    <span class="month">${mes}</span>
+                </div>
+                <div class="tournament-details">
+                    ${badge}
+                    <h3>${t.nombre}</h3>
+                    <div class="tournament-meta">
+                        ${t.sistema ? `<span><i class="fas fa-gamepad"></i> ${t.sistema}</span>` : ''}
+                        ${t.puntos  ? `<span><i class="fas fa-list-alt"></i> ${t.puntos}</span>` : ''}
+                        <span><i class="fas fa-map-marker-alt"></i> Nido Herejaibas · Veracruz</span>
+                    </div>
+                    ${t.descripcion ? `<p>${t.descripcion}</p>` : ''}
+                </div>
+                <div class="tournament-action">${action}</div>
+            </div>
+        `;
+    }
+
+    function renderPassedCard(t) {
+        const { dia, mes } = formatFecha(t.fecha);
+        return `
+            <div class="tournament-card" style="opacity:0.6;">
+                <div class="tournament-date">
+                    <span class="day">${dia}</span>
+                    <span class="month">${mes}</span>
+                </div>
+                <div class="tournament-details">
+                    <span class="tournament-badge" style="color:var(--text-dim);border-color:rgba(74,85,114,0.4);">Pasado</span>
+                    <h3>${t.nombre}</h3>
+                    <div class="tournament-meta">
+                        ${t.sistema ? `<span><i class="fas fa-gamepad"></i> ${t.sistema}</span>` : ''}
+                    </div>
+                    ${t.descripcion ? `<p>${t.descripcion}</p>` : ''}
+                </div>
+            </div>
+        `;
+    }
+
+    async function loadTournaments() {
+        const { data, error } = await sb.from('tournaments').select('*').order('fecha', { ascending: true });
+
+        const proxList   = document.getElementById('proximos-list');
+        const archList   = document.getElementById('archivo-list');
+
+        if (error || !data) {
+            proxList.innerHTML = `<div class="archive-empty"><i class="fas fa-exclamation-circle"></i><p>Error cargando torneos</p></div>`;
+            return;
+        }
+
+        const proximos = data.filter(t => t.estado !== 'pasado');
+        const pasados  = data.filter(t => t.estado === 'pasado');
+
+        // Próximos
+        if (proximos.length === 0) {
+            proxList.innerHTML = `
+                <div class="tournament-card">
+                    <div class="tournament-date"><span class="day">?</span><span class="month">2025</span></div>
+                    <div class="tournament-details">
+                        <span class="tournament-badge">Por confirmar</span>
+                        <h3>Próximo torneo sin anunciar</h3>
+                        <div class="tournament-meta"><span><i class="fas fa-map-marker-alt"></i> Nido Herejaibas · Veracruz</span></div>
+                        <p>Mantente al tanto en nuestro Discord para el anuncio oficial.</p>
+                    </div>
+                    <div class="tournament-action"><span class="coming-soon">Próximamente</span></div>
+                </div>`;
+        } else {
+            proxList.innerHTML = proximos.map(renderTournamentCard).join('');
+        }
+
+        // Archivo
+        if (pasados.length === 0) {
+            archList.innerHTML = `<div class="archive-empty"><i class="fas fa-scroll"></i><p>Los registros de torneos pasados y el salón de la fama de Herejaibas se habilitarán una vez concluyan las primeras campañas.</p></div>`;
+        } else {
+            archList.innerHTML = `<div class="tournament-list">${pasados.map(renderPassedCard).join('')}</div>`;
+        }
+    }
+
+    loadTournaments();
+    </script>
 </body>
 </html>

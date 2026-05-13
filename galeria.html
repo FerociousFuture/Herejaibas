@@ -8,6 +8,8 @@
     <link rel="icon" type="image/png" href="jaiba.png">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
 </head>
 <body>
 
@@ -50,72 +52,17 @@
             <div class="content-section-header">
                 <h2>Últimas <span>Obras</span></h2>
                 <div class="gallery-filters">
-                    <button class="gallery-filter-btn active">Todos</button>
-                    <button class="gallery-filter-btn">40K</button>
-                    <button class="gallery-filter-btn">AoS</button>
-                    <button class="gallery-filter-btn">Otros</button>
+                    <button class="gallery-filter-btn active" data-filter="Todos">Todos</button>
+                    <button class="gallery-filter-btn" data-filter="Warhammer 40K">40K</button>
+                    <button class="gallery-filter-btn" data-filter="Age of Sigmar">AoS</button>
+                    <button class="gallery-filter-btn" data-filter="Otros">Otros</button>
                 </div>
             </div>
-            <div class="gallery-grid">
-                <div class="gallery-item">
-                    <div class="gallery-placeholder">
-                        <i class="fas fa-image"></i>
-                        <span>Pendiente</span>
-                    </div>
-                    <div class="gallery-caption">
-                        <div class="gallery-caption-title">Miniatura por publicar</div>
-                        <div class="gallery-caption-sub">Warhammer 40K</div>
-                    </div>
-                </div>
-                <div class="gallery-item">
-                    <div class="gallery-placeholder">
-                        <i class="fas fa-image"></i>
-                        <span>Pendiente</span>
-                    </div>
-                    <div class="gallery-caption">
-                        <div class="gallery-caption-title">Miniatura por publicar</div>
-                        <div class="gallery-caption-sub">Age of Sigmar</div>
-                    </div>
-                </div>
-                <div class="gallery-item">
-                    <div class="gallery-placeholder">
-                        <i class="fas fa-image"></i>
-                        <span>Pendiente</span>
-                    </div>
-                    <div class="gallery-caption">
-                        <div class="gallery-caption-title">Miniatura por publicar</div>
-                        <div class="gallery-caption-sub">Warhammer 40K</div>
-                    </div>
-                </div>
-                <div class="gallery-item">
-                    <div class="gallery-placeholder">
-                        <i class="fas fa-image"></i>
-                        <span>Pendiente</span>
-                    </div>
-                    <div class="gallery-caption">
-                        <div class="gallery-caption-title">Miniatura por publicar</div>
-                        <div class="gallery-caption-sub">Warhammer 40K</div>
-                    </div>
-                </div>
-                <div class="gallery-item">
-                    <div class="gallery-placeholder">
-                        <i class="fas fa-image"></i>
-                        <span>Pendiente</span>
-                    </div>
-                    <div class="gallery-caption">
-                        <div class="gallery-caption-title">Miniatura por publicar</div>
-                        <div class="gallery-caption-sub">Age of Sigmar</div>
-                    </div>
-                </div>
-                <div class="gallery-item">
-                    <div class="gallery-placeholder">
-                        <i class="fas fa-image"></i>
-                        <span>Pendiente</span>
-                    </div>
-                    <div class="gallery-caption">
-                        <div class="gallery-caption-title">Miniatura por publicar</div>
-                        <div class="gallery-caption-sub">Otros</div>
-                    </div>
+            <div class="gallery-grid" id="gallery-grid">
+                <!-- Cargando -->
+                <div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--text-dim);">
+                    <i class="fas fa-spinner fa-spin" style="font-size:2rem;margin-bottom:12px;display:block;opacity:0.4;"></i>
+                    Cargando miniaturas...
                 </div>
             </div>
         </section>
@@ -140,7 +87,7 @@
                 </div>
                 <p class="footer-desc">Club de wargames en el Puerto de Veracruz. Reuniones semanales, torneos y comunidad para todos los niveles.</p>
                 <div class="footer-socials">
-                    <a href="#" class="footer-social-btn" aria-label="Discord"><i class="fab fa-discord"></i></a>
+                    <a href="https://discord.gg/HbMyzKFqzc" class="footer-social-btn" aria-label="Discord"><i class="fab fa-discord"></i></a>
                     <a href="https://www.instagram.com/herejaibas/" class="footer-social-btn" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                     <a href="#" class="footer-social-btn" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
                 </div>
@@ -169,5 +116,79 @@
     </footer>
 
     <script src="script.js"></script>
+    <script>
+    /* ---- GALERÍA DINÁMICA ---- */
+    const { createClient } = supabase;
+    const sb = createClient(window._sbUrl, window._sbAnon);
+
+    let allItems = [];
+    let activeFilter = 'Todos';
+
+    async function loadGallery() {
+        const { data, error } = await sb.from('gallery').select('*').order('created_at', { ascending: false });
+        const grid = document.getElementById('gallery-grid');
+
+        if (error) {
+            grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--text-dim);">
+                <i class="fas fa-exclamation-circle" style="font-size:2rem;margin-bottom:12px;display:block;opacity:0.4;"></i>
+                Error cargando la galería
+            </div>`;
+            return;
+        }
+
+        if (!data || data.length === 0) {
+            grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--text-dim);">
+                <i class="fas fa-image" style="font-size:2rem;margin-bottom:12px;display:block;opacity:0.3;"></i>
+                Próximamente las primeras miniaturas
+            </div>`;
+            return;
+        }
+
+        allItems = data;
+        renderGallery();
+    }
+
+    function renderGallery() {
+        const grid = document.getElementById('gallery-grid');
+        const items = activeFilter === 'Todos'
+            ? allItems
+            : allItems.filter(i => i.sistema === activeFilter);
+
+        if (items.length === 0) {
+            grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--text-dim);">
+                Sin miniaturas en esta categoría todavía
+            </div>`;
+            return;
+        }
+
+        grid.innerHTML = items.map(item => `
+            <div class="gallery-item">
+                ${item.img_url
+                    ? `<img src="${item.img_url}" alt="${item.titulo || 'Miniatura'}" loading="lazy">`
+                    : `<div class="gallery-placeholder">
+                           <i class="fas fa-image"></i>
+                           <span>Imagen próximamente</span>
+                       </div>`
+                }
+                <div class="gallery-caption">
+                    <div class="gallery-caption-title">${item.titulo || 'Sin título'}</div>
+                    <div class="gallery-caption-sub">${[item.sistema, item.autor].filter(Boolean).join(' · ')}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Filtros
+    document.querySelectorAll('.gallery-filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.gallery-filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            activeFilter = btn.dataset.filter;
+            renderGallery();
+        });
+    });
+
+    loadGallery();
+    </script>
 </body>
 </html>

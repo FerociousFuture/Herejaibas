@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | Herejaibas</title>
+    <link rel="icon" type="image/png" href="jaiba.png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <style>
+        /* ---- ADMIN ESPECÍFICO ---- */
+        .admin-wrap { max-width: 1100px; margin: 0 auto; padding: clamp(40px,6vw,80px) clamp(20px,5%,60px); position: relative; z-index: 1; }
+
+        /* Login */
+        #login-screen { display: flex; align-items: center; justify-content: center; min-height: 100svh; }
+        .login-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-gold);
+            border-radius: var(--radius-lg);
+            padding: 48px 40px;
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .login-card h2 { font-family: 'Cinzel', serif; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent-gold); text-align: center; }
+        .login-card p { font-size: 0.85rem; color: var(--text-muted); text-align: center; }
+        .admin-input {
+            width: 100%;
+            background: var(--bg-deep);
+            border: 1px solid var(--border-gold);
+            border-radius: var(--radius);
+            padding: 12px 16px;
+            color: var(--text-main);
+            font-family: 'Exo 2', sans-serif;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .admin-input:focus { border-color: var(--accent-gold); }
+        .admin-input::placeholder { color: var(--text-dim); }
+        .login-error { color: #ff6644; font-size: 0.82rem; text-align: center; display: none; }
+
+        /* Dashboard */
+        #dashboard-screen { display: none; }
+        .admin-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 16px clamp(20px,5%,60px);
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-gold);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .admin-header-left { display: flex; align-items: center; gap: 12px; }
+        .admin-title { font-family: 'Cinzel', serif; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.15em; color: var(--accent-gold); text-transform: uppercase; }
+        .admin-badge { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; background: rgba(200,168,75,0.1); border: 1px solid var(--border-gold); border-radius: 2px; padding: 3px 8px; color: var(--accent-gold); }
+        .admin-user { font-size: 0.8rem; color: var(--text-muted); }
+        .logout-btn { background: none; border: 1px solid rgba(200,168,75,0.3); border-radius: var(--radius); padding: 7px 16px; color: var(--text-muted); font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
+        .logout-btn:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
+
+        /* Tabs */
+        .admin-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border-gold); margin-bottom: 40px; }
+        .tab-btn { background: none; border: none; border-bottom: 2px solid transparent; padding: 12px 20px; font-family: 'Cinzel', serif; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); cursor: pointer; transition: all 0.2s; margin-bottom: -1px; }
+        .tab-btn.active, .tab-btn:hover { color: var(--accent-gold); border-bottom-color: var(--accent-gold); }
+
+        /* Panel */
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        /* Sección header */
+        .panel-section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+        .panel-section-header h3 { font-family: 'Cinzel', serif; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-main); }
+        .add-btn { background: var(--accent-gold); color: var(--bg-void); border: none; border-radius: var(--radius); padding: 10px 20px; font-family: 'Cinzel', serif; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
+        .add-btn:hover { background: var(--accent-gold-light); }
+
+        /* Tabla admin */
+        .admin-table { width: 100%; border-collapse: collapse; }
+        .admin-table th { font-family: 'Cinzel', serif; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-dim); padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border-gold); }
+        .admin-table td { padding: 14px 16px; border-bottom: 1px solid rgba(200,168,75,0.08); font-size: 0.88rem; color: var(--text-muted); vertical-align: middle; }
+        .admin-table tr:hover td { background: rgba(200,168,75,0.03); }
+        .admin-table .td-title { color: var(--text-main); font-weight: 500; }
+        .admin-table .td-img { width: 56px; height: 42px; object-fit: cover; border-radius: var(--radius); border: 1px solid var(--border-gold); }
+        .action-row { display: flex; gap: 8px; }
+        .edit-btn, .del-btn { border: none; border-radius: var(--radius); padding: 6px 12px; font-family: 'Cinzel', serif; font-size: 0.58rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
+        .edit-btn { background: rgba(200,168,75,0.1); color: var(--accent-gold); border: 1px solid var(--border-gold); }
+        .edit-btn:hover { background: var(--accent-gold); color: var(--bg-void); }
+        .del-btn { background: rgba(200,34,0,0.1); color: #ff6644; border: 1px solid rgba(200,34,0,0.3); }
+        .del-btn:hover { background: rgba(200,34,0,0.25); }
+
+        /* Modal */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
+        .modal-overlay.open { display: flex; }
+        .modal-box { background: var(--bg-card); border: 1px solid var(--border-gold); border-radius: var(--radius-lg); padding: 36px 32px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
+        .modal-box h3 { font-family: 'Cinzel', serif; font-size: 1rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-gold); }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-dim); }
+        .admin-textarea { width: 100%; background: var(--bg-deep); border: 1px solid var(--border-gold); border-radius: var(--radius); padding: 12px 16px; color: var(--text-main); font-family: 'Exo 2', sans-serif; font-size: 0.9rem; outline: none; resize: vertical; min-height: 80px; transition: border-color 0.2s; }
+        .admin-textarea:focus { border-color: var(--accent-gold); }
+        .admin-select { width: 100%; background: var(--bg-deep); border: 1px solid var(--border-gold); border-radius: var(--radius); padding: 12px 16px; color: var(--text-main); font-family: 'Exo 2', sans-serif; font-size: 0.9rem; outline: none; }
+        .modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 8px; }
+        .modal-cancel { background: none; border: 1px solid var(--border-gold); border-radius: var(--radius); padding: 10px 20px; color: var(--text-muted); font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
+        .modal-cancel:hover { color: var(--text-main); }
+        .modal-save { background: var(--accent-gold); color: var(--bg-void); border: none; border-radius: var(--radius); padding: 10px 24px; font-family: 'Cinzel', serif; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
+        .modal-save:hover { background: var(--accent-gold-light); }
+
+        /* Status badges */
+        .badge-prox { background: rgba(0,191,255,0.1); color: var(--accent-cyan); border: 1px solid rgba(0,191,255,0.3); border-radius: 2px; padding: 3px 8px; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+        .badge-conf { background: rgba(200,168,75,0.1); color: var(--accent-gold); border: 1px solid var(--border-gold); border-radius: 2px; padding: 3px 8px; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+
+        /* Toast */
+        .toast { position: fixed; bottom: 32px; right: 32px; background: var(--bg-elevated); border: 1px solid var(--border-gold); border-radius: var(--radius-lg); padding: 14px 20px; font-size: 0.85rem; color: var(--text-main); z-index: 3000; opacity: 0; transform: translateY(16px); transition: all 0.3s; pointer-events: none; }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.ok { border-color: rgba(0,200,100,0.4); }
+        .toast.err { border-color: rgba(200,34,0,0.4); color: #ff6644; }
+
+        /* Placeholder imagen */
+        .img-placeholder { width: 56px; height: 42px; background: var(--bg-elevated); border: 1px solid var(--border-gold); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; color: var(--text-dim); font-size: 0.9rem; }
+
+        /* Empty state */
+        .empty-state { text-align: center; padding: 48px 24px; color: var(--text-dim); font-size: 0.9rem; }
+        .empty-state i { font-size: 2rem; opacity: 0.3; margin-bottom: 12px; display: block; }
+
+        /* Upload label */
+        .upload-label { display: inline-flex; align-items: center; gap: 8px; background: rgba(200,168,75,0.08); border: 1px dashed var(--border-gold); border-radius: var(--radius); padding: 10px 16px; color: var(--accent-gold); font-size: 0.78rem; cursor: pointer; transition: all 0.2s; }
+        .upload-label:hover { background: rgba(200,168,75,0.14); }
+        #gallery-file-input, #tour-file-input { display: none; }
+        .upload-preview { width: 80px; height: 60px; object-fit: cover; border-radius: var(--radius); border: 1px solid var(--border-gold); display: none; }
+
+        @media (max-width: 640px) {
+            .admin-table td:nth-child(1), .admin-table th:nth-child(1) { display: none; }
+            .modal-box { padding: 24px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ========= TOAST ========= -->
+<div class="toast" id="toast"></div>
+
+<!-- ========= LOGIN ========= -->
+<div id="login-screen">
+    <div class="login-card">
+        <div style="text-align:center; margin-bottom:8px;">
+            <div style="width:64px;height:64px;border:2px solid var(--accent-gold);border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;background:rgba(200,168,75,0.08);">
+                <img src="logo.png" alt="Herejaibas" style="width:75%;height:75%;object-fit:contain;">
+            </div>
+        </div>
+        <h2>Panel de Control</h2>
+        <p>Acceso exclusivo para administradores de Herejaibas</p>
+        <input class="admin-input" type="email" id="login-email" placeholder="Email" autocomplete="email">
+        <input class="admin-input" type="password" id="login-pass" placeholder="Contraseña" autocomplete="current-password">
+        <p class="login-error" id="login-error">Email o contraseña incorrectos</p>
+        <button class="btn-primary" id="login-btn" style="width:100%;text-align:center;">Entrar al Cuartel</button>
+        <p style="font-size:0.75rem;color:var(--text-dim);text-align:center;">Sólo miembros autorizados del club</p>
+    </div>
+</div>
+
+<!-- ========= DASHBOARD ========= -->
+<div id="dashboard-screen">
+    <div class="admin-header">
+        <div class="admin-header-left">
+            <span class="admin-title">Herejaibas</span>
+            <span class="admin-badge">Admin</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;">
+            <span class="admin-user" id="admin-user-label"></span>
+            <button class="logout-btn" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Salir</button>
+        </div>
+    </div>
+
+    <div class="admin-wrap">
+
+        <!-- Tabs -->
+        <div class="admin-tabs">
+            <button class="tab-btn active" data-tab="galeria"><i class="fas fa-images"></i> Galería</button>
+            <button class="tab-btn" data-tab="torneos"><i class="fas fa-trophy"></i> Torneos</button>
+        </div>
+
+        <!-- ===== TAB GALERÍA ===== -->
+        <div class="tab-panel active" id="tab-galeria">
+            <div class="panel-section-header">
+                <h3><i class="fas fa-images" style="color:var(--accent-gold);margin-right:8px;"></i>Miniaturas</h3>
+                <button class="add-btn" id="add-gallery-btn"><i class="fas fa-plus"></i> Agregar miniatura</button>
+            </div>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Imagen</th>
+                        <th>Título</th>
+                        <th>Sistema</th>
+                        <th>Autor</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="gallery-tbody">
+                    <tr><td colspan="5"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i>Cargando...</div></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ===== TAB TORNEOS ===== -->
+        <div class="tab-panel" id="tab-torneos">
+            <div class="panel-section-header">
+                <h3><i class="fas fa-trophy" style="color:var(--accent-gold);margin-right:8px;"></i>Torneos y Eventos</h3>
+                <button class="add-btn" id="add-tour-btn"><i class="fas fa-plus"></i> Agregar torneo</button>
+            </div>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Nombre</th>
+                        <th>Sistema</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tour-tbody">
+                    <tr><td colspan="5"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i>Cargando...</div></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<!-- ========= MODAL GALERÍA ========= -->
+<div class="modal-overlay" id="gallery-modal">
+    <div class="modal-box">
+        <h3 id="gallery-modal-title">Nueva Miniatura</h3>
+
+        <div class="form-group">
+            <label class="form-label">Título *</label>
+            <input class="admin-input" type="text" id="g-titulo" placeholder="Ej: Space Marine Primaris">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Sistema</label>
+            <select class="admin-select" id="g-sistema">
+                <option value="Warhammer 40K">Warhammer 40K</option>
+                <option value="Age of Sigmar">Age of Sigmar</option>
+                <option value="Otros">Otros</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Autor / Pintor</label>
+            <input class="admin-input" type="text" id="g-autor" placeholder="Nombre del hobbista">
+        </div>
+        <div class="form-group">
+            <label class="form-label">URL de imagen <span style="color:var(--text-dim);font-size:0.7rem;">(o sube un archivo)</span></label>
+            <input class="admin-input" type="url" id="g-img-url" placeholder="https://... (si tienes el enlace directo)">
+        </div>
+        <div class="form-group">
+            <label class="form-label">— o sube una imagen —</label>
+            <label class="upload-label" for="gallery-file-input">
+                <i class="fas fa-upload"></i> Elegir imagen
+            </label>
+            <input type="file" id="gallery-file-input" accept="image/*">
+            <img id="gallery-upload-preview" class="upload-preview" alt="preview">
+        </div>
+
+        <div class="modal-actions">
+            <button class="modal-cancel" id="gallery-modal-cancel">Cancelar</button>
+            <button class="modal-save" id="gallery-modal-save">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<!-- ========= MODAL TORNEOS ========= -->
+<div class="modal-overlay" id="tour-modal">
+    <div class="modal-box">
+        <h3 id="tour-modal-title">Nuevo Torneo</h3>
+
+        <div class="form-group">
+            <label class="form-label">Nombre del evento *</label>
+            <input class="admin-input" type="text" id="t-nombre" placeholder="Ej: Torneo Herejía en el Golfo I">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="form-group">
+                <label class="form-label">Fecha</label>
+                <input class="admin-input" type="date" id="t-fecha">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Sistema</label>
+                <select class="admin-select" id="t-sistema">
+                    <option value="Warhammer 40K">Warhammer 40K</option>
+                    <option value="Age of Sigmar">Age of Sigmar</option>
+                    <option value="Por definir">Por definir</option>
+                    <option value="Otros">Otros</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Descripción</label>
+            <textarea class="admin-textarea" id="t-desc" placeholder="Detalles del evento, bases, premios..."></textarea>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="form-group">
+                <label class="form-label">Puntos de ejército</label>
+                <input class="admin-input" type="text" id="t-puntos" placeholder="Ej: 2000 pts">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Estado</label>
+                <select class="admin-select" id="t-estado">
+                    <option value="proximo">Próximamente</option>
+                    <option value="confirmado">Confirmado</option>
+                    <option value="pasado">Pasado</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">URL de imagen del banner <span style="color:var(--text-dim);font-size:0.7rem;">(opcional)</span></label>
+            <input class="admin-input" type="url" id="t-img-url" placeholder="https://...">
+        </div>
+
+        <div class="modal-actions">
+            <button class="modal-cancel" id="tour-modal-cancel">Cancelar</button>
+            <button class="modal-save" id="tour-modal-save">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ============================================================
+   INIT SUPABASE
+   ============================================================ */
+const { createClient } = supabase;
+const sb = createClient(window._sbUrl, window._sbAnon);
+
+/* ============================================================
+   AUTH
+   ============================================================ */
+async function checkSession() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) showDashboard(session.user);
+}
+
+document.getElementById('login-btn').addEventListener('click', async () => {
+    const email = document.getElementById('login-email').value.trim();
+    const pass  = document.getElementById('login-pass').value;
+    const err   = document.getElementById('login-error');
+    err.style.display = 'none';
+
+    const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+    if (error) { err.style.display = 'block'; return; }
+    showDashboard(data.user);
+});
+
+document.getElementById('login-pass').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('login-btn').click();
+});
+
+document.getElementById('logout-btn').addEventListener('click', async () => {
+    await sb.auth.signOut();
+    document.getElementById('dashboard-screen').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+});
+
+function showDashboard(user) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('dashboard-screen').style.display = 'block';
+    document.getElementById('admin-user-label').textContent = user.email;
+    loadGallery();
+    loadTournaments();
+}
+
+checkSession();
+
+/* ============================================================
+   TABS
+   ============================================================ */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    });
+});
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+function toast(msg, type = 'ok') {
+    const t = document.getElementById('toast');
+    t.textContent = (type === 'ok' ? '✓ ' : '✗ ') + msg;
+    t.className = 'toast show ' + type;
+    setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ============================================================
+   GALERÍA
+   ============================================================ */
+let galleryEditId = null;
+let galleryUploadFile = null;
+
+async function loadGallery() {
+    const { data, error } = await sb.from('gallery').select('*').order('created_at', { ascending: false });
+    const tbody = document.getElementById('gallery-tbody');
+    if (error || !data || data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><i class="fas fa-image"></i>No hay miniaturas todavía. ¡Agrega la primera!</div></td></tr>`;
+        return;
+    }
+    tbody.innerHTML = data.map(row => `
+        <tr>
+            <td>${row.img_url
+                ? `<img class="td-img" src="${row.img_url}" alt="${row.titulo}">`
+                : `<div class="img-placeholder"><i class="fas fa-image"></i></div>`}</td>
+            <td class="td-title">${row.titulo || '—'}</td>
+            <td>${row.sistema || '—'}</td>
+            <td>${row.autor || '—'}</td>
+            <td>
+                <div class="action-row">
+                    <button class="edit-btn" onclick="editGallery(${JSON.stringify(row).replace(/"/g,'&quot;')})">Editar</button>
+                    <button class="del-btn" onclick="deleteGallery('${row.id}')">Borrar</button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+}
+
+document.getElementById('add-gallery-btn').addEventListener('click', () => {
+    galleryEditId = null;
+    galleryUploadFile = null;
+    document.getElementById('gallery-modal-title').textContent = 'Nueva Miniatura';
+    document.getElementById('g-titulo').value = '';
+    document.getElementById('g-autor').value = '';
+    document.getElementById('g-img-url').value = '';
+    document.getElementById('g-sistema').value = 'Warhammer 40K';
+    document.getElementById('gallery-upload-preview').style.display = 'none';
+    document.getElementById('gallery-file-input').value = '';
+    document.getElementById('gallery-modal').classList.add('open');
+});
+
+window.editGallery = function(row) {
+    galleryEditId = row.id;
+    galleryUploadFile = null;
+    document.getElementById('gallery-modal-title').textContent = 'Editar Miniatura';
+    document.getElementById('g-titulo').value = row.titulo || '';
+    document.getElementById('g-autor').value = row.autor || '';
+    document.getElementById('g-img-url').value = row.img_url || '';
+    document.getElementById('g-sistema').value = row.sistema || 'Warhammer 40K';
+    const prev = document.getElementById('gallery-upload-preview');
+    if (row.img_url) { prev.src = row.img_url; prev.style.display = 'block'; } else { prev.style.display = 'none'; }
+    document.getElementById('gallery-file-input').value = '';
+    document.getElementById('gallery-modal').classList.add('open');
+};
+
+document.getElementById('gallery-file-input').addEventListener('change', e => {
+    galleryUploadFile = e.target.files[0];
+    if (galleryUploadFile) {
+        const url = URL.createObjectURL(galleryUploadFile);
+        const prev = document.getElementById('gallery-upload-preview');
+        prev.src = url; prev.style.display = 'block';
+        document.getElementById('g-img-url').value = '';
+    }
+});
+
+document.getElementById('gallery-modal-cancel').addEventListener('click', () => {
+    document.getElementById('gallery-modal').classList.remove('open');
+});
+
+document.getElementById('gallery-modal-save').addEventListener('click', async () => {
+    const titulo = document.getElementById('g-titulo').value.trim();
+    if (!titulo) { toast('El título es obligatorio', 'err'); return; }
+
+    let img_url = document.getElementById('g-img-url').value.trim();
+
+    // Si hay archivo, subirlo a Storage
+    if (galleryUploadFile) {
+        const ext  = galleryUploadFile.name.split('.').pop();
+        const path = `gallery/${Date.now()}.${ext}`;
+        const { error: upErr } = await sb.storage.from('herejaibas').upload(path, galleryUploadFile, { upsert: true });
+        if (upErr) { toast('Error subiendo imagen: ' + upErr.message, 'err'); return; }
+        const { data: urlData } = sb.storage.from('herejaibas').getPublicUrl(path);
+        img_url = urlData.publicUrl;
+    }
+
+    const payload = {
+        titulo,
+        sistema:  document.getElementById('g-sistema').value,
+        autor:    document.getElementById('g-autor').value.trim(),
+        img_url:  img_url || null
+    };
+
+    let error;
+    if (galleryEditId) {
+        ({ error } = await sb.from('gallery').update(payload).eq('id', galleryEditId));
+    } else {
+        ({ error } = await sb.from('gallery').insert([payload]));
+    }
+
+    if (error) { toast('Error: ' + error.message, 'err'); return; }
+    toast(galleryEditId ? 'Miniatura actualizada' : 'Miniatura agregada');
+    document.getElementById('gallery-modal').classList.remove('open');
+    loadGallery();
+});
+
+window.deleteGallery = async function(id) {
+    if (!confirm('¿Eliminar esta miniatura?')) return;
+    const { error } = await sb.from('gallery').delete().eq('id', id);
+    if (error) { toast('Error: ' + error.message, 'err'); return; }
+    toast('Miniatura eliminada');
+    loadGallery();
+};
+
+/* ============================================================
+   TORNEOS
+   ============================================================ */
+let tourEditId = null;
+
+async function loadTournaments() {
+    const { data, error } = await sb.from('tournaments').select('*').order('fecha', { ascending: true });
+    const tbody = document.getElementById('tour-tbody');
+    if (error || !data || data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><i class="fas fa-trophy"></i>No hay torneos todavía.</div></td></tr>`;
+        return;
+    }
+    tbody.innerHTML = data.map(row => {
+        const fechaStr = row.fecha ? new Date(row.fecha + 'T12:00:00').toLocaleDateString('es-MX', { day:'2-digit', month:'short', year:'numeric' }) : '?';
+        const badge = row.estado === 'confirmado'
+            ? `<span class="badge-conf">Confirmado</span>`
+            : row.estado === 'pasado'
+            ? `<span style="color:var(--text-dim);font-size:0.75rem;">Pasado</span>`
+            : `<span class="badge-prox">Próximamente</span>`;
+        return `
+            <tr>
+                <td>${fechaStr}</td>
+                <td class="td-title">${row.nombre || '—'}</td>
+                <td>${row.sistema || '—'}</td>
+                <td>${badge}</td>
+                <td>
+                    <div class="action-row">
+                        <button class="edit-btn" onclick="editTour(${JSON.stringify(row).replace(/"/g,'&quot;')})">Editar</button>
+                        <button class="del-btn" onclick="deleteTour('${row.id}')">Borrar</button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+document.getElementById('add-tour-btn').addEventListener('click', () => {
+    tourEditId = null;
+    document.getElementById('tour-modal-title').textContent = 'Nuevo Torneo';
+    ['t-nombre','t-fecha','t-desc','t-puntos','t-img-url'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('t-sistema').value = 'Warhammer 40K';
+    document.getElementById('t-estado').value = 'proximo';
+    document.getElementById('tour-modal').classList.add('open');
+});
+
+window.editTour = function(row) {
+    tourEditId = row.id;
+    document.getElementById('tour-modal-title').textContent = 'Editar Torneo';
+    document.getElementById('t-nombre').value  = row.nombre  || '';
+    document.getElementById('t-fecha').value   = row.fecha   || '';
+    document.getElementById('t-desc').value    = row.descripcion || '';
+    document.getElementById('t-puntos').value  = row.puntos  || '';
+    document.getElementById('t-img-url').value = row.img_url || '';
+    document.getElementById('t-sistema').value = row.sistema || 'Warhammer 40K';
+    document.getElementById('t-estado').value  = row.estado  || 'proximo';
+    document.getElementById('tour-modal').classList.add('open');
+};
+
+document.getElementById('tour-modal-cancel').addEventListener('click', () => {
+    document.getElementById('tour-modal').classList.remove('open');
+});
+
+document.getElementById('tour-modal-save').addEventListener('click', async () => {
+    const nombre = document.getElementById('t-nombre').value.trim();
+    if (!nombre) { toast('El nombre es obligatorio', 'err'); return; }
+
+    const payload = {
+        nombre,
+        fecha:       document.getElementById('t-fecha').value || null,
+        sistema:     document.getElementById('t-sistema').value,
+        descripcion: document.getElementById('t-desc').value.trim(),
+        puntos:      document.getElementById('t-puntos').value.trim(),
+        img_url:     document.getElementById('t-img-url').value.trim() || null,
+        estado:      document.getElementById('t-estado').value
+    };
+
+    let error;
+    if (tourEditId) {
+        ({ error } = await sb.from('tournaments').update(payload).eq('id', tourEditId));
+    } else {
+        ({ error } = await sb.from('tournaments').insert([payload]));
+    }
+
+    if (error) { toast('Error: ' + error.message, 'err'); return; }
+    toast(tourEditId ? 'Torneo actualizado' : 'Torneo agregado');
+    document.getElementById('tour-modal').classList.remove('open');
+    loadTournaments();
+});
+
+window.deleteTour = async function(id) {
+    if (!confirm('¿Eliminar este torneo?')) return;
+    const { error } = await sb.from('tournaments').delete().eq('id', id);
+    if (error) { toast('Error: ' + error.message, 'err'); return; }
+    toast('Torneo eliminado');
+    loadTournaments();
+};
+
+// Cerrar modales al click fuera
+document.querySelectorAll('.modal-overlay').forEach(m => {
+    m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+</script>
+
+</body>
+</html>
