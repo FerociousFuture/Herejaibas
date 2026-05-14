@@ -8,6 +8,192 @@
     <link rel="icon" type="image/png" href="jaiba.png">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <style>
+        /* ---- TOP 5 WIDGET ---- */
+        .top5-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media (max-width: 700px) {
+            .top5-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Lista Top 5 */
+        .top5-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            border: 1px solid var(--border-gold);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .top5-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 20px;
+            border-bottom: 1px solid rgba(200,168,75,0.08);
+            transition: background 0.2s;
+        }
+
+        .top5-row:last-child { border-bottom: none; }
+
+        .top5-row:hover { background: rgba(200,168,75,0.04); }
+
+        .top5-row.first-place {
+            background: rgba(200,168,75,0.06);
+            border-bottom-color: rgba(200,168,75,0.15);
+        }
+
+        .top5-medal {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel', serif;
+            font-size: 0.7rem;
+            font-weight: 900;
+            flex-shrink: 0;
+        }
+
+        .top5-medal.m1 { background: rgba(200,168,75,0.15); color: var(--accent-gold); border: 1px solid var(--accent-gold); }
+        .top5-medal.m2 { background: rgba(192,192,192,0.1); color: #c0c0c0;             border: 1px solid rgba(192,192,192,0.3); }
+        .top5-medal.m3 { background: rgba(205,127,50,0.1);  color: #cd7f32;             border: 1px solid rgba(205,127,50,0.3); }
+        .top5-medal.m4 { background: transparent; color: var(--text-dim); border: 1px solid rgba(74,85,114,0.3); }
+        .top5-medal.m5 { background: transparent; color: var(--text-dim); border: 1px solid rgba(74,85,114,0.3); }
+
+        .top5-info { flex: 1; min-width: 0; }
+
+        .top5-name {
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .top5-row.first-place .top5-name { color: var(--accent-gold); }
+
+        .top5-meta {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin-top: 2px;
+        }
+
+        .top5-pct {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            font-weight: 900;
+            color: var(--accent-gold);
+            flex-shrink: 0;
+        }
+
+        .top5-row:not(.first-place) .top5-pct {
+            color: var(--text-muted);
+            font-size: 0.88rem;
+        }
+
+        /* Panel CTA ranking */
+        .ranking-cta-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-gold);
+            border-radius: var(--radius-lg);
+            padding: 32px 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ranking-cta-panel::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
+        }
+
+        .ranking-cta-icon {
+            width: 56px;
+            height: 56px;
+            background: rgba(200,168,75,0.1);
+            border: 1px solid var(--border-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-gold);
+            font-size: 1.4rem;
+        }
+
+        .ranking-cta-panel h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-main);
+        }
+
+        .ranking-cta-panel p {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            font-weight: 300;
+            line-height: 1.7;
+        }
+
+        .ranking-mini-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .rms-card {
+            background: var(--bg-deep);
+            border: 1px solid var(--border-gold);
+            border-radius: var(--radius);
+            padding: 12px;
+            text-align: center;
+        }
+
+        .rms-num {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: var(--accent-gold);
+            display: block;
+            line-height: 1;
+        }
+
+        .rms-label {
+            font-size: 0.55rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-top: 4px;
+            display: block;
+        }
+
+        /* Loading state */
+        .top5-loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-dim);
+        }
+    </style>
 </head>
 <body>
 
@@ -77,6 +263,43 @@
                     <h3>Libro de Batallas</h3>
                     <p>El registro eterno de las partidas libradas en el club. Marcadores, ejércitos, victorias y derrotas.</p>
                     <a href="partidas.html" class="cta-button">Ver historial</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- TOP 5 RANKING -->
+        <section>
+            <div class="content-section-header">
+                <h2>Tabla de <span>Honor</span></h2>
+            </div>
+            <div class="top5-grid">
+
+                <!-- Lista Top 5 -->
+                <div>
+                    <div id="top5-container">
+                        <div class="top5-loading">
+                            <i class="fas fa-spinner fa-spin" style="font-size:1.5rem;display:block;margin-bottom:8px;opacity:0.4;"></i>
+                            Calculando clasificación...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel CTA -->
+                <div class="ranking-cta-panel">
+                    <div class="ranking-cta-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3>Ranking Completo</h3>
+                    <p>Consulta el ranking detallado de todos los comandantes: partidas jugadas, victorias, derrotas, empates y porcentaje de victoria.</p>
+
+                    <div class="ranking-mini-stats" id="cta-mini-stats">
+                        <div class="rms-card"><span class="rms-num" id="cta-jugadores">—</span><span class="rms-label">Comandantes</span></div>
+                        <div class="rms-card"><span class="rms-num" id="cta-partidas">—</span><span class="rms-label">Batallas</span></div>
+                    </div>
+
+                    <a href="ranking.html" class="btn-primary" style="text-align:center;">
+                        <i class="fas fa-chart-bar" style="margin-right:8px;"></i>Ver tabla completa
+                    </a>
                 </div>
             </div>
         </section>
@@ -163,6 +386,7 @@
                     <a href="galeria.html">Galería</a>
                     <a href="torneos.html">Torneos</a>
                     <a href="partidas.html">Libro de Batallas</a>
+                    <a href="ranking.html">Tabla de Honor</a>
                 </div>
             </div>
             <div class="footer-col">
@@ -180,5 +404,80 @@
     </footer>
 
     <script src="script.js"></script>
+    <script>
+    /* ---- TOP 5 DINÁMICO ---- */
+    const { createClient } = supabase;
+    const sb = createClient(window._sbUrl, window._sbAnon);
+
+    function buildPlayers(matches) {
+        const map = {};
+        function ensure(name) {
+            if (!map[name]) map[name] = { name, wins: 0, losses: 0, draws: 0, games: 0 };
+        }
+        matches.forEach(m => {
+            ensure(m.jugador1);
+            ensure(m.jugador2);
+            map[m.jugador1].games++;
+            map[m.jugador2].games++;
+            if (!m.ganador) {
+                map[m.jugador1].draws++;
+                map[m.jugador2].draws++;
+            } else if (m.ganador === m.jugador1) {
+                map[m.jugador1].wins++;
+                map[m.jugador2].losses++;
+            } else if (m.ganador === m.jugador2) {
+                map[m.jugador2].wins++;
+                map[m.jugador1].losses++;
+            }
+        });
+        return Object.values(map).map(p => {
+            const decided = p.wins + p.losses;
+            p.pct = decided > 0 ? Math.round((p.wins / decided) * 100) : 0;
+            return p;
+        }).sort((a, b) => b.pct - a.pct || b.wins - a.wins);
+    }
+
+    const medalClass = ['m1','m2','m3','m4','m5'];
+    const medalLabel = ['1','2','3','4','5'];
+
+    async function loadTop5() {
+        const { data, error } = await sb.from('partidas').select('*');
+        const container = document.getElementById('top5-container');
+
+        if (error || !data || data.length === 0) {
+            container.innerHTML = `
+                <div class="top5-list">
+                    <div class="top5-loading" style="padding:32px 20px;">
+                        <i class="fas fa-scroll" style="font-size:1.5rem;display:block;margin-bottom:8px;opacity:0.3;"></i>
+                        Aún no hay batallas registradas. ¡El primer campeón está por surgir!
+                    </div>
+                </div>`;
+            return;
+        }
+
+        const players = buildPlayers(data).slice(0, 5);
+
+        // Actualizar mini stats CTA
+        const allPlayers = buildPlayers(data);
+        document.getElementById('cta-jugadores').textContent = allPlayers.length;
+        document.getElementById('cta-partidas').textContent  = data.length;
+
+        container.innerHTML = `
+            <div class="top5-list">
+                ${players.map((p, i) => `
+                    <div class="top5-row${i === 0 ? ' first-place' : ''}">
+                        <div class="top5-medal ${medalClass[i]}">${medalLabel[i]}</div>
+                        <div class="top5-info">
+                            <div class="top5-name">${p.name}</div>
+                            <div class="top5-meta">${p.wins}V · ${p.losses}D · ${p.draws}E · ${p.games} partidas</div>
+                        </div>
+                        <div class="top5-pct">${p.pct}%</div>
+                    </div>
+                `).join('')}
+            </div>`;
+    }
+
+    loadTop5();
+    </script>
 </body>
 </html>

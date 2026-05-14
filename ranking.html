@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ranking | Herejaibas · Wargames Veracruz</title>
+    <meta name="description" content="Ranking de jugadores del club Herejaibas en Veracruz. Victorias, derrotas y porcentajes de éxito.">
+    <link rel="icon" type="image/png" href="jaiba.png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <style>
+
+        /* ============================================
+           RANKING ESPECÍFICO
+           ============================================ */
+
+        /* Podio Top 3 */
+        .podium-wrap {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 0;
+        }
+
+        .podium-slot {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            max-width: 220px;
+        }
+
+        .podium-slot.first { order: 2; }
+        .podium-slot.second { order: 1; }
+        .podium-slot.third { order: 3; }
+
+        .podium-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            border: 2px solid var(--border-gold);
+            background: var(--bg-elevated);
+            color: var(--accent-gold);
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .podium-slot.first .podium-avatar {
+            width: 80px;
+            height: 80px;
+            font-size: 1.9rem;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 28px var(--glow-gold);
+            background: rgba(200,168,75,0.1);
+        }
+
+        .podium-crown {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--accent-gold);
+            font-size: 0.9rem;
+        }
+
+        .podium-card {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-gold);
+            border-radius: var(--radius-lg);
+            padding: 16px 12px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .podium-slot.first .podium-card {
+            border-color: rgba(200,168,75,0.6);
+            background: rgba(200,168,75,0.05);
+            padding-bottom: 20px;
+        }
+
+        .podium-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+        }
+
+        .podium-slot.first  .podium-card::before { background: linear-gradient(90deg, transparent, var(--accent-gold), transparent); }
+        .podium-slot.second .podium-card::before { background: linear-gradient(90deg, transparent, #c0c0c0, transparent); }
+        .podium-slot.third  .podium-card::before { background: linear-gradient(90deg, transparent, #cd7f32, transparent); }
+
+        .podium-pos {
+            font-family: 'Cinzel', serif;
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        .podium-slot.first  .podium-pos { color: var(--accent-gold); }
+        .podium-slot.second .podium-pos { color: #c0c0c0; }
+        .podium-slot.third  .podium-pos { color: #cd7f32; }
+
+        .podium-name {
+            font-family: 'Cinzel', serif;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .podium-pct {
+            font-family: 'Cinzel', serif;
+            font-size: 1.4rem;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+        .podium-slot.first  .podium-pct { font-size: 1.8rem; color: var(--accent-gold); }
+        .podium-slot.second .podium-pct { color: #c0c0c0; }
+        .podium-slot.third  .podium-pct { color: #cd7f32; }
+
+        .podium-sub {
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+        }
+
+        .podium-wins-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 8px;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        .podium-wins-row i {
+            color: var(--accent-gold);
+            font-size: 0.65rem;
+        }
+
+        .podium-platform {
+            width: 100%;
+            border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+        }
+
+        .podium-slot.first  .podium-platform-bar { height: 80px; background: linear-gradient(to bottom, rgba(200,168,75,0.15), rgba(200,168,75,0.04)); border: 1px solid var(--border-gold); border-top: none; border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
+        .podium-slot.second .podium-platform-bar { height: 56px; background: linear-gradient(to bottom, rgba(192,192,192,0.08), transparent); border: 1px solid rgba(192,192,192,0.2); border-top: none; border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
+        .podium-slot.third  .podium-platform-bar { height: 36px; background: linear-gradient(to bottom, rgba(205,127,50,0.08), transparent); border: 1px solid rgba(205,127,50,0.2); border-top: none; border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
+
+        @media (max-width: 540px) {
+            .podium-wrap { gap: 8px; }
+            .podium-slot.first .podium-avatar { width: 64px; height: 64px; font-size: 1.5rem; }
+            .podium-name { font-size: 0.68rem; }
+            .podium-slot.first .podium-pct { font-size: 1.4rem; }
+        }
+
+        /* ---- TABLA RANKING COMPLETA ---- */
+        .ranking-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .ranking-table thead tr {
+            border-bottom: 1px solid var(--border-gold);
+        }
+
+        .ranking-table th {
+            font-family: 'Cinzel', serif;
+            font-size: 0.58rem;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            padding: 12px 16px;
+            text-align: left;
+        }
+
+        .ranking-table th.right { text-align: right; }
+        .ranking-table th.center { text-align: center; }
+
+        .ranking-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid rgba(200,168,75,0.06);
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            vertical-align: middle;
+            transition: background 0.2s;
+        }
+
+        .ranking-table tr:hover td {
+            background: rgba(200,168,75,0.03);
+        }
+
+        .ranking-table td.right { text-align: right; }
+        .ranking-table td.center { text-align: center; }
+
+        .rank-pos {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            font-weight: 900;
+            color: var(--text-dim);
+            min-width: 32px;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .rank-pos.gold   { color: var(--accent-gold); }
+        .rank-pos.silver { color: #c0c0c0; }
+        .rank-pos.bronze { color: #cd7f32; }
+
+        .rank-name-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .rank-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid var(--border-gold);
+            background: var(--bg-elevated);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            flex-shrink: 0;
+        }
+
+        .rank-name {
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: 0.04em;
+        }
+
+        /* Barra de porcentaje */
+        .pct-cell {
+            min-width: 120px;
+        }
+
+        .pct-bar-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pct-bar-bg {
+            flex: 1;
+            height: 4px;
+            background: rgba(200,168,75,0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            min-width: 60px;
+        }
+
+        .pct-bar-fill {
+            height: 100%;
+            border-radius: 2px;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-gold-light));
+            transition: width 0.6s ease;
+        }
+
+        .pct-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            min-width: 42px;
+            text-align: right;
+        }
+
+        .wins-num {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .losses-num {
+            font-size: 0.88rem;
+            color: var(--text-dim);
+        }
+
+        .draws-num {
+            font-size: 0.88rem;
+            color: var(--accent-cyan);
+        }
+
+        .games-num {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Streaks */
+        .streak-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border-radius: 2px;
+        }
+
+        .streak-hot {
+            background: rgba(200,168,75,0.12);
+            color: var(--accent-gold);
+            border: 1px solid var(--border-gold);
+        }
+
+        .streak-cold {
+            background: rgba(74,85,114,0.15);
+            color: var(--text-dim);
+            border: 1px solid rgba(74,85,114,0.3);
+        }
+
+        /* Filtros */
+        .ranking-filters {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .rank-filter-btn {
+            font-family: 'Exo 2', sans-serif;
+            font-weight: 600;
+            font-size: 0.68rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 7px 16px;
+            border: 1px solid var(--border-gold);
+            border-radius: var(--radius);
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .rank-filter-btn.active,
+        .rank-filter-btn:hover {
+            background: rgba(200,168,75,0.1);
+            color: var(--accent-gold);
+            border-color: var(--accent-gold);
+        }
+
+        /* Stat cards de resumen */
+        .ranking-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+        .rs-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-gold);
+            border-radius: var(--radius-lg);
+            padding: 18px 16px;
+            text-align: center;
+        }
+
+        .rs-num {
+            font-family: 'Cinzel', serif;
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: var(--accent-gold);
+            line-height: 1;
+            display: block;
+        }
+
+        .rs-label {
+            font-size: 0.58rem;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-top: 6px;
+            display: block;
+        }
+
+        /* Empty */
+        .rank-empty {
+            text-align: center;
+            padding: 64px 24px;
+            color: var(--text-dim);
+        }
+
+        .rank-empty i {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+            display: block;
+            opacity: 0.3;
+        }
+
+        .rank-empty p { font-size: 0.9rem; font-weight: 300; }
+
+        /* Table scroll on mobile */
+        .table-scroll {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        @media (max-width: 640px) {
+            .ranking-table th:nth-child(5),
+            .ranking-table td:nth-child(5),
+            .ranking-table th:nth-child(6),
+            .ranking-table td:nth-child(6) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <a href="index.html" class="logo-container">
+            <div class="logo-emblem">
+                <img src="logo.png" alt="Herejaibas Logo">
+            </div>
+            <div class="logo-text">
+                <span class="logo-name">Herejaibas</span>
+                <span class="logo-sub">Club de Wargames · Veracruz</span>
+            </div>
+        </a>
+        <nav id="main-nav">
+            <ul class="nav-links">
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="comunidad.html" class="active">Comunidad</a></li>
+                <li><a href="galeria.html">Galería</a></li>
+                <li><a href="torneos.html">Torneos</a></li>
+            </ul>
+        </nav>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Menú">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="nav-spacer"></div>
+    </header>
+
+    <section class="page-header page-header-bg" style="background-image: url('https://4kwallpapers.com/images/wallpapers/warhammer-40k-space-3840x2160-22638.jpg');">
+        <div class="container">
+            <div class="page-header-eyebrow">Gloria Eterna · Herejaibas</div>
+            <h1>TABLA DE <span>HONOR</span></h1>
+            <p>El legado de cada comandante, forjado en el fuego de la batalla. Victorias, derrotas y gloria inmortal.</p>
+        </div>
+    </section>
+
+    <main class="main-content">
+
+        <!-- RESUMEN GENERAL -->
+        <section>
+            <div class="content-section-header">
+                <h2>Estadísticas <span>del Club</span></h2>
+            </div>
+            <div class="ranking-summary" id="ranking-summary">
+                <div class="rs-card"><span class="rs-num" id="rs-jugadores">—</span><span class="rs-label">Comandantes</span></div>
+                <div class="rs-card"><span class="rs-num" id="rs-partidas">—</span><span class="rs-label">Batallas libradas</span></div>
+                <div class="rs-card"><span class="rs-num" id="rs-lider">—</span><span class="rs-label">Líder actual</span></div>
+                <div class="rs-card"><span class="rs-num" id="rs-avg-pct">—</span><span class="rs-label">% Promedio victorias</span></div>
+            </div>
+        </section>
+
+        <!-- PODIO TOP 3 -->
+        <section id="section-podium">
+            <div class="content-section-header">
+                <h2>El <span>Podio</span></h2>
+            </div>
+            <div class="podium-wrap" id="podium-wrap">
+                <div class="rank-empty" style="width:100%;">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Calculando el podio...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- RANKING COMPLETO -->
+        <section>
+            <div class="content-section-header">
+                <h2>Ranking <span>Completo</span></h2>
+                <div class="ranking-filters">
+                    <button class="rank-filter-btn active" data-filter="Todos">Todos</button>
+                    <button class="rank-filter-btn" data-filter="Warhammer 40K">40K</button>
+                    <button class="rank-filter-btn" data-filter="Age of Sigmar">AoS</button>
+                </div>
+            </div>
+            <div class="table-scroll">
+                <table class="ranking-table">
+                    <thead>
+                        <tr>
+                            <th style="width:52px;">#</th>
+                            <th>Comandante</th>
+                            <th class="center">PJ</th>
+                            <th class="center">V</th>
+                            <th class="center">D</th>
+                            <th class="center">E</th>
+                            <th style="min-width:160px;">% Victoria</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ranking-tbody">
+                        <tr><td colspan="7">
+                            <div class="rank-empty">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>Cargando el registro de honor...</p>
+                            </div>
+                        </td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- NOTA -->
+        <section>
+            <div class="notice-box" style="max-width:700px;margin:0 auto;">
+                <div class="notice-box-title"><i class="fas fa-info-circle"></i> ¿Cómo se calcula el ranking?</div>
+                <p>El ranking se basa en el <strong style="color:var(--accent-gold);">porcentaje de victorias</strong> (victorias ÷ partidas jugadas). En caso de empate en porcentaje, se desempata por número total de victorias. Solo se consideran partidas registradas en el Libro de Batallas. Los empates no cuentan ni como victoria ni como derrota.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <div class="footer-logo-emblem"><img src="logo.png" alt="Herejaibas"></div>
+                    <span class="footer-logo-text">Herejaibas</span>
+                </div>
+                <p class="footer-desc">Club de wargames en el Puerto de Veracruz. Reuniones semanales, torneos y comunidad para todos los niveles.</p>
+                <div class="footer-socials">
+                    <a href="https://discord.gg/HbMyzKFqzc" class="footer-social-btn" aria-label="Discord"><i class="fab fa-discord"></i></a>
+                    <a href="https://www.instagram.com/herejaibas/" class="footer-social-btn" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="footer-social-btn" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Navegación</h4>
+                <div class="footer-links">
+                    <a href="index.html">Inicio</a>
+                    <a href="comunidad.html">Comunidad</a>
+                    <a href="galeria.html">Galería</a>
+                    <a href="torneos.html">Torneos</a>
+                    <a href="partidas.html">Libro de Batallas</a>
+                    <a href="ranking.html">Tabla de Honor</a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Contacto</h4>
+                <div class="footer-links">
+                    <a href="https://discord.gg/HbMyzKFqzc">Discord</a>
+                    <a href="https://www.instagram.com/herejaibas/">Instagram</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Herejaibas · Club de Wargames · Veracruz, México</p>
+            <span class="footer-badge">herejaibas.com</span>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+    /* ============================================================
+       RANKING PÚBLICO - calcula stats desde la tabla "partidas"
+    ============================================================ */
+    const { createClient } = supabase;
+    const sb = createClient(window._sbUrl, window._sbAnon);
+
+    let allMatches  = [];
+    let activeFilter = 'Todos';
+
+    /* ---- Construye mapa de jugadores desde partidas ---- */
+    function buildPlayers(matches) {
+        const map = {};
+
+        function ensure(name) {
+            if (!map[name]) {
+                map[name] = { name, wins: 0, losses: 0, draws: 0, games: 0 };
+            }
+        }
+
+        matches.forEach(m => {
+            ensure(m.jugador1);
+            ensure(m.jugador2);
+
+            map[m.jugador1].games++;
+            map[m.jugador2].games++;
+
+            if (!m.ganador) {
+                // Empate
+                map[m.jugador1].draws++;
+                map[m.jugador2].draws++;
+            } else if (m.ganador === m.jugador1) {
+                map[m.jugador1].wins++;
+                map[m.jugador2].losses++;
+            } else if (m.ganador === m.jugador2) {
+                map[m.jugador2].wins++;
+                map[m.jugador1].losses++;
+            }
+        });
+
+        // Calcular porcentaje (solo partidas decididas)
+        return Object.values(map).map(p => {
+            const decided = p.wins + p.losses;
+            p.pct = decided > 0 ? Math.round((p.wins / decided) * 100) : 0;
+            return p;
+        }).sort((a, b) => b.pct - a.pct || b.wins - a.wins || a.losses - b.losses);
+    }
+
+    /* ---- Inicial de nombre ---- */
+    function initials(name) {
+        return name.trim().split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    }
+
+    /* ---- Clase de posición ---- */
+    function posClass(i) {
+        if (i === 0) return 'gold';
+        if (i === 1) return 'silver';
+        if (i === 2) return 'bronze';
+        return '';
+    }
+
+    /* ---- Render podio ---- */
+    function renderPodium(players) {
+        const wrap = document.getElementById('podium-wrap');
+        if (players.length === 0) {
+            wrap.innerHTML = `<div class="rank-empty" style="width:100%;"><i class="fas fa-trophy"></i><p>Aún no hay batallas registradas. ¡El podio espera su primer campeón!</p></div>`;
+            return;
+        }
+
+        const slots = [
+            { slot: 'first',  label: '1.º Lugar', idx: 0 },
+            { slot: 'second', label: '2.º Lugar', idx: 1 },
+            { slot: 'third',  label: '3.º Lugar', idx: 2 },
+        ];
+
+        wrap.innerHTML = slots.map(({ slot, label, idx }) => {
+            const p = players[idx];
+            if (!p) {
+                return `
+                    <div class="podium-slot ${slot}">
+                        <div class="podium-avatar" style="opacity:0.3;">—</div>
+                        <div class="podium-card">
+                            <div class="podium-pos">${label}</div>
+                            <div class="podium-name" style="color:var(--text-dim);">Sin registrar</div>
+                            <div class="podium-pct" style="color:var(--text-dim);">—</div>
+                        </div>
+                        <div class="podium-platform-bar"></div>
+                    </div>`;
+            }
+            const crown = slot === 'first' ? `<i class="fas fa-crown podium-crown"></i>` : '';
+            return `
+                <div class="podium-slot ${slot}">
+                    <div class="podium-avatar">
+                        ${crown}
+                        ${initials(p.name)}
+                    </div>
+                    <div class="podium-card">
+                        <div class="podium-pos">${label}</div>
+                        <div class="podium-name">${p.name}</div>
+                        <div class="podium-pct">${p.pct}%</div>
+                        <div class="podium-sub">Victorias</div>
+                        <div class="podium-wins-row">
+                            <i class="fas fa-sword"></i> ${p.wins}V &nbsp; ${p.losses}D &nbsp;
+                            <span style="color:var(--accent-cyan);">${p.draws}E</span>
+                        </div>
+                    </div>
+                    <div class="podium-platform-bar"></div>
+                </div>`;
+        }).join('');
+    }
+
+    /* ---- Render tabla ---- */
+    function renderTable(players) {
+        const tbody = document.getElementById('ranking-tbody');
+
+        if (players.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7"><div class="rank-empty"><i class="fas fa-scroll"></i><p>No hay datos para este filtro todavía.</p></div></td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = players.map((p, i) => {
+            const pc = posClass(i);
+            const barWidth = players[0].pct > 0 ? Math.round((p.pct / players[0].pct) * 100) : 0;
+            return `
+                <tr>
+                    <td><span class="rank-pos ${pc}">${i + 1}</span></td>
+                    <td>
+                        <div class="rank-name-cell">
+                            <div class="rank-avatar">${initials(p.name)}</div>
+                            <span class="rank-name">${p.name}</span>
+                        </div>
+                    </td>
+                    <td class="center"><span class="games-num">${p.games}</span></td>
+                    <td class="center"><span class="wins-num">${p.wins}</span></td>
+                    <td class="center"><span class="losses-num">${p.losses}</span></td>
+                    <td class="center"><span class="draws-num">${p.draws}</span></td>
+                    <td class="pct-cell">
+                        <div class="pct-bar-wrap">
+                            <div class="pct-bar-bg">
+                                <div class="pct-bar-fill" style="width:${barWidth}%;"></div>
+                            </div>
+                            <span class="pct-label">${p.pct}%</span>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    /* ---- Render summary ---- */
+    function renderSummary(players, totalMatches) {
+        document.getElementById('rs-jugadores').textContent = players.length;
+        document.getElementById('rs-partidas').textContent  = totalMatches;
+        document.getElementById('rs-lider').textContent     = players.length ? players[0].name.split(' ')[0] : '—';
+        const avg = players.length
+            ? Math.round(players.reduce((s, p) => s + p.pct, 0) / players.length)
+            : 0;
+        document.getElementById('rs-avg-pct').textContent   = players.length ? avg + '%' : '—';
+    }
+
+    /* ---- Filtrado y render ---- */
+    function applyFilter() {
+        const filtered = activeFilter === 'Todos'
+            ? allMatches
+            : allMatches.filter(m => m.sistema === activeFilter);
+        const players = buildPlayers(filtered);
+        renderPodium(players);
+        renderTable(players);
+        if (activeFilter === 'Todos') renderSummary(players, filtered.length);
+    }
+
+    /* ---- Carga datos ---- */
+    async function loadRanking() {
+        const { data, error } = await sb.from('partidas').select('*').order('fecha', { ascending: false });
+
+        if (error || !data) {
+            document.getElementById('ranking-tbody').innerHTML = `<tr><td colspan="7"><div class="rank-empty"><i class="fas fa-exclamation-circle"></i><p>Error cargando el ranking. Intenta de nuevo.</p></div></td></tr>`;
+            return;
+        }
+
+        allMatches = data;
+        applyFilter();
+    }
+
+    /* ---- Filtros ---- */
+    document.querySelectorAll('.rank-filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.rank-filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            activeFilter = btn.dataset.filter;
+            applyFilter();
+        });
+    });
+
+    loadRanking();
+    </script>
+</body>
+</html>
