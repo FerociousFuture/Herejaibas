@@ -251,7 +251,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 9px 14px;
+            padding: 12px 14px;
             cursor: pointer;
             transition: background 0.15s;
             border-bottom: 1px solid rgba(200,168,75,0.04);
@@ -262,37 +262,21 @@
         .faction-option:hover,
         .faction-option.highlighted { background: rgba(200,168,75,0.08); }
 
-        .faction-option-img {
-            width: 28px;
-            height: 28px;
-            object-fit: contain;
-            border-radius: 3px;
-            flex-shrink: 0;
-            background: var(--bg-deep);
-        }
-
-        .faction-option-name { font-size: 0.82rem; color: var(--text-main); }
+        .faction-option-name { font-size: 0.85rem; color: var(--text-main); font-weight: 500; }
 
         .faction-selected-preview {
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 8px 12px;
+            padding: 10px 14px;
             background: rgba(200,168,75,0.06);
             border: 1px solid var(--border-gold);
             border-radius: var(--radius);
             margin-top: 8px;
         }
 
-        .faction-selected-preview img {
-            width: 32px;
-            height: 32px;
-            object-fit: contain;
-            border-radius: 3px;
-        }
-
         .faction-selected-name {
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             color: var(--accent-gold);
             font-family: 'Cinzel', serif;
             font-weight: 600;
@@ -346,19 +330,6 @@
         .player-suggestion-item:hover { background: rgba(200,168,75,0.08); }
         .player-suggestion-item i { color: var(--accent-gold); font-size: 0.7rem; }
 
-        /* Img auto info note */
-        .img-auto-note {
-            font-size: 0.72rem;
-            color: var(--accent-cyan);
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            margin-top: 4px;
-        }
-
-        /* Custom link override row */
-        .img-link-override { margin-top: 4px; }
-
         @media (max-width: 640px) {
             .admin-table td:nth-child(1), .admin-table th:nth-child(1) { display: none; }
             .modal-box { padding: 24px 20px; }
@@ -367,8 +338,10 @@
 </head>
 <body>
 
+<!-- ========= TOAST ========= -->
 <div class="toast" id="toast"></div>
 
+<!-- ========= LOGIN ========= -->
 <div id="login-screen">
     <div class="login-card">
         <div style="text-align:center; margin-bottom:8px;">
@@ -386,6 +359,7 @@
     </div>
 </div>
 
+<!-- ========= DASHBOARD ========= -->
 <div id="dashboard-screen">
     <div class="admin-header">
         <div class="admin-header-left">
@@ -400,6 +374,7 @@
 
     <div class="admin-wrap">
 
+        <!-- Tabs -->
         <div class="admin-tabs">
             <button class="tab-btn active" data-tab="banners"><i class="fas fa-images"></i> Banners</button>
             <button class="tab-btn" data-tab="galeria"><i class="fas fa-paint-brush"></i> Galería</button>
@@ -407,6 +382,7 @@
             <button class="tab-btn" data-tab="partidas"><i class="fas fa-shield-alt"></i> Partidas</button>
         </div>
 
+        <!-- ===== TAB BANNERS ===== -->
         <div class="tab-panel active" id="tab-banners">
             <div class="panel-section-header">
                 <h3><i class="fas fa-images" style="color:var(--accent-gold);margin-right:8px;"></i>Banners Principales</h3>
@@ -427,6 +403,7 @@
             </table>
         </div>
 
+        <!-- ===== TAB GALERÍA ===== -->
         <div class="tab-panel" id="tab-galeria">
             <div class="panel-section-header">
                 <h3><i class="fas fa-paint-brush" style="color:var(--accent-gold);margin-right:8px;"></i>Miniaturas</h3>
@@ -448,6 +425,7 @@
             </table>
         </div>
 
+        <!-- ===== TAB TORNEOS ===== -->
         <div class="tab-panel" id="tab-torneos">
             <div class="panel-section-header">
                 <h3><i class="fas fa-trophy" style="color:var(--accent-gold);margin-right:8px;"></i>Torneos y Eventos</h3>
@@ -469,12 +447,14 @@
             </table>
         </div>
 
+        <!-- ===== TAB PARTIDAS ===== -->
         <div class="tab-panel" id="tab-partidas">
             <div class="panel-section-header">
                 <h3><i class="fas fa-shield-alt" style="color:var(--accent-gold);margin-right:8px;"></i>Libro de Batallas</h3>
                 <button class="add-btn" id="add-match-btn"><i class="fas fa-plus"></i> Registrar partida</button>
             </div>
 
+            <!-- Stats mini -->
             <div class="admin-stats-mini" id="admin-match-stats">
                 <div class="admin-stat-card"><span class="admin-stat-num">—</span><span class="admin-stat-label">Partidas</span></div>
                 <div class="admin-stat-card"><span class="admin-stat-num">—</span><span class="admin-stat-label">40K</span></div>
@@ -503,6 +483,7 @@
     </div>
 </div>
 
+<!-- ========= MODAL BANNERS ========= -->
 <div class="modal-overlay" id="banner-modal">
     <div class="modal-box">
         <h3 id="banner-modal-title">Nuevo Banner</h3>
@@ -547,6 +528,7 @@
     </div>
 </div>
 
+<!-- ========= MODAL GALERÍA ========= -->
 <div class="modal-overlay" id="gallery-modal">
     <div class="modal-box">
         <h3 id="gallery-modal-title">Nueva Miniatura</h3>
@@ -587,6 +569,7 @@
     </div>
 </div>
 
+<!-- ========= MODAL TORNEOS ========= -->
 <div class="modal-overlay" id="tour-modal">
     <div class="modal-box">
         <h3 id="tour-modal-title">Nuevo Torneo</h3>
@@ -640,10 +623,12 @@
     </div>
 </div>
 
+<!-- ========= MODAL PARTIDAS ========= -->
 <div class="modal-overlay" id="match-modal">
     <div class="modal-box" style="max-width:700px;">
         <h3 id="match-modal-title">Registrar Partida</h3>
 
+        <!-- Fecha y Sistema -->
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
             <div class="form-group">
                 <label class="form-label">Fecha *</label>
@@ -659,6 +644,7 @@
             </div>
         </div>
 
+        <!-- Jugador 1 -->
         <div class="match-section-divider">
             <i class="fas fa-user"></i> Jugador 1
         </div>
@@ -677,21 +663,13 @@
                 <div class="faction-dropdown" id="m-e1-dropdown"></div>
             </div>
             <div class="faction-selected-preview" id="m-e1-preview" style="display:none;">
-                <img id="m-e1-preview-img" src="" alt="">
                 <span class="faction-selected-name" id="m-e1-preview-name"></span>
                 <button class="clear-faction" onclick="clearFaction(1)"><i class="fas fa-times"></i></button>
             </div>
             <input type="hidden" id="m-e1">
-            <input type="hidden" id="m-img1">
-        </div>
-        <div class="form-group">
-            <label class="form-label">
-                Imagen de facción personalizada
-                <span style="color:var(--text-dim);font-size:0.7rem;">(sobreescribe la imagen automática)</span>
-            </label>
-            <input class="admin-input img-link-override" type="url" id="m-img1-override" placeholder="https://... (dejar vacío para usar la imagen predeterminada)">
         </div>
 
+        <!-- Jugador 2 -->
         <div class="match-section-divider">
             <i class="fas fa-user"></i> Jugador 2
         </div>
@@ -710,21 +688,13 @@
                 <div class="faction-dropdown" id="m-e2-dropdown"></div>
             </div>
             <div class="faction-selected-preview" id="m-e2-preview" style="display:none;">
-                <img id="m-e2-preview-img" src="" alt="">
                 <span class="faction-selected-name" id="m-e2-preview-name"></span>
                 <button class="clear-faction" onclick="clearFaction(2)"><i class="fas fa-times"></i></button>
             </div>
             <input type="hidden" id="m-e2">
-            <input type="hidden" id="m-img2">
-        </div>
-        <div class="form-group">
-            <label class="form-label">
-                Imagen de facción personalizada
-                <span style="color:var(--text-dim);font-size:0.7rem;">(sobreescribe la imagen automática)</span>
-            </label>
-            <input class="admin-input img-link-override" type="url" id="m-img2-override" placeholder="https://... (dejar vacío para usar la imagen predeterminada)">
         </div>
 
+        <!-- Resultado -->
         <div class="match-section-divider">
             <i class="fas fa-trophy"></i> Resultado final
         </div>
@@ -745,6 +715,7 @@
             </div>
         </div>
 
+        <!-- Notas -->
         <div class="form-group">
             <label class="form-label">Crónica / Notas <span style="color:var(--text-dim);font-size:0.7rem;">(opcional)</span></label>
             <textarea class="admin-textarea" id="m-notas" placeholder="Momento épico, narrativa de la partida, observaciones..."></textarea>
@@ -763,70 +734,32 @@
    ============================================================ */
 const FACTIONS = {
     "Warhammer 40K": [
-        { name: "Adeptus Custodes",       img: "https://www.warhammer-community.com/wp-content/uploads/2019/06/adeptus-custodes-symbol.png" },
-        { name: "Adeptus Mechanicus",     img: "https://www.warhammer-community.com/wp-content/uploads/2019/04/adeptus-mechanicus-logo.png" },
-        { name: "Aeldari",                img: "https://www.warhammer-community.com/wp-content/uploads/2019/04/eldar-logo.png" },
-        { name: "Adepta Sororitas",       img: "https://www.warhammer-community.com/wp-content/uploads/2019/05/sisters-logo.png" },
-        { name: "Agents of the Imperium", img: "https://www.warhammer-community.com/wp-content/uploads/2021/07/agents-logo.png" },
-        { name: "Blood Angels",           img: "https://www.warhammer-community.com/wp-content/uploads/2019/04/blood-angels-logo.png" },
-        { name: "Chaos Daemons",          img: "https://www.warhammer-community.com/wp-content/uploads/2019/04/chaos-daemons-logo.png" },
-        { name: "Chaos Knights",          img: "https://www.warhammer-community.com/wp-content/uploads/2022/06/chaos-knights-symbol.png" },
-        { name: "Chaos Space Marines",    img: "https://www.warhammer-community.com/wp-content/uploads/2019/04/chaos-space-marines-logo.png" },
-        { name: "Dark Angels",            img: "https://www.warhammer-community.com/wp-content/uploads/2019/04/dark-angels-logo.png" },
-        { name: "Death Guard",            img: "https://www.warhammer-community.com/wp-content/uploads/2019/05/death-guard-logo.png" },
-        { name: "Deathwatch",             img: "https://www.warhammer-community.com/wp-content/uploads/2019/04/deathwatch-logo.png" },
-        { name: "Drukhari",               img: "https://www.warhammer-community.com/wp-content/uploads/2019/04/drukhari-logo.png" },
-        { name: "Genestealer Cults",      img: "https://www.warhammer-community.com/wp-content/uploads/2019/04/genestealer-cults-logo.png" },
-        { name: "Grey Knights",           img: "https://www.warhammer-community.com/wp-content/uploads/2019/04/grey-knights-logo.png" },
-        { name: "Imperial Fists",         img: "https://www.warhammer-community.com/wp-content/uploads/2019/04/imperial-fists-logo.png" },
-        { name: "Imperial Guard / Astra Militarum", img: "https://www.warhammer-community.com/wp-content/uploads/2019/04/astra-militarum-logo.png" },
-        { name: "Imperial Knights",       img: "https://www.warhammer-community.com/wp-content/uploads/2019/04/imperial-knights-logo.png" },
-        { name: "Iron Hands",             img: "https://www.warhammer-community.com/wp-content/uploads/2019/04/iron-hands-logo.png" },
-        { name: "Leagues of Votann",      img: "https://www.warhammer-community.com/wp-content/uploads/2022/04/leagues-of-votann-logo.png" },
-        { name: "Necrons",                img: "https://www.warhammer-community.com/wp-content/uploads/2019/04/necrons-logo.png" },
-        { name: "Orks",                   img: "https://www.warhammer-community.com/wp-content/uploads/2019/04/orks-logo.png" },
-        { name: "Raven Guard",            img: "https://www.warhammer-community.com/wp-content/uploads/2019/04/raven-guard-logo.png" },
-        { name: "Salamanders",            img: "https://www.warhammer-community.com/wp-content/uploads/2019/04/salamanders-logo.png" },
-        { name: "Space Marines",          img: "https://www.warhammer-community.com/wp-content/uploads/2019/04/space-marines-logo.png" },
-        { name: "Space Wolves",           img: "https://www.warhammer-community.com/wp-content/uploads/2019/04/space-wolves-logo.png" },
-        { name: "T'au Empire",            img: "https://www.warhammer-community.com/wp-content/uploads/2019/04/tau-logo.png" },
-        { name: "Thousand Sons",          img: "https://www.warhammer-community.com/wp-content/uploads/2019/05/thousand-sons-logo.png" },
-        { name: "Tyranids",               img: "https://www.warhammer-community.com/wp-content/uploads/2019/04/tyranids-logo.png" },
-        { name: "Ultramarines",           img: "https://www.warhammer-community.com/wp-content/uploads/2019/04/ultramarines-logo.png" },
-        { name: "White Scars",            img: "https://www.warhammer-community.com/wp-content/uploads/2019/04/white-scars-logo.png" },
-        { name: "World Eaters",           img: "https://www.warhammer-community.com/wp-content/uploads/2022/09/world-eaters-symbol.png" },
+        { name: "Adeptus Custodes" }, { name: "Adeptus Mechanicus" }, { name: "Aeldari" },
+        { name: "Adepta Sororitas" }, { name: "Agents of the Imperium" }, { name: "Blood Angels" },
+        { name: "Chaos Daemons" }, { name: "Chaos Knights" }, { name: "Chaos Space Marines" },
+        { name: "Dark Angels" }, { name: "Death Guard" }, { name: "Deathwatch" },
+        { name: "Drukhari" }, { name: "Genestealer Cults" }, { name: "Grey Knights" },
+        { name: "Imperial Fists" }, { name: "Imperial Guard / Astra Militarum" }, { name: "Imperial Knights" },
+        { name: "Iron Hands" }, { name: "Leagues of Votann" }, { name: "Necrons" },
+        { name: "Orks" }, { name: "Raven Guard" }, { name: "Salamanders" },
+        { name: "Space Marines" }, { name: "Space Wolves" }, { name: "T'au Empire" },
+        { name: "Thousand Sons" }, { name: "Tyranids" }, { name: "Ultramarines" },
+        { name: "White Scars" }, { name: "World Eaters" }
     ],
     "Age of Sigmar": [
         // ORDER
-        { name: "Cities of Sigmar",       img: "https://www.warhammer-community.com/wp-content/uploads/2019/08/cities-of-sigmar-logo.png" },
-        { name: "Daughters of Khaine",    img: "https://www.warhammer-community.com/wp-content/uploads/2018/09/daughters-of-khaine-logo.png" },
-        { name: "Fyreslayers",            img: "https://www.warhammer-community.com/wp-content/uploads/2018/12/fyreslayers-logo.png" },
-        { name: "Idoneth Deepkin",        img: "https://www.warhammer-community.com/wp-content/uploads/2018/03/idoneth-logo.png" },
-        { name: "Kharadron Overlords",    img: "https://www.warhammer-community.com/wp-content/uploads/2018/02/kharadron-logo.png" },
-        { name: "Lumineth Realm-lords",   img: "https://www.warhammer-community.com/wp-content/uploads/2020/03/lumineth-logo.png" },
-        { name: "Seraphon",               img: "https://www.warhammer-community.com/wp-content/uploads/2018/12/seraphon-logo.png" },
-        { name: "Stormcast Eternals",     img: "https://www.warhammer-community.com/wp-content/uploads/2018/01/stormcast-eternals-logo.png" },
-        { name: "Sylvaneth",              img: "https://www.warhammer-community.com/wp-content/uploads/2018/01/sylvaneth-logo.png" },
+        { name: "Cities of Sigmar" }, { name: "Daughters of Khaine" }, { name: "Fyreslayers" },
+        { name: "Idoneth Deepkin" }, { name: "Kharadron Overlords" }, { name: "Lumineth Realm-lords" },
+        { name: "Seraphon" }, { name: "Stormcast Eternals" }, { name: "Sylvaneth" },
         // CHAOS
-        { name: "Beasts of Chaos",        img: "https://www.warhammer-community.com/wp-content/uploads/2018/01/beasts-of-chaos-logo.png" },
-        { name: "Blades of Khorne",       img: "https://www.warhammer-community.com/wp-content/uploads/2018/01/blades-of-khorne-logo.png" },
-        { name: "Disciples of Tzeentch",  img: "https://www.warhammer-community.com/wp-content/uploads/2018/01/disciples-of-tzeentch-logo.png" },
-        { name: "Hedonites of Slaanesh",  img: "https://www.warhammer-community.com/wp-content/uploads/2019/04/slaanesh-logo.png" },
-        { name: "Maggotkin of Nurgle",    img: "https://www.warhammer-community.com/wp-content/uploads/2018/01/maggotkin-logo.png" },
-        { name: "Ravagers (Slaves to Darkness)", img: "https://www.warhammer-community.com/wp-content/uploads/2019/10/slaves-to-darkness-logo.png" },
-        { name: "Skaven",                 img: "https://www.warhammer-community.com/wp-content/uploads/2024/02/skaven-logo.png" },
-        { name: "Slaves to Darkness",     img: "https://www.warhammer-community.com/wp-content/uploads/2019/10/slaves-to-darkness-logo.png" },
+        { name: "Beasts of Chaos" }, { name: "Blades of Khorne" }, { name: "Disciples of Tzeentch" },
+        { name: "Hedonites of Slaanesh" }, { name: "Maggotkin of Nurgle" }, { name: "Ravagers (Slaves to Darkness)" },
+        { name: "Skaven" }, { name: "Slaves to Darkness" },
         // DEATH
-        { name: "Flesh-eater Courts",     img: "https://www.warhammer-community.com/wp-content/uploads/2018/01/flesh-eater-courts-logo.png" },
-        { name: "Nighthaunt",             img: "https://www.warhammer-community.com/wp-content/uploads/2018/05/nighthaunt-logo.png" },
-        { name: "Ossiarch Bonereapers",   img: "https://www.warhammer-community.com/wp-content/uploads/2019/10/ossiarch-logo.png" },
-        { name: "Soulblight Gravelords",  img: "https://www.warhammer-community.com/wp-content/uploads/2021/04/soulblight-logo.png" },
+        { name: "Flesh-eater Courts" }, { name: "Nighthaunt" }, { name: "Ossiarch Bonereapers" }, { name: "Soulblight Gravelords" },
         // DESTRUCTION
-        { name: "Gloomspite Gitz",        img: "https://www.warhammer-community.com/wp-content/uploads/2018/12/gloomspite-logo.png" },
-        { name: "Ironjawz",               img: "https://www.warhammer-community.com/wp-content/uploads/2018/01/ironjawz-logo.png" },
-        { name: "Kruleboyz",              img: "https://www.warhammer-community.com/wp-content/uploads/2021/06/kruleboyz-logo.png" },
-        { name: "Ogor Mawtribes",         img: "https://www.warhammer-community.com/wp-content/uploads/2019/11/ogor-logo.png" },
-        { name: "Sons of Behemat",        img: "https://www.warhammer-community.com/wp-content/uploads/2020/10/sons-of-behemat-logo.png" },
+        { name: "Gloomspite Gitz" }, { name: "Ironjawz" }, { name: "Kruleboyz" },
+        { name: "Ogor Mawtribes" }, { name: "Sons of Behemat" }
     ]
 };
 
@@ -841,8 +774,8 @@ function getFactionList(sistema) {
    ============================================================ */
 
 const factionState = {
-    1: { name: '', img: '' },
-    2: { name: '', img: '' }
+    1: { name: '' },
+    2: { name: '' }
 };
 
 function buildFactionDropdown(dropdownEl, searchEl, playerNum) {
@@ -869,8 +802,7 @@ function buildFactionDropdown(dropdownEl, searchEl, playerNum) {
         if (groups.length > 1) html += `<div class="faction-group-label">${group.label}</div>`;
         filtered.forEach(f => {
             html += `
-                <div class="faction-option" data-name="${f.name}" data-img="${f.img}" onclick="selectFaction(${playerNum}, this)">
-                    <img class="faction-option-img" src="${f.img}" alt="${f.name}" onerror="this.style.display='none'">
+                <div class="faction-option" data-name="${f.name}" onclick="selectFaction(${playerNum}, this)">
                     <span class="faction-option-name">${f.name}</span>
                 </div>`;
         });
@@ -881,17 +813,13 @@ function buildFactionDropdown(dropdownEl, searchEl, playerNum) {
 
 window.selectFaction = function(playerNum, el) {
     const name = el.dataset.name;
-    const img  = el.dataset.img;
-    factionState[playerNum] = { name, img };
+    factionState[playerNum] = { name };
 
-    document.getElementById(`m-e${playerNum}`).value   = name;
-    document.getElementById(`m-img${playerNum}`).value = img;
+    document.getElementById(`m-e${playerNum}`).value = name;
 
-    const preview    = document.getElementById(`m-e${playerNum}-preview`);
-    const previewImg = document.getElementById(`m-e${playerNum}-preview-img`);
-    const previewName= document.getElementById(`m-e${playerNum}-preview-name`);
+    const preview     = document.getElementById(`m-e${playerNum}-preview`);
+    const previewName = document.getElementById(`m-e${playerNum}-preview-name`);
     preview.style.display = 'flex';
-    previewImg.src         = img;
     previewName.textContent= name;
 
     document.getElementById(`m-e${playerNum}-search`).value = '';
@@ -901,9 +829,8 @@ window.selectFaction = function(playerNum, el) {
 };
 
 window.clearFaction = function(playerNum) {
-    factionState[playerNum] = { name: '', img: '' };
-    document.getElementById(`m-e${playerNum}`).value   = '';
-    document.getElementById(`m-img${playerNum}`).value = '';
+    factionState[playerNum] = { name: '' };
+    document.getElementById(`m-e${playerNum}`).value = '';
     document.getElementById(`m-e${playerNum}-preview`).style.display = 'none';
     document.getElementById(`m-e${playerNum}-search`).value = '';
 };
@@ -1011,7 +938,7 @@ function showDashboard(user) {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('dashboard-screen').style.display = 'block';
     document.getElementById('admin-user-label').textContent = user.email;
-    loadBanners(); // <-- Cargar Banners
+    loadBanners();
     loadGallery();
     loadTournaments();
     loadMatches();
@@ -1457,8 +1384,6 @@ function resetMatchModal() {
     clearFaction(2);
     document.getElementById('m-j1').value          = '';
     document.getElementById('m-j2').value          = '';
-    document.getElementById('m-img1-override').value = '';
-    document.getElementById('m-img2-override').value = '';
     document.getElementById('m-notas').value        = '';
     document.getElementById('m-p1').value           = '0';
     document.getElementById('m-p2').value           = '0';
@@ -1467,16 +1392,13 @@ function resetMatchModal() {
     document.getElementById('m-fecha').value        = new Date().toISOString().split('T')[0];
 }
 
-function prefillFaction(playerNum, name, img) {
-    factionState[playerNum] = { name, img };
-    document.getElementById(`m-e${playerNum}`).value   = name;
-    document.getElementById(`m-img${playerNum}`).value = img;
+function prefillFaction(playerNum, name) {
+    factionState[playerNum] = { name };
+    document.getElementById(`m-e${playerNum}`).value = name;
 
     const preview     = document.getElementById(`m-e${playerNum}-preview`);
-    const previewImg  = document.getElementById(`m-e${playerNum}-preview-img`);
     const previewName = document.getElementById(`m-e${playerNum}-preview-name`);
     preview.style.display = 'flex';
-    previewImg.src          = img;
     previewName.textContent = name;
 }
 
@@ -1504,24 +1426,16 @@ window.editMatch = function(row) {
 
     const faction1 = allFactions.find(f => f.name === row.ejercito1);
     if (faction1) {
-        prefillFaction(1, faction1.name, faction1.img);
-        if (row.faccion1_img && row.faccion1_img !== faction1.img) {
-            document.getElementById('m-img1-override').value = row.faccion1_img;
-        }
+        prefillFaction(1, faction1.name);
     } else if (row.ejercito1) {
         document.getElementById('m-e1').value = row.ejercito1;
-        document.getElementById('m-img1-override').value = row.faccion1_img || '';
     }
 
     const faction2 = allFactions.find(f => f.name === row.ejercito2);
     if (faction2) {
-        prefillFaction(2, faction2.name, faction2.img);
-        if (row.faccion2_img && row.faccion2_img !== faction2.img) {
-            document.getElementById('m-img2-override').value = row.faccion2_img;
-        }
+        prefillFaction(2, faction2.name);
     } else if (row.ejercito2) {
         document.getElementById('m-e2').value = row.ejercito2;
-        document.getElementById('m-img2-override').value = row.faccion2_img || '';
     }
 
     updateGanadorSelect();
@@ -1544,20 +1458,15 @@ document.getElementById('match-modal-save').addEventListener('click', async () =
     if (!e1 || !e2) { toast('Selecciona el ejército de ambos jugadores', 'err'); return; }
     if (!fecha)     { toast('La fecha es obligatoria', 'err'); return; }
 
-    const override1 = document.getElementById('m-img1-override').value.trim();
-    const override2 = document.getElementById('m-img2-override').value.trim();
-    const finalImg1 = override1 || document.getElementById('m-img1').value || null;
-    const finalImg2 = override2 || document.getElementById('m-img2').value || null;
-
     const payload = {
         fecha,
         sistema:      document.getElementById('m-sistema').value,
         jugador1:     j1,
         ejercito1:    e1,
-        faccion1_img: finalImg1,
+        faccion1_img: null,
         jugador2:     j2,
         ejercito2:    e2,
-        faccion2_img: finalImg2,
+        faccion2_img: null,
         puntos1:      parseInt(document.getElementById('m-p1').value) || 0,
         puntos2:      parseInt(document.getElementById('m-p2').value) || 0,
         ganador:      document.getElementById('m-ganador').value || null,
@@ -1586,11 +1495,10 @@ window.deleteMatch = async function(id) {
 };
 
 /* ============================================================
-   CERRAR MODALES AL CLICK FUERA
+   CERRAR MODALES AL CLICK FUERA (ELIMINADO A PETICIÓN DEL USUARIO)
    ============================================================ */
-document.querySelectorAll('.modal-overlay').forEach(m => {
-    m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
-});
+/* Se eliminó el script que cerraba los modales haciendo clic en ".modal-overlay" */
+
 </script>
 
 </body>
