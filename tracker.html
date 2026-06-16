@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <!-- El user-scalable=no evita que la pantalla haga zoom en celulares al picar los botones rápido -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Match Tracker | Herejaibas</title>
+    <link rel="icon" type="image/png" href="jaiba.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ============================================================
+           MATCH TRACKER STYLES (APP FEEL)
+           ============================================================ */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            background-color: #0f1115;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+            font-family: 'Exo 2', sans-serif;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        .tracker-container {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            padding: 40px 20px;
+        }
+
+        /* Header & Steps */
+        .tracker-header { text-align: center; margin-bottom: 40px; }
+        .tracker-steps { display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+        .t-step {
+            width: 28px; height: 28px; border-radius: 50%; border: 1px solid #333;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; color: #888; background: #1a1c23; font-weight: 600;
+        }
+        .t-step.active { background: #f5a623; color: #000; border-color: #f5a623; font-weight: 800; }
+        .t-line { width: 20px; height: 1px; background: #333; margin: 0 4px; }
+        
+        .tracker-title {
+            color: #f4f4f0; font-family: monospace; font-size: 1.8rem;
+            letter-spacing: 2px; margin-bottom: 5px; text-transform: uppercase;
+        }
+        .tracker-subtitle {
+            color: #888; font-size: 0.75rem; letter-spacing: 2px;
+            text-transform: uppercase; margin-bottom: 20px; font-weight: 600;
+        }
+        .tracker-desc { color: #aaa; font-size: 0.9rem; line-height: 1.4; }
+
+        /* Body & Inputs */
+        .tracker-body { flex: 1; }
+        .tracker-view { display: none; }
+        .tracker-view.active { display: block; animation: fadeIn 0.3s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .player-setup-card { display: flex; flex-direction: column; gap: 12px; }
+        .p1-label { color: #4a90e2; font-size: 0.85rem; font-weight: 800; letter-spacing: 1px; }
+        .p2-label { color: #e24a4a; font-size: 0.85rem; font-weight: 800; letter-spacing: 1px; }
+
+        .tk-input {
+            width: 100%; background: #23262f; border: 1px solid #3a3f4b;
+            border-radius: 8px; padding: 16px; color: #fff;
+            font-size: 1.1rem; font-weight: 600; outline: none; font-family: 'Exo 2', sans-serif;
+            transition: all 0.2s;
+        }
+        .tk-input::placeholder { color: #666; font-weight: 600; }
+
+        .p1-input:focus { border-color: #4a90e2; box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2); }
+        .p2-input:focus { border-color: #e24a4a; box-shadow: 0 0 0 2px rgba(226, 74, 74, 0.2); }
+
+        .tk-select-wrap { position: relative; }
+        .tk-select { appearance: none; font-size: 1rem; font-weight: 500; color: #ccc; cursor: pointer; }
+        .tk-select-icon { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #aaa; pointer-events: none; }
+
+        /* Battle Ready Toggle */
+        .tk-btn-toggle {
+            width: 100%; background: #23262f; border: 1px solid #3a3f4b;
+            border-radius: 8px; padding: 16px; color: #888;
+            font-family: monospace; font-size: 0.95rem; font-weight: 700;
+            letter-spacing: 1px; cursor: pointer; transition: all 0.2s;
+        }
+        .tk-btn-toggle.active { background: #27ae60; border-color: #27ae60; color: #fff; }
+
+        /* Footer Nav */
+        .tracker-footer {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 40px; padding-top: 20px; border-top: 1px solid #333;
+        }
+        .tk-btn-nav {
+            background: none; border: none; color: #888;
+            font-size: 0.9rem; font-weight: 700; cursor: pointer;
+            letter-spacing: 1px; font-family: 'Exo 2', sans-serif; transition: color 0.2s;
+        }
+        .tk-btn-nav:hover { color: #fff; }
+        .tk-btn-next {
+            background: #f5a623; color: #000; padding: 12px 24px; border-radius: 8px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .tk-btn-next:hover { background: #ffb845; color: #000; }
+    </style>
+</head>
+<body>
+
+    <div class="tracker-container">
+        
+        <!-- HEADER & STEPS -->
+        <div class="tracker-header">
+            <div class="tracker-steps" id="step-indicators">
+                <div class="t-step active">1</div><div class="t-line"></div>
+                <div class="t-step">2</div><div class="t-line"></div>
+                <div class="t-step">3</div><div class="t-line"></div>
+                <div class="t-step">4</div><div class="t-line"></div>
+                <div class="t-step">5</div><div class="t-line"></div>
+                <div class="t-step">6</div>
+            </div>
+            <h2 class="tracker-title" id="header-title">PLAYERS</h2>
+            <p class="tracker-subtitle" id="header-subtitle">STEP 1 OF 6</p>
+            <p class="tracker-desc" id="header-desc">Name the players and pick their faction. These are used throughout the tracker.</p>
+        </div>
+
+        <!-- VIEWS / STEPS -->
+        <div class="tracker-body">
+            
+            <!-- STEP 1: PLAYERS VIEW -->
+            <div id="tracker-step-1" class="tracker-view active">
+                
+                <!-- PLAYER 1 -->
+                <div class="player-setup-card">
+                    <label class="p1-label">PLAYER 1</label>
+                    <input type="text" id="tk-p1-name" class="tk-input p1-input" placeholder="PLAYER 1" autocomplete="off">
+                    
+                    <div class="tk-select-wrap">
+                        <select id="tk-p1-faction" class="tk-input tk-select">
+                            <option value="">Faction (optional)</option>
+                            <!-- Facciones generadas por JS -->
+                        </select>
+                        <i class="fas fa-chevron-down tk-select-icon"></i>
+                    </div>
+
+                    <button id="tk-p1-br" class="tk-btn-toggle" onclick="toggleBattleReady(1)">
+                        BATTLE READY +10 VP
+                    </button>
+                </div>
+
+                <!-- PLAYER 2 -->
+                <div class="player-setup-card" style="margin-top: 30px;">
+                    <label class="p2-label">PLAYER 2</label>
+                    <input type="text" id="tk-p2-name" class="tk-input p2-input" placeholder="PLAYER 2" autocomplete="off">
+                    
+                    <div class="tk-select-wrap">
+                        <select id="tk-p2-faction" class="tk-input tk-select">
+                            <option value="">Faction (optional)</option>
+                            <!-- Facciones generadas por JS -->
+                        </select>
+                        <i class="fas fa-chevron-down tk-select-icon"></i>
+                    </div>
+
+                    <button id="tk-p2-br" class="tk-btn-toggle" onclick="toggleBattleReady(2)">
+                        BATTLE READY +10 VP
+                    </button>
+                </div>
+
+            </div>
+            
+            <!-- STEP 2: PLACEHOLDER (Para la siguiente fase) -->
+            <div id="tracker-step-2" class="tracker-view">
+                <p style="text-align: center; color: #888;">Aquí irán las misiones primarias...</p>
+            </div>
+
+        </div>
+
+        <!-- FOOTER NAV -->
+        <div class="tracker-footer">
+            <button class="tk-btn-nav" id="tk-back-btn" onclick="goBack()">CANCEL</button>
+            <button class="tk-btn-nav tk-btn-next" id="tk-next-btn" onclick="nextTrackerStep()">NEXT STEP <i class="fas fa-arrow-right"></i></button>
+        </div>
+
+    </div>
+
+    <script>
+        /* ============================================================
+           TRACKER STATE & LOGIC
+           ============================================================ */
+        let tkState = {
+            step: 1,
+            maxSteps: 6,
+            p1: { name: 'PLAYER 1', faction: '', battleReady: false, vp: 0, cp: 0 },
+            p2: { name: 'PLAYER 2', faction: '', battleReady: false, vp: 0, cp: 0 }
+        };
+
+        const tkFactions = [
+            "Adepta Sororitas", "Adeptus Custodes", "Adeptus Mechanicus", "Aeldari", 
+            "Astra Militarum", "Blood Angels", "Chaos Daemons", "Chaos Knights", 
+            "Chaos Space Marines", "Dark Angels", "Death Guard", "Drukhari", 
+            "Genestealer Cults", "Grey Knights", "Imperial Knights", "Leagues of Votann", 
+            "Necrons", "Orks", "Space Marines", "Space Wolves", "T'au Empire", 
+            "Thousand Sons", "Tyranids", "World Eaters", "Cities of Sigmar", "Stormcast Eternals", "Slaves to Darkness"
+        ].sort();
+
+        function initTracker() {
+            const p1Select = document.getElementById('tk-p1-faction');
+            const p2Select = document.getElementById('tk-p2-faction');
+            
+            let options = '<option value="">Faction (optional)</option>';
+            tkFactions.forEach(f => {
+                options += `<option value="${f}">${f}</option>`;
+            });
+
+            p1Select.innerHTML = options;
+            p2Select.innerHTML = options;
+        }
+
+        window.toggleBattleReady = function(playerNum) {
+            const btn = document.getElementById(`tk-p${playerNum}-br`);
+            if (playerNum === 1) {
+                tkState.p1.battleReady = !tkState.p1.battleReady;
+                btn.classList.toggle('active', tkState.p1.battleReady);
+            } else {
+                tkState.p2.battleReady = !tkState.p2.battleReady;
+                btn.classList.toggle('active', tkState.p2.battleReady);
+            }
+        };
+
+        window.goBack = function() {
+            if (tkState.step === 1) {
+                if(confirm('¿Salir del tracker y volver a la comunidad?')) {
+                    window.location.href = 'comunidad.html';
+                }
+            } else {
+                tkState.step--;
+                updateView();
+            }
+        };
+
+        window.nextTrackerStep = function() {
+            if (tkState.step === 1) {
+                // Guardar nombres temporalmente
+                tkState.p1.name = document.getElementById('tk-p1-name').value || 'PLAYER 1';
+                tkState.p2.name = document.getElementById('tk-p2-name').value || 'PLAYER 2';
+                tkState.p1.faction = document.getElementById('tk-p1-faction').value;
+                tkState.p2.faction = document.getElementById('tk-p2-faction').value;
+            }
+            
+            if (tkState.step < tkState.maxSteps) {
+                tkState.step++;
+                updateView();
+            }
+        };
+
+        function updateView() {
+            // Actualizar vista activa
+            document.querySelectorAll('.tracker-view').forEach(el => el.classList.remove('active'));
+            const nextView = document.getElementById(`tracker-step-${tkState.step}`);
+            if (nextView) nextView.classList.add('active');
+
+            // Actualizar indicadores (bolitas)
+            const steps = document.querySelectorAll('.t-step');
+            steps.forEach((el, index) => {
+                if (index + 1 === tkState.step) el.classList.add('active');
+                else el.classList.remove('active');
+            });
+
+            // Actualizar Header
+            document.getElementById('header-subtitle').textContent = `STEP ${tkState.step} OF ${tkState.maxSteps}`;
+            
+            if (tkState.step === 1) {
+                document.getElementById('header-title').textContent = "PLAYERS";
+                document.getElementById('header-desc').textContent = "Name the players and pick their faction. These are used throughout the tracker.";
+                document.getElementById('tk-back-btn').textContent = "CANCEL";
+            } else if (tkState.step === 2) {
+                document.getElementById('header-title').textContent = "PRIMARY MISSION";
+                document.getElementById('header-desc').textContent = "Select the Primary Mission for this battle.";
+                document.getElementById('tk-back-btn').textContent = "BACK";
+            }
+
+            console.log("State:", tkState);
+        }
+
+        document.addEventListener('DOMContentLoaded', initTracker);
+    </script>
+</body>
+</html>
