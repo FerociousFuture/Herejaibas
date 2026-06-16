@@ -2,16 +2,15 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <!-- El user-scalable=no evita que la pantalla haga zoom en celulares al picar los botones rápido -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Match Tracker | Herejaibas</title>
+    <title>Rastreador de Partidas | Herejaibas</title>
     <link rel="icon" type="image/png" href="jaiba.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Exo+2:wght@400;600;800&family=Oswald:wght@500;700;900&display=swap" rel="stylesheet">
     
     <style>
         /* ============================================================
-           MATCH TRACKER STYLES (APP FEEL)
+           ESTILOS DEL TRACKER (APARIENCIA DE APP NATIVA)
            ============================================================ */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
@@ -36,14 +35,15 @@
             padding: 40px 20px;
         }
 
-        /* Header & Steps */
+        /* Encabezado y Pasos */
         .tracker-header { text-align: center; margin-bottom: 40px; }
         .tracker-steps { display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
         .t-step {
             width: 28px; height: 28px; border-radius: 50%; border: 1px solid #333;
             display: flex; align-items: center; justify-content: center;
-            font-size: 0.8rem; color: #888; background: #1a1c23; font-weight: 600;
+            font-size: 0.8rem; color: #888; background: #1a1c23; font-weight: 600; transition: all 0.3s;
         }
+        .t-step.completed { background: #27ae60; color: #fff; border-color: #27ae60; }
         .t-step.active { background: #f5a623; color: #000; border-color: #f5a623; font-weight: 800; }
         .t-line { width: 20px; height: 1px; background: #333; margin: 0 4px; }
         
@@ -52,21 +52,21 @@
             letter-spacing: 2px; margin-bottom: 5px; text-transform: uppercase;
         }
         .tracker-subtitle {
-            color: #888; font-size: 0.75rem; letter-spacing: 2px;
+            color: #f5a623; font-size: 0.75rem; letter-spacing: 2px;
             text-transform: uppercase; margin-bottom: 20px; font-weight: 600;
         }
-        .tracker-desc { color: #aaa; font-size: 0.9rem; line-height: 1.4; }
+        .tracker-desc { color: #aaa; font-size: 0.85rem; line-height: 1.4; text-transform: uppercase; letter-spacing: 1px; font-weight: bold;}
 
-        /* Body & Inputs */
+        /* Contenido y Entradas */
         .tracker-body { flex: 1; }
         .tracker-view { display: none; }
         .tracker-view.active { display: block; animation: fadeIn 0.3s ease; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .player-setup-card { display: flex; flex-direction: column; gap: 12px; }
-        .p1-label { color: #4a90e2; font-size: 0.85rem; font-weight: 800; letter-spacing: 1px; }
-        .p2-label { color: #e24a4a; font-size: 0.85rem; font-weight: 800; letter-spacing: 1px; }
+        .player-setup-card { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; }
+        .p1-label { color: #4a90e2; font-size: 0.85rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+        .p2-label { color: #e24a4a; font-size: 0.85rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
 
         .tk-input {
             width: 100%; background: #23262f; border: 1px solid #3a3f4b;
@@ -75,15 +75,36 @@
             transition: all 0.2s;
         }
         .tk-input::placeholder { color: #666; font-weight: 600; }
-
         .p1-input:focus { border-color: #4a90e2; box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2); }
         .p2-input:focus { border-color: #e24a4a; box-shadow: 0 0 0 2px rgba(226, 74, 74, 0.2); }
 
         .tk-select-wrap { position: relative; }
         .tk-select { appearance: none; font-size: 1rem; font-weight: 500; color: #ccc; cursor: pointer; }
+        .tk-select:disabled { opacity: 0.5; cursor: not-allowed; }
         .tk-select-icon { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #aaa; pointer-events: none; }
 
-        /* Battle Ready Toggle */
+        /* Lista de Destacamentos y Puntos */
+        .dp-tracker-badge {
+            background: #1a1c23; border: 1px solid #f5a623; color: #f5a623;
+            padding: 4px 10px; border-radius: 20px; font-weight: 800; font-size: 0.85rem;
+        }
+        .dp-tracker-badge.full { background: #f5a623; color: #000; }
+        
+        .selected-detachment {
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255, 255, 255, 0.05); border: 1px solid #3a3f4b;
+            padding: 12px 16px; border-radius: 8px; margin-bottom: 8px;
+        }
+        .sd-info strong { display: block; font-size: 1rem; color: #fff; margin-bottom: 4px; }
+        .sd-info span { font-size: 0.75rem; color: #aaa; display: inline-flex; align-items: center; gap: 6px; }
+        .sd-info .sd-dp { color: #f5a623; font-weight: 700; background: rgba(245, 166, 35, 0.1); padding: 2px 6px; border-radius: 4px; }
+        .sd-remove {
+            background: none; border: none; color: #ff4a4a; font-size: 1.1rem;
+            cursor: pointer; padding: 5px; transition: 0.2s;
+        }
+        .sd-remove:hover { color: #ff1c1c; transform: scale(1.1); }
+
+        /* Botón Battle Ready */
         .tk-btn-toggle {
             width: 100%; background: #23262f; border: 1px solid #3a3f4b;
             border-radius: 8px; padding: 16px; color: #888;
@@ -92,7 +113,88 @@
         }
         .tk-btn-toggle.active { background: #27ae60; border-color: #27ae60; color: #fff; }
 
-        /* Footer Nav */
+        /* ===== PASO 3: FORCE DISPOSITION ===== */
+        .force-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .force-col { display: flex; flex-direction: column; gap: 10px; }
+        
+        .fd-btn {
+            display: flex; align-items: center; gap: 14px;
+            background: #1a1c23; border: 2px solid transparent;
+            border-radius: 12px; padding: 10px 14px;
+            cursor: pointer; transition: all 0.2s;
+            text-align: left; opacity: 0.4; pointer-events: none;
+            position: relative;
+        }
+        .fd-btn.available { opacity: 1; pointer-events: auto; }
+        .fd-btn:hover.available { background: #23262f; }
+        
+        .fd-icon {
+            width: 36px; height: 36px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; color: #fff; flex-shrink: 0;
+            opacity: 0.8;
+        }
+        .fd-text {
+            color: #fff; font-family: 'Exo 2', sans-serif;
+            font-weight: 800; font-size: 0.8rem; letter-spacing: 0.5px;
+        }
+        .fd-check {
+            display: none; margin-left: auto; color: #fff; font-size: 1.2rem;
+        }
+
+        /* Colores específicos de cada Force Disposition */
+        .fd-take .fd-icon { background: #27ae60; }
+        .fd-purge .fd-icon { background: #c0392b; }
+        .fd-disruption .fd-icon { background: #2980b9; }
+        .fd-recon .fd-icon { background: #16a085; }
+        .fd-priority .fd-icon { background: #b8860b; }
+
+        /* Estado Activo (Seleccionado) */
+        .fd-btn.selected { border-color: currentColor; }
+        .fd-btn.selected .fd-icon { opacity: 1; }
+        .fd-btn.selected .fd-check { display: block; }
+        .fd-btn.selected.fd-take { border-color: #27ae60; background: #356247; }
+        .fd-btn.selected.fd-purge { border-color: #c0392b; background: #6b2f2d; }
+        .fd-btn.selected.fd-disruption { border-color: #2980b9; background: #2a4669; }
+        .fd-btn.selected.fd-recon { border-color: #16a085; background: #225a58; }
+        .fd-btn.selected.fd-priority { border-color: #b8860b; background: #6d5423; }
+
+        /* Cuadros de Resumen de Misiones */
+        .mission-summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; border-top: 1px solid #333; padding-top: 24px; }
+        .mission-summary-card {
+            background: #1a1c23; border: 1px solid #3a3f4b; border-radius: 12px;
+            padding: 16px; cursor: pointer; transition: 0.2s; position: relative;
+            display: flex; flex-direction: column; justify-content: center; min-height: 100px;
+        }
+        .mission-summary-card:hover { border-color: #f5a623; background: #23262f; }
+        .ms-label { font-size: 0.65rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+        .ms-label.p1 { color: #4a90e2; }
+        .ms-label.p2 { color: #e24a4a; }
+        .ms-title { font-family: 'Oswald', sans-serif; font-size: 1.2rem; color: #fff; line-height: 1.1; text-transform: uppercase; margin-bottom: 12px;}
+        .ms-view { position: absolute; right: 16px; bottom: 16px; font-size: 0.7rem; color: #aaa; font-weight: 700; letter-spacing: 1px; display: flex; align-items: center; gap: 4px; }
+
+        /* ===== BOTONES GENERALES DE GRID (Roles y Secundarias) ===== */
+        .general-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .grid-btn {
+            background: #1a1c23; border: 1px solid #3a3f4b; border-radius: 12px;
+            color: #fff; font-family: 'Exo 2', sans-serif; font-weight: 800;
+            padding: 20px 10px; cursor: pointer; transition: all 0.2s; font-size: 1.1rem;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .grid-btn small { font-size: 0.65rem; font-weight: 600; opacity: 0.7; display: block; margin-top: 6px; letter-spacing: 0.5px; }
+        .grid-btn:hover { background: #23262f; }
+        
+        .p1-btn.selected { background: #4a90e2; border-color: #4a90e2; color: #fff; }
+        .p1-btn.selected small { opacity: 1; }
+        .p2-btn.selected { background: #e24a4a; border-color: #e24a4a; color: #fff; }
+        .p2-btn.selected small { opacity: 1; }
+
+        .roll-question {
+            text-align: center; color: #888; margin-bottom: 15px; font-weight: 800;
+            letter-spacing: 2px; font-size: 0.8rem; text-transform: uppercase;
+        }
+
+        /* Botones de Navegación */
         .tracker-footer {
             display: flex; justify-content: space-between; align-items: center;
             margin-top: 40px; padding-top: 20px; border-top: 1px solid #333;
@@ -105,120 +207,668 @@
         .tk-btn-nav:hover { color: #fff; }
         .tk-btn-next {
             background: #f5a623; color: #000; padding: 12px 24px; border-radius: 8px;
-            display: flex; align-items: center; gap: 8px;
+            display: flex; align-items: center; gap: 8px; font-weight: 800;
         }
         .tk-btn-next:hover { background: #ffb845; color: #000; }
+        .tk-btn-next:disabled { opacity: 0.5; cursor: not-allowed; background: #555; color: #aaa; }
+
+        /* ============================================================
+           MISSION CARDS UI (MODAL)
+           ============================================================ */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+            z-index: 2000; align-items: center; justify-content: center; padding: 16px;
+        }
+        .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease; }
+        .modal-box {
+            background: #1a1c23; border: 1px solid #3a3f4b; border-radius: 12px;
+            width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto;
+            position: relative;
+        }
+        .modal-close {
+            position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.5);
+            border: none; color: #fff; width: 30px; height: 30px; border-radius: 50%;
+            cursor: pointer; z-index: 100; font-size: 1rem;
+        }
+
+        /* Diseño interno de la Carta */
+        .m-card { background: #f1ede1; overflow: hidden; color: #112; font-family: 'Exo 2', sans-serif; border-radius: 12px; }
+        .m-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; color: #fff; position: relative; }
+        .m-header-info { display: flex; flex-direction: column; z-index: 1;}
+        .m-header-sub { font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; margin-bottom: 2px; opacity: 0.8; }
+        .m-header-title { font-family: 'Oswald', sans-serif; font-size: 1.8rem; font-weight: 700; line-height: 1; text-transform: uppercase; }
+        .m-header-icon {
+            position: absolute; right: 0; top: 0; bottom: 0; background: rgba(0,0,0,0.2); width: 70px;
+            display: flex; align-items: center; justify-content: center; font-size: 2rem; clip-path: polygon(20% 0, 100% 0, 100% 100%, 0% 100%);
+        }
+        .bg-take { background-color: #277e54; } .bg-purge { background-color: #a4282e; } .bg-disruption { background-color: #24588e; }
+        .bg-recon { background-color: #257f86; } .bg-priority { background-color: #ad8124; }
+
+        .m-rules { padding: 16px; display: flex; flex-direction: column; gap: 16px; }
+        .m-rule-box { background: #fff; border: 1px solid #112; display: flex; flex-direction: column; }
+        .m-rule-header { background: #192a40; color: #fff; display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; font-family: 'Oswald', sans-serif; font-size: 1rem; letter-spacing: 1px; text-transform: uppercase; }
+        .m-rule-header-vp { background: #fff; color: #112; padding: 2px 8px; font-size: 0.75rem; font-weight: 800; border-radius: 2px;}
+        .m-rule-body { padding: 16px; font-size: 0.95rem; }
+        .m-rule-when { display: inline-flex; align-items: center; gap: 6px; background: #112; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
+        .m-rule-when::before { content: ''; display: block; width: 6px; height: 6px; background: #f5a623; border-radius: 50%; }
+        .m-rule-cond { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-top: 8px; }
+        .m-rule-desc { flex: 1; line-height: 1.4; color: #222; }
+        .m-rule-desc strong { color: #000; font-weight: 800; }
+        .m-vp-box { background: #192a40; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 50px; height: 55px; border-radius: 4px; flex-shrink: 0; font-family: 'Oswald', sans-serif; line-height: 1; }
+        .m-vp-num { font-size: 1.8rem; font-weight: 700; } .m-vp-lbl { font-size: 0.65rem; letter-spacing: 1px; font-family: 'Exo 2', sans-serif; font-weight: 700;}
+        .m-split-or { text-align: center; font-size: 0.65rem; font-weight: 800; background: #112; color: #fff; border-radius: 12px; width: 35px; margin: 12px auto; padding: 2px 0; letter-spacing: 1px; }
+        .m-cumulative-bar { text-align: center; position: relative; margin: 16px 0; }
+        .m-cumulative-bar::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: #d0b070; z-index: 1; }
+        .m-cumulative-text { position: relative; z-index: 2; background: #f5a623; color: #112; font-size: 0.65rem; font-weight: 800; padding: 2px 8px; border-radius: 10px; letter-spacing: 1px; text-transform: uppercase; display: inline-block; }
+
+        .m-footer { background: #e6e1d3; border-top: 1px dashed #ccc; padding: 16px 20px; display: flex; align-items: center; gap: 12px; font-family: 'Oswald', sans-serif; font-size: 1rem; color: #112; letter-spacing: 1px; }
+        .m-footer-lbl { font-size: 0.75rem; color: #666; letter-spacing: 2px; }
+        .m-footer-icon { width: 30px; height: 35px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.1rem; clip-path: polygon(0 0, 100% 0, 100% 75%, 50% 100%, 0 75%); }
+
+        .m-action-box { background: #fff; border: 1px solid #b8860b; border-radius: 4px; overflow: hidden; margin-top: 16px; }
+        .m-action-header { background: #d4a017; color: #112; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; font-family: 'Oswald', sans-serif; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; }
+        .m-action-badge { background: #112; color: #fff; font-size: 0.65rem; padding: 2px 8px; border-radius: 2px; letter-spacing: 1px; }
+        .m-action-body { padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+        .m-action-row { display: flex; align-items: flex-start; gap: 10px; font-size: 0.85rem; line-height: 1.4; color: #222;}
+        .m-action-lbl { background: #112; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 0.65rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; flex-shrink: 0; min-width: 90px; text-align: center; display: inline-flex; align-items: center; gap: 4px; }
+        .m-action-lbl.restr { background: #c0392b; }
+        .m-action-lbl::before { content: ''; display: block; width: 5px; height: 5px; background: #f5a623; border-radius: 50%; }
     </style>
 </head>
 <body>
 
     <div class="tracker-container">
         
-        <!-- HEADER & STEPS -->
+        <!-- ENCABEZADO Y PASOS -->
         <div class="tracker-header">
             <div class="tracker-steps" id="step-indicators">
-                <div class="t-step active">1</div><div class="t-line"></div>
-                <div class="t-step">2</div><div class="t-line"></div>
-                <div class="t-step">3</div><div class="t-line"></div>
-                <div class="t-step">4</div><div class="t-line"></div>
-                <div class="t-step">5</div><div class="t-line"></div>
-                <div class="t-step">6</div>
+                <div class="t-step active" id="step-1">1</div><div class="t-line"></div>
+                <div class="t-step" id="step-2">2</div><div class="t-line"></div>
+                <div class="t-step" id="step-3">3</div><div class="t-line"></div>
+                <div class="t-step" id="step-4">4</div><div class="t-line"></div>
+                <div class="t-step" id="step-5">5</div><div class="t-line"></div>
+                <div class="t-step" id="step-6">6</div>
             </div>
-            <h2 class="tracker-title" id="header-title">PLAYERS</h2>
-            <p class="tracker-subtitle" id="header-subtitle">STEP 1 OF 6</p>
-            <p class="tracker-desc" id="header-desc">Name the players and pick their faction. These are used throughout the tracker.</p>
+            <h2 class="tracker-title" id="header-title">JUGADORES</h2>
+            <p class="tracker-subtitle" id="header-subtitle">PASO 1 DE 6</p>
+            <p class="tracker-desc" id="header-desc">Nombra a los jugadores y elige su facción.</p>
         </div>
 
-        <!-- VIEWS / STEPS -->
+        <!-- VISTAS / PASOS -->
         <div class="tracker-body">
             
-            <!-- STEP 1: PLAYERS VIEW -->
+            <!-- ================= PASO 1: JUGADORES Y FACCIÓN ================= -->
             <div id="tracker-step-1" class="tracker-view active">
-                
-                <!-- PLAYER 1 -->
                 <div class="player-setup-card">
-                    <label class="p1-label">PLAYER 1</label>
-                    <input type="text" id="tk-p1-name" class="tk-input p1-input" placeholder="PLAYER 1" autocomplete="off">
-                    
+                    <label class="p1-label">JUGADOR 1</label>
+                    <input type="text" id="tk-p1-name" class="tk-input p1-input" placeholder="Nombre J1" autocomplete="off">
                     <div class="tk-select-wrap">
                         <select id="tk-p1-faction" class="tk-input tk-select">
-                            <option value="">Faction (optional)</option>
-                            <!-- Facciones generadas por JS -->
+                            <option value="">Facción (obligatorio)</option>
                         </select>
                         <i class="fas fa-chevron-down tk-select-icon"></i>
                     </div>
-
-                    <button id="tk-p1-br" class="tk-btn-toggle" onclick="toggleBattleReady(1)">
-                        BATTLE READY +10 VP
-                    </button>
+                    <button id="tk-p1-br" class="tk-btn-toggle" onclick="toggleBattleReady(1)">BATTLE READY +10 PV</button>
                 </div>
 
-                <!-- PLAYER 2 -->
                 <div class="player-setup-card" style="margin-top: 30px;">
-                    <label class="p2-label">PLAYER 2</label>
-                    <input type="text" id="tk-p2-name" class="tk-input p2-input" placeholder="PLAYER 2" autocomplete="off">
-                    
+                    <label class="p2-label">JUGADOR 2</label>
+                    <input type="text" id="tk-p2-name" class="tk-input p2-input" placeholder="Nombre J2" autocomplete="off">
                     <div class="tk-select-wrap">
                         <select id="tk-p2-faction" class="tk-input tk-select">
-                            <option value="">Faction (optional)</option>
-                            <!-- Facciones generadas por JS -->
+                            <option value="">Facción (obligatorio)</option>
                         </select>
                         <i class="fas fa-chevron-down tk-select-icon"></i>
                     </div>
+                    <button id="tk-p2-br" class="tk-btn-toggle" onclick="toggleBattleReady(2)">BATTLE READY +10 PV</button>
+                </div>
+            </div>
 
-                    <button id="tk-p2-br" class="tk-btn-toggle" onclick="toggleBattleReady(2)">
-                        BATTLE READY +10 VP
-                    </button>
+            <!-- ================= PASO 2: DESTACAMENTOS ================= -->
+            <div id="tracker-step-2" class="tracker-view">
+                <div class="player-setup-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label class="p1-label" id="label-p1-detachment">JUGADOR 1</label>
+                        <div id="badge-p1-dp" class="dp-tracker-badge">DP: 0 / 3</div>
+                    </div>
+                    <div id="p1-detachment-list"></div>
+                    <div class="tk-select-wrap">
+                        <select id="tk-p1-detachment-select" class="tk-input tk-select p1-input" onchange="addDetachment(1)">
+                            <option value="">+ Añadir Destacamento...</option>
+                        </select>
+                        <i class="fas fa-chevron-down tk-select-icon"></i>
+                    </div>
                 </div>
 
+                <div class="player-setup-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label class="p2-label" id="label-p2-detachment">JUGADOR 2</label>
+                        <div id="badge-p2-dp" class="dp-tracker-badge">DP: 0 / 3</div>
+                    </div>
+                    <div id="p2-detachment-list"></div>
+                    <div class="tk-select-wrap">
+                        <select id="tk-p2-detachment-select" class="tk-input tk-select p2-input" onchange="addDetachment(2)">
+                            <option value="">+ Añadir Destacamento...</option>
+                        </select>
+                        <i class="fas fa-chevron-down tk-select-icon"></i>
+                    </div>
+                </div>
             </div>
             
-            <!-- STEP 2: PLACEHOLDER (Para la siguiente fase) -->
-            <div id="tracker-step-2" class="tracker-view">
-                <p style="text-align: center; color: #888;">Aquí irán las misiones primarias...</p>
+            <!-- ================= PASO 3: FORCE DISPOSITION ================= -->
+            <div id="tracker-step-3" class="tracker-view">
+                <div class="force-grid">
+                    <div class="force-col" id="p1-force-col">
+                        <label class="p1-label" id="label-p1-force" style="margin-bottom:8px;">JUGADOR 1</label>
+                        <button class="fd-btn fd-take" data-force="Take and Hold" onclick="selectForce(1, 'Take and Hold')"><div class="fd-icon"><i class="fas fa-chess-rook"></i></div><span class="fd-text">TAKE AND HOLD</span><i class="fas fa-check fd-check"></i></button>
+                        <button class="fd-btn fd-purge" data-force="Purge the Foe" onclick="selectForce(1, 'Purge the Foe')"><div class="fd-icon"><i class="fas fa-khanda"></i></div><span class="fd-text">PURGE THE FOE</span><i class="fas fa-check fd-check"></i></button>
+                        <button class="fd-btn fd-disruption" data-force="Disruption" onclick="selectForce(1, 'Disruption')"><div class="fd-icon"><i class="fas fa-bomb"></i></div><span class="fd-text">DISRUPTION</span><i class="fas fa-check fd-check"></i></button>
+                        <button class="fd-btn fd-recon" data-force="Reconnaissance" onclick="selectForce(1, 'Reconnaissance')"><div class="fd-icon"><i class="fas fa-eye"></i></div><span class="fd-text">RECONNAISSANCE</span><i class="fas fa-check fd-check"></i></button>
+                        <button class="fd-btn fd-priority" data-force="Priority Assets" onclick="selectForce(1, 'Priority Assets')"><div class="fd-icon"><i class="fas fa-location-arrow"></i></div><span class="fd-text">PRIORITY ASSETS</span><i class="fas fa-check fd-check"></i></button>
+                    </div>
+
+                    <div class="force-col" id="p2-force-col">
+                        <label class="p2-label" id="label-p2-force" style="margin-bottom:8px;">JUGADOR 2</label>
+                        <button class="fd-btn fd-take" data-force="Take and Hold" onclick="selectForce(2, 'Take and Hold')"><div class="fd-icon"><i class="fas fa-chess-rook"></i></div><span class="fd-text">TAKE AND HOLD</span><i class="fas fa-check fd-check"></i></button>
+                        <button class="fd-btn fd-purge" data-force="Purge the Foe" onclick="selectForce(2, 'Purge the Foe')"><div class="fd-icon"><i class="fas fa-khanda"></i></div><span class="fd-text">PURGE THE FOE</span><i class="fas fa-check fd-check"></i></button>
+                        <button class="fd-btn fd-disruption" data-force="Disruption" onclick="selectForce(2, 'Disruption')"><div class="fd-icon"><i class="fas fa-bomb"></i></div><span class="fd-text">DISRUPTION</span><i class="fas fa-check fd-check"></i></button>
+                        <button class="fd-btn fd-recon" data-force="Reconnaissance" onclick="selectForce(2, 'Reconnaissance')"><div class="fd-icon"><i class="fas fa-eye"></i></div><span class="fd-text">RECONNAISSANCE</span><i class="fas fa-check fd-check"></i></button>
+                        <button class="fd-btn fd-priority" data-force="Priority Assets" onclick="selectForce(2, 'Priority Assets')"><div class="fd-icon"><i class="fas fa-location-arrow"></i></div><span class="fd-text">PRIORITY ASSETS</span><i class="fas fa-check fd-check"></i></button>
+                    </div>
+                </div>
+
+                <div class="mission-summary-grid" id="mission-summary-area" style="display:none;">
+                    <div class="mission-summary-card" onclick="viewMission(1)">
+                        <div class="ms-label p1" id="ms-p1-label">JUGADOR 1 · PRIMARIA</div>
+                        <div class="ms-title" id="ms-p1-title">-</div>
+                        <div class="ms-view">VER <i class="fas fa-chevron-right"></i></div>
+                    </div>
+                    <div class="mission-summary-card" onclick="viewMission(2)">
+                        <div class="ms-label p2" id="ms-p2-label">JUGADOR 2 · PRIMARIA</div>
+                        <div class="ms-title" id="ms-p2-title">-</div>
+                        <div class="ms-view">VER <i class="fas fa-chevron-right"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= PASO 4: ATTACKER / DEFENDER ================= -->
+            <div id="tracker-step-4" class="tracker-view">
+                <div class="player-setup-card">
+                    <label class="p1-label" id="label-p1-role">JUGADOR 1</label>
+                    <div class="general-grid">
+                        <button class="grid-btn p1-btn" id="btn-p1-atk" onclick="setRole(1, 'attacker')">ATACANTE</button>
+                        <button class="grid-btn p1-btn" id="btn-p1-def" onclick="setRole(1, 'defender')">DEFENSOR</button>
+                    </div>
+                </div>
+
+                <div class="player-setup-card">
+                    <label class="p2-label" id="label-p2-role">JUGADOR 2</label>
+                    <div class="general-grid">
+                        <button class="grid-btn p2-btn" id="btn-p2-atk" onclick="setRole(2, 'attacker')">ATACANTE</button>
+                        <button class="grid-btn p2-btn" id="btn-p2-def" onclick="setRole(2, 'defender')">DEFENSOR</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= PASO 5: MISIONES SECUNDARIAS ================= -->
+            <div id="tracker-step-5" class="tracker-view">
+                <div class="player-setup-card">
+                    <label class="p1-label" id="label-p1-sec">JUGADOR 1</label>
+                    <div class="general-grid">
+                        <button class="grid-btn p1-btn" id="btn-p1-tac" onclick="setSecType(1, 'tactical')">TÁCTICAS<small>Robar cada ronda</small></button>
+                        <button class="grid-btn p1-btn" id="btn-p1-fix" onclick="setSecType(1, 'fixed')">FIJAS<small>Bloqueadas partida</small></button>
+                    </div>
+                </div>
+
+                <div class="player-setup-card">
+                    <label class="p2-label" id="label-p2-sec">JUGADOR 2</label>
+                    <div class="general-grid">
+                        <button class="grid-btn p2-btn" id="btn-p2-tac" onclick="setSecType(2, 'tactical')">TÁCTICAS<small>Robar cada ronda</small></button>
+                        <button class="grid-btn p2-btn" id="btn-p2-fix" onclick="setSecType(2, 'fixed')">FIJAS<small>Bloqueadas partida</small></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= PASO 6: PRIMER TURNO ================= -->
+            <div id="tracker-step-6" class="tracker-view">
+                <div class="player-setup-card">
+                    <div class="roll-question">¿QUIÉN GANÓ LA TIRADA?</div>
+                    <div class="general-grid">
+                        <button class="grid-btn p1-btn" id="btn-roll-p1" onclick="setRollWinner(1)">JUGADOR 1</button>
+                        <button class="grid-btn p2-btn" id="btn-roll-p2" onclick="setRollWinner(2)">JUGADOR 2</button>
+                    </div>
+                </div>
+
+                <div class="player-setup-card" id="first-turn-container" style="display:none; margin-top: 20px;">
+                    <div class="roll-question" id="first-turn-question">...</div>
+                    <div class="general-grid">
+                        <button class="grid-btn p1-btn" id="btn-first-p1" onclick="setFirstTurn(1)">JUGADOR 1</button>
+                        <button class="grid-btn p2-btn" id="btn-first-p2" onclick="setFirstTurn(2)">JUGADOR 2</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= PASO 7: RASTREADOR (PLACEHOLDER) ================= -->
+            <div id="tracker-step-7" class="tracker-view">
+                <div class="player-setup-card" style="text-align:center; padding: 40px 0;">
+                    <i class="fas fa-satellite-dish" style="font-size: 3rem; color: #f5a623; margin-bottom: 20px;"></i>
+                    <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.5rem; margin-bottom: 10px;">¡PARTIDA CONFIGURADA!</h3>
+                    <p style="color: #888;">Aquí comenzará el rastreador de Puntos de Victoria y de Mando durante las 5 rondas de batalla.</p>
+                </div>
             </div>
 
         </div>
 
-        <!-- FOOTER NAV -->
+        <!-- NAVEGACIÓN INFERIOR -->
         <div class="tracker-footer">
-            <button class="tk-btn-nav" id="tk-back-btn" onclick="goBack()">CANCEL</button>
-            <button class="tk-btn-nav tk-btn-next" id="tk-next-btn" onclick="nextTrackerStep()">NEXT STEP <i class="fas fa-arrow-right"></i></button>
+            <button class="tk-btn-nav" id="tk-back-btn" onclick="goBack()">CANCELAR</button>
+            <button class="tk-btn-nav tk-btn-next" id="tk-next-btn" onclick="nextTrackerStep()" disabled>SIGUIENTE <i class="fas fa-arrow-right"></i></button>
         </div>
 
     </div>
 
+    <!-- MODAL DE LA CARTA DE MISIÓN -->
+    <div id="mission-modal" class="modal-overlay">
+        <div class="modal-box" style="padding: 0; background: transparent; border: none;">
+            <button class="modal-close" onclick="closeMission()"><i class="fas fa-times"></i></button>
+            <div id="mission-modal-content"></div>
+        </div>
+    </div>
+
     <script>
         /* ============================================================
-           TRACKER STATE & LOGIC
+           BASE DE DATOS DE FACCIONES Y DESTACAMENTOS (11th Ed)
+           ============================================================ */
+        const tkFactionsList = [
+            "Adepta Sororitas", "Adeptus Custodes", "Adeptus Mechanicus", "Aeldari", 
+            "Agents of the Imperium", "Astra Militarum", "Black Templars", "Blood Angels", "Chaos Daemons", 
+            "Chaos Knights", "Chaos Space Marines", "Dark Angels", "Death Guard", 
+            "Deathwatch", "Drukhari", "Emperor's Children", "Genestealer Cults", "Grey Knights", 
+            "Imperial Fists", "Imperial Knights", "Iron Hands", "Leagues of Votann", 
+            "Necrons", "Orks", "Raven Guard", "Salamanders", "Space Marines", 
+            "Space Wolves", "T'au Empire", "Thousand Sons", "Tyranids", 
+            "Ultramarines", "White Scars", "World Eaters"
+        ].sort();
+
+        const SM_DETACHMENTS = [
+            { name: "Fulguris Task Force", force: "Disruption", dp: 1 }, { name: "Librarius Conclave", force: "Reconnaissance", dp: 1 }, { name: "Subversion Assets", force: "Reconnaissance", dp: 1 }, { name: "1st Company Task Force", force: "Priority Assets", dp: 2 }, { name: "Anvil Siege Force", force: "Take and Hold", dp: 2 }, { name: "Armoured Speartip", force: "Take and Hold", dp: 3 }, { name: "Bastion Task Force", force: "Take and Hold", dp: 2 }, { name: "Blade of Ultramar", force: "Priority Assets", dp: 3 }, { name: "Ceramite Sentinels", force: "Take and Hold", dp: 3 }, { name: "Emperor's Shield", force: "Priority Assets", dp: 2 }, { name: "Firestorm Assault Force", force: "Purge the Foe", dp: 2 }, { name: "Forgefather's Seekers", force: "Purge the Foe", dp: 2 }, { name: "Gladius Task Force", force: "Priority Assets", dp: 3 }, { name: "Hammer of Avernii", force: "Priority Assets", dp: 2 }, { name: "Headhunter Task Force", force: "Priority Assets", dp: 2 }, { name: "Ironstorm Spearhead", force: "Purge the Foe", dp: 2 }, { name: "Orbital Assault Force", force: "Take and Hold", dp: 2 }, { name: "Reclamation Force", force: "Take and Hold", dp: 2 }, { name: "Shadowmark Talon", force: "Disruption", dp: 2 }, { name: "Spearpoint Task Force", force: "Disruption", dp: 2 }, { name: "Stormlance Task Force", force: "Disruption", dp: 3 }, { name: "Vanguard Spearhead", force: "Reconnaissance", dp: 2 }
+        ];
+
+        const tkDetachments = {
+            "Space Marines": SM_DETACHMENTS, "Imperial Fists": SM_DETACHMENTS, "Iron Hands": SM_DETACHMENTS,
+            "Raven Guard": SM_DETACHMENTS, "Salamanders": SM_DETACHMENTS, "Ultramarines": SM_DETACHMENTS, "White Scars": SM_DETACHMENTS,
+            "Adepta Sororitas": [ { name: "Exemplars of the Order", force: "Reconnaissance", dp: 1 }, { name: "Furious Zeal", force: "Purge the Foe", dp: 1 }, { name: "Sanctified Shield", force: "Take and Hold", dp: 1 }, { name: "Army of Faith", force: "Priority Assets", dp: 2 }, { name: "Bringers of Flame", force: "Purge the Foe", dp: 2 }, { name: "Hallowed Martyrs", force: "Take and Hold", dp: 2 }, { name: "Penitent Host", force: "Priority Assets", dp: 2 } ],
+            "Adeptus Custodes": [ { name: "Golden Defenders", force: "Take and Hold", dp: 1 }, { name: "Shadow-Hunters", force: "Disruption", dp: 1 }, { name: "Vaults of Terra", force: "Take and Hold", dp: 1 }, { name: "Auric Champions", force: "Purge the Foe", dp: 2 }, { name: "Null Maiden Vigil", force: "Disruption", dp: 2 }, { name: "Talons of the Emperor", force: "Priority Assets", dp: 2 }, { name: "Shield Host", force: "Priority Assets", dp: 3 } ],
+            "Adeptus Mechanicus": [ { name: "Legio Cybernetica", force: "Priority Assets", dp: 1 }, { name: "Myrmidon Maniple", force: "Purge the Foe", dp: 1 }, { name: "Tech-Priest Coven", force: "Reconnaissance", dp: 1 }, { name: "Cohort Cybernetica", force: "Disruption", dp: 2 }, { name: "Data-psalm Conclave", force: "Priority Assets", dp: 2 }, { name: "Explorator Maniple", force: "Take and Hold", dp: 2 }, { name: "Skitarii Hunter Cohort", force: "Reconnaissance", dp: 2 }, { name: "Rad-Zone Corps", force: "Purge the Foe", dp: 3 } ],
+            "Agents of the Imperium": [ { name: "Imperial Fleet", force: "Priority Assets", dp: 2 }, { name: "Ordo Hereticus", force: "Disruption", dp: 2 }, { name: "Ordo Malleus", force: "Purge the Foe", dp: 2 }, { name: "Ordo Xenos", force: "Reconnaissance", dp: 2 } ],
+            "Astra Militarum": [ { name: "Gunnery Conclave", force: "Priority Assets", dp: 1 }, { name: "Reconnaissance Platoon", force: "Reconnaissance", dp: 1 }, { name: "Sworn Defenders", force: "Take and Hold", dp: 1 }, { name: "Armoured Fist", force: "Priority Assets", dp: 2 }, { name: "Artillery Company", force: "Purge the Foe", dp: 2 }, { name: "Cadian Shock Troops", force: "Priority Assets", dp: 2 }, { name: "Catachan Infantry", force: "Disruption", dp: 2 }, { name: "Death Korps of Krieg", force: "Purge the Foe", dp: 2 }, { name: "Mechanised Infantry", force: "Disruption", dp: 2 }, { name: "Militarum Tempestus", force: "Take and Hold", dp: 2 }, { name: "Tempestus Drop Force", force: "Reconnaissance", dp: 2 }, { name: "Combined Regiment", force: "Take and Hold", dp: 3 } ],
+            "Imperial Knights": [ { name: "Baronial Court", force: "Disruption", dp: 1 }, { name: "Household Guard", force: "Reconnaissance", dp: 1 }, { name: "Knights Seneschal", force: "Priority Assets", dp: 1 }, { name: "Exalted Court", force: "Disruption", dp: 2 }, { name: "Freeblade Lance", force: "Purge the Foe", dp: 2 }, { name: "Noble Lance", force: "Priority Assets", dp: 2 }, { name: "Questor Imperialis", force: "Take and Hold", dp: 3 }, { name: "Questor Mechanicus", force: "Reconnaissance", dp: 3 } ],
+            "Dark Angels": [ { name: "Dark Age Arsenal", force: "Priority Assets", dp: 1 }, { name: "Darkflight Pursuit", force: "Reconnaissance", dp: 1 }, { name: "Interrogation Conclave", force: "Purge the Foe", dp: 1 }, { name: "Company of Hunters", force: "Disruption", dp: 2 }, { name: "Inner Circle Task Force", force: "Priority Assets", dp: 2 }, { name: "Lion's Blade Task Force", force: "Purge the Foe", dp: 2 }, { name: "Unforgiven Task Force", force: "Take and Hold", dp: 2 }, { name: "Wrath of the Rock", force: "Priority Assets", dp: 3 } ],
+            "Blood Angels": [ { name: "Encarmine Speartip", force: "Disruption", dp: 1 }, { name: "Legacy of Grace", force: "Priority Assets", dp: 1 }, { name: "Wrath of the Doomed", force: "Purge the Foe", dp: 1 }, { name: "Angelic Inheritors", force: "Priority Assets", dp: 3 }, { name: "Liberator Assault Group", force: "Take and Hold", dp: 3 }, { name: "Rage-cursed Onslaught", force: "Purge the Foe", dp: 3 }, { name: "The Angelic Host", force: "Disruption", dp: 2 }, { name: "The Lost Brethren", force: "Purge the Foe", dp: 2 } ],
+            "Space Wolves": [ { name: "Champions of Fenris", force: "Purge the Foe", dp: 1 }, { name: "Legends of Saga and Song", force: "Take and Hold", dp: 1 }, { name: "Veterans of the Fang", force: "Disruption", dp: 1 }, { name: "Saga of the Beastslayer", force: "Purge the Foe", dp: 2 }, { name: "Saga of the Bold", force: "Priority Assets", dp: 2 }, { name: "Saga of the Great Wolf", force: "Take and Hold", dp: 2 }, { name: "Saga of the Hunter", force: "Disruption", dp: 2 } ],
+            "Black Templars": [ { name: "Marshal's Household", force: "Priority Assets", dp: 1 }, { name: "The Living Miracle", force: "Purge the Foe", dp: 1 }, { name: "Wrathful Procession", force: "Take and Hold", dp: 1 }, { name: "Companions of Vehemence", force: "Purge the Foe", dp: 2 }, { name: "Godhammer Assault Force", force: "Disruption", dp: 2 }, { name: "Vindication Task Force", force: "Priority Assets", dp: 2 } ],
+            "Deathwatch": [ { name: "Black Spear Task Force", force: "Priority Assets", dp: 3 } ],
+            "Grey Knights": [ { name: "Argent Assault", force: "Purge the Foe", dp: 1 }, { name: "Fires of Purgation", force: "Disruption", dp: 1 }, { name: "Immaterial Interdiction", force: "Priority Assets", dp: 1 }, { name: "Augurium Task Force", force: "Reconnaissance", dp: 2 }, { name: "Banishers", force: "Disruption", dp: 2 }, { name: "Brotherhood Strike", force: "Purge the Foe", dp: 2 }, { name: "Hallowed Conclave", force: "Take and Hold", dp: 2 }, { name: "Sanctic Spearhead", force: "Priority Assets", dp: 2 }, { name: "Warpbane Task Force", force: "Purge the Foe", dp: 3 } ],
+            "Orks": [ { name: "More Dakka!", force: "Purge the Foe", dp: 1 }, { name: "Rollin' Deff", force: "Priority Assets", dp: 1 }, { name: "Taktikal Brigade", force: "Disruption", dp: 1 }, { name: "Blitz Brigade", force: "Reconnaissance", dp: 2 }, { name: "Bully Boyz", force: "Purge the Foe", dp: 2 }, { name: "Da Big Hunt", force: "Purge the Foe", dp: 2 }, { name: "Dread Mob", force: "Purge the Foe", dp: 2 }, { name: "Freebooter Krew", force: "Take and Hold", dp: 2 }, { name: "Green Tide", force: "Take and Hold", dp: 2 }, { name: "Kult of Speed", force: "Disruption", dp: 2 }, { name: "Speedwaaagh!", force: "Reconnaissance", dp: 2 }, { name: "War Horde", force: "Take and Hold", dp: 3 } ],
+            "Aeldari": [ { name: "Armoured Warhost", force: "Reconnaissance", dp: 1 }, { name: "Fateful Performance", force: "Disruption", dp: 1 }, { name: "Path of the Outcast", force: "Reconnaissance", dp: 1 }, { name: "Twilight Flickers", force: "Take and Hold", dp: 1 }, { name: "Aspect Host", force: "Disruption", dp: 3 }, { name: "Corsair Coterie", force: "Priority Assets", dp: 2 }, { name: "Devoted of Ynnead", force: "Priority Assets", dp: 2 }, { name: "Eldritch Raiders", force: "Disruption", dp: 2 }, { name: "Ghosts of the Webway", force: "Disruption", dp: 2 }, { name: "Guardian Battlehost", force: "Take and Hold", dp: 2 }, { name: "Seer Council", force: "Priority Assets", dp: 2 }, { name: "Serpent's Brood", force: "Purge the Foe", dp: 2 }, { name: "Spirit Conclave", force: "Take and Hold", dp: 2 }, { name: "Warhost", force: "Purge the Foe", dp: 3 }, { name: "Windrider Host", force: "Disruption", dp: 2 } ],
+            "Drukhari": [ { name: "Exhibition of Slaughter", force: "Disruption", dp: 1 }, { name: "Kabalite Agonysts", force: "Purge the Foe", dp: 1 }, { name: "Tools of Torment", force: "Take and Hold", dp: 1 }, { name: "Covenite Coterie", force: "Purge the Foe", dp: 2 }, { name: "Kabalite Cartel", force: "Disruption", dp: 2 }, { name: "Realspace Raiders", force: "Priority Assets", dp: 2 }, { name: "Reaper's Wager", force: "Purge the Foe", dp: 3 }, { name: "Skysplinter Assault", force: "Reconnaissance", dp: 2 }, { name: "Spectacle of Spite", force: "Purge the Foe", dp: 2 } ],
+            "Tyranids": [ { name: "Ambush Predators", force: "Disruption", dp: 1 }, { name: "Talons of the Norn Queen", force: "Take and Hold", dp: 1 }, { name: "Warrior Bioform Onslaught", force: "Take and Hold", dp: 1 }, { name: "Assimilation Swarm", force: "Priority Assets", dp: 2 }, { name: "Crusher Stampede", force: "Purge the Foe", dp: 2 }, { name: "Invasion Fleet", force: "Take and Hold", dp: 3 }, { name: "Subterranean Assault", force: "Disruption", dp: 3 }, { name: "Synaptic Nexus", force: "Disruption", dp: 2 }, { name: "Unending Swarm", force: "Take and Hold", dp: 2 }, { name: "Vanguard Onslaught", force: "Reconnaissance", dp: 2 } ],
+            "Genestealer Cults": [ { name: "Heroes of the Uprising", force: "Purge the Foe", dp: 1 }, { name: "Purestrain Broodswarm", force: "Priority Assets", dp: 1 }, { name: "Xenocult Masses", force: "Disruption", dp: 1 }, { name: "Biosanctic Broodsurge", force: "Take and Hold", dp: 2 }, { name: "Brood Brothers Auxillia", force: "Take and Hold", dp: 2 }, { name: "Final Day", force: "Purge the Foe", dp: 2 }, { name: "Host of Ascension", force: "Take and Hold", dp: 3 }, { name: "Outlander Claw", force: "Reconnaissance", dp: 2 }, { name: "Xenocreed Congregation", force: "Priority Assets", dp: 2 } ],
+            "Necrons": [ { name: "Hand of the Dynasty", force: "Take and Hold", dp: 1 }, { name: "Skyshroud Spearhead", force: "Reconnaissance", dp: 1 }, { name: "The Phaeron's Armoury", force: "Priority Assets", dp: 1 }, { name: "Annihilation Legion", force: "Purge the Foe", dp: 2 }, { name: "Awakened Dynasty", force: "Take and Hold", dp: 3 }, { name: "Canoptek Court", force: "Take and Hold", dp: 3 }, { name: "Cryptek Conclave", force: "Priority Assets", dp: 2 }, { name: "Cursed Legion", force: "Purge the Foe", dp: 2 }, { name: "Hypercrypt Legion", force: "Reconnaissance", dp: 2 }, { name: "Obeisance Phalanx", force: "Disruption", dp: 2 }, { name: "Pantheon of Woe", force: "Purge the Foe", dp: 2 }, { name: "Starshatter Arsenal", force: "Priority Assets", dp: 3 } ],
+            "Leagues of Votann": [ { name: "Armoured Trailblazers", force: "Disruption", dp: 1 }, { name: "Farseekers", force: "Reconnaissance", dp: 1 }, { name: "Hearthguard Covenant", force: "Priority Assets", dp: 1 }, { name: "Brandfast Oathband", force: "Take and Hold", dp: 2 }, { name: "Dêlve Assault Shift", force: "Purge the Foe", dp: 2 }, { name: "Hearthband", force: "Priority Assets", dp: 3 }, { name: "Hearthfyre Arsenal", force: "Priority Assets", dp: 2 }, { name: "Mercenary Oathband", force: "Take and Hold", dp: 2 }, { name: "Needgaârd Oathband", force: "Purge the Foe", dp: 2 }, { name: "Persecution Prospect", force: "Disruption", dp: 2 } ],
+            "T'au Empire": [ { name: "Advanced Acquisition Cadre", force: "Reconnaissance", dp: 1 }, { name: "Auxillary Cadre", force: "Disruption", dp: 1 }, { name: "Experimental Prototype Cadre", force: "Priority Assets", dp: 1 }, { name: "Kauyon", force: "Priority Assets", dp: 2 }, { name: "Kroot Hunting Pack", force: "Take and Hold", dp: 2 }, { name: "Mont'ka", force: "Purge the Foe", dp: 3 }, { name: "Retaliation Cadre", force: "Purge the Foe", dp: 2 } ],
+            "Chaos Space Marines": [ { name: "Cabal of Chaos", force: "Disruption", dp: 1 }, { name: "Devotees of Destruction", force: "Priority Assets", dp: 1 }, { name: "Murdertalon Raiders", force: "Purge the Foe", dp: 1 }, { name: "Chaos Cult", force: "Priority Assets", dp: 2 }, { name: "Creations of Bile", force: "Purge the Foe", dp: 3 }, { name: "Cult of the Arkifane", force: "Priority Assets", dp: 2 }, { name: "Deceptors", force: "Disruption", dp: 2 }, { name: "Dread Talons", force: "Disruption", dp: 2 }, { name: "Fellhammer Siege-host", force: "Take and Hold", dp: 2 }, { name: "Huron's Marauders", force: "Disruption", dp: 3 }, { name: "Nightmare Hunt", force: "Disruption", dp: 2 }, { name: "Pactbound Zealots", force: "Priority Assets", dp: 3 }, { name: "Renegade Raiders", force: "Reconnaissance", dp: 3 }, { name: "Renegade Warband", force: "Priority Assets", dp: 2 }, { name: "Soulforged Warpack", force: "Purge the Foe", dp: 2 }, { name: "Veterans of the Long War", force: "Take and Hold", dp: 2 }, { name: "Warpstrike Champions", force: "Disruption", dp: 2 } ],
+            "Emperor's Children": [ { name: "Elegant Brutes", force: "Take and Hold", dp: 1 }, { name: "Frenzied Host", force: "Disruption", dp: 1 }, { name: "Spectacle of Slaughter", force: "Purge the Foe", dp: 1 }, { name: "Carnival of Excess", force: "Priority Assets", dp: 2 }, { name: "Coterie of the Conceited", force: "Purge the Foe", dp: 3 }, { name: "Court of the Phoenician", force: "Purge the Foe", dp: 2 }, { name: "Mercurial Host", force: "Reconnaissance", dp: 2 }, { name: "Peerless Bladesmen", force: "Priority Assets", dp: 2 }, { name: "Rapid Evisceration", force: "Disruption", dp: 2 }, { name: "Slaanesh's Chosen", force: "Purge the Foe", dp: 2 } ],
+            "Death Guard": [ { name: "Paragons of Putrescence", force: "Priority Assets", dp: 1 }, { name: "Contagion Engines", force: "Purge the Foe", dp: 1 }, { name: "Flyblown Host", force: "Reconnaissance", dp: 1 }, { name: "Champions of Contagion", force: "Take and Hold", dp: 2 }, { name: "Death Lord's Chosen", force: "Priority Assets", dp: 2 }, { name: "Mortarion's Hammer", force: "Purge the Foe", dp: 2 }, { name: "Shamblerot Vectorium", force: "Disruption", dp: 2 }, { name: "Tallyband Summoners", force: "Disruption", dp: 2 }, { name: "Virulent Vectorium", force: "Take and Hold", dp: 3 } ],
+            "Thousand Sons": [ { name: "Ritual of Regeneration", force: "Purge the Foe", dp: 1 }, { name: "Sekhetar Cohort", force: "Priority Assets", dp: 1 }, { name: "Servants of Change", force: "Reconnaissance", dp: 1 }, { name: "Changehost of Deceit", force: "Reconnaissance", dp: 2 }, { name: "Grand Coven", force: "Priority Assets", dp: 3 }, { name: "Hexwarp Thrallband", force: "Take and Hold", dp: 2 }, { name: "Rubricae Phalanx", force: "Take and Hold", dp: 3 }, { name: "Warpforged Cabal", force: "Disruption", dp: 2 }, { name: "Warpmeld Pact", force: "Purge the Foe", dp: 2 } ],
+            "Chaos Knights": [ { name: "Bastions of Tyranny", force: "Disruption", dp: 1 }, { name: "Hunting Warpack", force: "Reconnaissance", dp: 1 }, { name: "Iconoclast Fiefdom", force: "Take and Hold", dp: 1 }, { name: "Helhunt Lance", force: "Disruption", dp: 2 }, { name: "Houndpack Lance", force: "Reconnaissance", dp: 2 }, { name: "Infernal Lance", force: "Purge the Foe", dp: 3 }, { name: "Lords of Dread", force: "Priority Assets", dp: 2 }, { name: "Traitoris Lance", force: "Purge the Foe", dp: 2 } ],
+            "Chaos Daemons": [ { name: "Cavalcade of Chaos", force: "Disruption", dp: 1 }, { name: "Lords of the Warp", force: "Purge the Foe", dp: 1 }, { name: "Warptide", force: "Reconnaissance", dp: 1 }, { name: "Blood Legion", force: "Purge the Foe", dp: 2 }, { name: "Daemonic Incursion", force: "Disruption", dp: 3 }, { name: "Legion of Excess", force: "Priority Assets", dp: 2 }, { name: "Plague Legion", force: "Take and Hold", dp: 2 }, { name: "Scintillating Legion", force: "Priority Assets", dp: 2 }, { name: "Shadow Legion", force: "Purge the Foe", dp: 2 } ],
+            "World Eaters": [ { name: "Butchers of Khorne", force: "Disruption", dp: 1 }, { name: "Brazen Engines", force: "Purge the Foe", dp: 1 }, { name: "Vessels of Wrath", force: "Priority Assets", dp: 1 }, { name: "Berzerker Warband", force: "Purge the Foe", dp: 3 }, { name: "Cult of Blood", force: "Priority Assets", dp: 2 }, { name: "Goretrack Onslaught", force: "Take and Hold", dp: 2 }, { name: "Khorne Daemonkin", force: "Reconnaissance", dp: 2 }, { name: "Possessed Slaughterband", force: "Purge the Foe", dp: 2 } ]
+        };
+
+        /* ============================================================
+           BASE DE DATOS DE MISIONES (MATRIZ)
+           ============================================================ */
+        const UI_STYLES = {
+            "Take and Hold": { bg: "bg-take", icon: "fa-chess-rook" },
+            "Purge the Foe": { bg: "bg-purge", icon: "fa-khanda" },
+            "Disruption": { bg: "bg-disruption", icon: "fa-bomb" },
+            "Reconnaissance": { bg: "bg-recon", icon: "fa-eye" },
+            "Priority Assets": { bg: "bg-priority", icon: "fa-location-arrow" }
+        };
+
+        const MISSION_MATRIX = {
+            // ==== TAKE AND HOLD COMBINATIONS ====
+            "Take and Hold_Take and Hold": {
+                name: "BATTLEFIELD DOMINANCE", type: "Take and Hold", opponent: "TAKE AND HOLD - MIRROR",
+                rules: [
+                    { title: "1ra y 2da Ronda de Batalla", when: "Al final de tu turno", desc: "Controlas más <strong>objetivos</strong> que tu oponente.", vp: ["2"] },
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu fase de Mando (o al final de tu turno en la 5ta ronda)", desc: "Por cada <strong>objetivo</strong> que controles.", vp: ["3"], cumulative: { desc: "Por cada uno de esos <strong>objetivos</strong> (excluyendo tu objetivo base) si controlas tu <strong>objetivo base</strong>.", vp: "+2" } }
+                ]
+            },
+            "Take and Hold_Purge the Foe": {
+                name: "IMMOVABLE OBJECT", type: "Take and Hold", opponent: "PURGE THE FOE",
+                rules: [
+                    { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Controlas uno o más <strong>objetivos centrales</strong>.", vp: ["3"] },
+                    { title: "De la 2da a la 4ta Ronda", when: "Al final de tu fase de Mando", desc: "Por cada <strong>objetivo</strong> que controles (excluyendo tu <strong>objetivo base</strong>).", vp: ["5"] },
+                    { title: "5ta Ronda de Batalla", when: "Al final de tu turno", desc: "Por cada <strong>objetivo</strong> que controles (excluyendo tu <strong>objetivo base</strong>).", vp: ["5"] }
+                ]
+            },
+            "Take and Hold_Disruption": {
+                name: "DETERMINED ACQUISITION", type: "Take and Hold", opponent: "DISRUPTION",
+                rules: [
+                    { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Por cada <strong>objetivo</strong> que controles que no controlabas al inicio del turno (excluyendo tu <strong>objetivo base</strong>).", vp: ["2"] },
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu fase de Mando (o al final de tu turno en la 5ta ronda)", desc: "Por cada <strong>objetivo</strong> que controles.", vp: ["3"], cumulative: { desc: "Por cada uno de esos <strong>objetivos</strong> que esté dentro del territorio de tu oponente.", vp: "+3" } }
+                ]
+            },
+            "Take and Hold_Reconnaissance": {
+                name: "PURGE AND SECURE", type: "Take and Hold", opponent: "RECONNAISSANCE",
+                rules: [
+                    { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Una o más unidades enemigas fueron <strong>destruidas</strong> este turno por una unidad aliada que estaba a rango de uno o más <strong>objetivos</strong>.", vp: ["3"], or: "Una o más unidades enemigas que comenzaron el turno a rango de uno o más <strong>objetivos</strong> fueron <strong>destruidas</strong> este turno.", orVp: "3" },
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu fase de Mando (o al final de tu turno en la 5ta ronda)", desc: "Por cada <strong>objetivo</strong> que controles (excluyendo tu <strong>objetivo base</strong>).", vp: ["4"] },
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu turno", desc: "Controlas uno o más <strong>objetivos</strong> que no controlabas al inicio del turno (excluyendo tu <strong>objetivo base</strong>).", vp: ["3"] }
+                ]
+            },
+            "Take and Hold_Priority Assets": {
+                name: "INESCAPABLE DOMINION", type: "Take and Hold", opponent: "PRIORITY ASSETS",
+                rules: [
+                    { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Controlas <strong>tres o más objetivos</strong>.", vp: ["4"] },
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu fase de Mando (o al final de tu turno en la 5ta ronda)", desc: "Controlas <strong>dos o más objetivos</strong>.", vp: ["5"], hr: "Controlas más <strong>objetivos</strong> que tu oponente.", hrVp: "4" },
+                    { title: "Fin de la Batalla", when: "", desc: "Controlas el <strong>objetivo base</strong> de tu oponente.", vp: ["5"] }
+                ]
+            },
+            // ==== PURGE THE FOE COMBINATIONS ====
+            "Purge the Foe_Take and Hold": {
+                name: "UNSTOPPABLE FORCE", type: "Purge the Foe", opponent: "TAKE AND HOLD",
+                rules: [
+                    { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Una o más unidades enemigas fueron <strong>destruidas</strong> este turno.", vp: ["3"] },
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu fase de Mando (o al final de tu turno en la 5ta ronda)", desc: "Por cada <strong>objetivo</strong> que controles (excluyendo tu <strong>objetivo base</strong>).", vp: ["4"] },
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu turno", desc: "Controlas uno o más <strong>objetivos</strong> que no controlabas al inicio del turno (excluyendo tu <strong>objetivo base</strong>).", vp: ["3"] },
+                    { title: "Fin de la Batalla", when: "", desc: "Controlas uno o más <strong>objetivos centrales</strong>.", vp: ["5"] }
+                ]
+            },
+            "Purge the Foe_Purge the Foe": {
+                name: "MEATGRINDER", type: "Purge the Foe", opponent: "PURGE THE FOE - MIRROR",
+                rules: [
+                    { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Una o más unidades enemigas fueron <strong>destruidas</strong> este turno.", vp: ["3"] },
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu fase de Mando (o al final de tu turno en la 5ta ronda)", desc: "Controlas uno o más <strong>objetivos</strong> (excluyendo tu <strong>objetivo base</strong>).", vp: ["4"] },
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu turno", desc: "Más unidades enemigas fueron <strong>destruidas</strong> este turno que unidades aliadas fueron <strong>destruidas</strong> en el turno anterior.", vp: ["5"], hr: "Controlas el <strong>objetivo base</strong> de tu oponente.", hrVp: "5" }
+                ]
+            },
+            "Purge the Foe_Disruption": {
+                name: "PUNISHMENT", type: "Purge the Foe", opponent: "DISRUPTION",
+                intro: "<strong>INICIO DE TU TURNO:</strong> Elige de una a tres unidades enemigas en el campo de batalla que estén a rango de objetivos y/o hayan <strong>destruido</strong> al menos una unidad aliada durante el turno anterior. Si no puedes hacerlo, elige cualquier unidad enemiga en el campo de batalla en su lugar. Desde ahora hasta el inicio de tu siguiente turno, esas unidades están <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>condenadas</strong>.",
+                rules: [
+                    { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Una o más unidades enemigas <strong>condenadas</strong> abandonaron el campo de batalla este turno.", vp: ["5"] },
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu fase de Mando (o al final de tu turno en la 5ta ronda)", desc: "Controlas uno o más <strong>objetivos</strong> (excluyendo tu <strong>objetivo base</strong>).", vp: ["4"], hr: "Controlas más <strong>objetivos</strong> que tu oponente.", hrVp: "5" },
+                    { title: "Fin de la Batalla", when: "", desc: "Controlas el <strong>objetivo base</strong> de tu oponente.", vp: ["8"] }
+                ]
+            },
+            "Purge the Foe_Reconnaissance": {
+                name: "CONSECRATE", type: "Purge the Foe", opponent: "RECONNAISSANCE",
+                intro: "<strong>CONSAGRAR:</strong> Cuando una unidad aliada <strong>destruye</strong> una unidad enemiga, se convierte en una <strong>unidad de consagración</strong>. Al final de tu turno, cada unidad de consagración a rango de un <strong>objetivo</strong> (excluyendo tu <strong>objetivo base</strong>) que aún no haya sido <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>consagrada</strong>, lo consagra — coloca un marcador de operación allí; la unidad deja de ser una unidad de consagración.",
+                rules: [
+                    { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Uno o dos <strong>objetivos</strong> están <strong>consagrados</strong>.", vp: ["3"], or: "Tres o más <strong>objetivos</strong> están <strong>consagrados</strong>.", orVp: "6" },
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu fase de Mando (o al final de tu turno en la 5ta ronda)", desc: "Controlas al menos un <strong>objetivo</strong> (excluyendo tu <strong>objetivo base</strong>).", vp: ["4"], hr: "Controlas <strong>más objetivos</strong> que tu oponente.", hrVp: "4" },
+                    { title: "Fin de la Batalla", when: "", desc: "El <strong>objetivo base</strong> enemigo ha sido <strong>consagrado</strong>.", vp: ["5"] }
+                ]
+            },
+            "Purge the Foe_Priority Assets": {
+                name: "DESTROYER'S WRATH", type: "Purge the Foe", opponent: "PRIORITY ASSETS",
+                rules: [
+                    { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Una o más unidades enemigas fueron <strong>destruidas</strong> este turno.", vp: ["3"] },
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu fase de Mando (o al final de tu turno en la 5ta ronda)", desc: "Controlas uno o más <strong>objetivos</strong> (excluyendo tu <strong>objetivo base</strong>).", vp: ["4"], hr: "Controlas más <strong>objetivos</strong> que tu oponente.", hrVp: "6" },
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu turno", desc: "Más unidades enemigas fueron <strong>destruidas</strong> este turno que unidades aliadas fueron <strong>destruidas</strong> en el turno anterior.", vp: ["4"] }
+                ]
+            },
+            // ==== DISRUPTION COMBINATIONS ====
+            "Disruption_Take and Hold": {
+                name: "DEATH TRAP", type: "Disruption", opponent: "TAKE AND HOLD",
+                rules: [
+                    { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Por cada área de terreno <strong>atrapada (trapped)</strong> este turno (ver acción).", vp: ["2"], cumulative: { desc: "Por cada una de esas <strong>áreas de terreno</strong> que sea un objetivo.", vp: "+3" } },
+                    { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Al menos una unidad enemiga que comenzó el turno en un área de terreno ha sido destruida, siempre que el área esté <strong>atrapada</strong>.", vp: ["3"] },
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu fase de Mando (o al final de tu turno en la 5ta ronda)", desc: "Controlas al menos un <strong>objetivo</strong> (excluyendo tu <strong>objetivo base</strong>).", vp: ["4"] }
+                ],
+                action: {
+                    name: "TRAMPA EXPLOSIVA (BOOBY TRAP)",
+                    type: "ACCIÓN DE OBJETIVO",
+                    starts: "Tu fase de Disparo.",
+                    units: "Una unidad aliada a rango de un <strong>objetivo</strong> (excluyendo tu <strong>objetivo base</strong>), o dentro de un área de terreno fuera de tu zona de despliegue que aún no esté <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>atrapada</strong>.",
+                    limit: "Ilimitado. Cada unidad que inicie esta acción en esta fase debe estar en un área de terreno diferente.",
+                    completes: "Inmediatamente.",
+                    effect: "Ese área de terreno queda <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>atrapada</strong> — coloca uno de tus marcadores de operación dentro de ese área de terreno."
+                }
+            },
+            "Disruption_Purge the Foe": {
+                name: "DELAYING ACTION", type: "Disruption", opponent: "PURGE THE FOE",
+                rules: [
+                    { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Por cada unidad enemiga <strong>destruida</strong> este turno.", vp: ["2"] },
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu fase de Mando (o al final de tu turno en la 5ta ronda)", desc: "Controlas al menos un <strong>objetivo</strong> (excluyendo <strong>objetivos base</strong>).", vp: ["4"] },
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu turno", desc: "Controlas al menos un <strong>objetivo central</strong> y al menos un <strong>objetivo de expansión</strong>.", vp: ["3"] }
+                ]
+            },
+            "Disruption_Disruption": {
+                name: "OUTMANOEUVRE", type: "Disruption", opponent: "DISRUPTION - MIRROR",
+                rules: [
+                    { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Controlas el <strong>objetivo base</strong> enemigo.", vp: ["10"] },
+                    { title: "1ra Ronda de Batalla", when: "Al final de tu turno", desc: "Por cada <strong>objetivo</strong> que controles (excluyendo tu <strong>objetivo base</strong>).", vp: ["4"] },
+                    { title: "2da y 3ra Ronda de Batalla", when: "Al final de tu fase de Mando", desc: "Por cada <strong>objetivo</strong> que controles (excluyendo tu <strong>objetivo base</strong>).", vp: ["5"] },
+                    { title: "4ta Ronda de Batalla en adelante", when: "Al final de tu turno", desc: "Por cada <strong>objetivo</strong> que controles (excluyendo tu <strong>objetivo base</strong>).", vp: ["6"] }
+                ]
+            },
+            "Disruption_Reconnaissance": {
+                name: "SMOKE AND MIRRORS", type: "Disruption", opponent: "RECONNAISSANCE",
+                rules: [
+                    { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Por cada <strong>objetivo</strong> que sea un <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>señuelo</strong> (ver acción).", vp: ["2"], cumulative: { desc: "Por cada uno de esos <strong>objetivos</strong> que esté dentro del territorio de tu oponente.", vp: "+2" } },
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu fase de Mando (o al final de tu turno en la 5ta ronda)", desc: "Controlas al menos un <strong>objetivo</strong> (excluyendo tu <strong>objetivo base</strong>).", vp: ["4"] },
+                    { title: "Fin de la Batalla", when: "", desc: "Al menos <strong>cuatro objetivos</strong> son <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>señuelos</strong>.", vp: ["10"] }
+                ],
+                action: {
+                    name: "SEÑUELO (DECOY)",
+                    type: "ACCIÓN DE OBJETIVO",
+                    starts: "Tu fase de Disparo.",
+                    units: "Una unidad aliada a rango de un <strong>objetivo</strong> (excluyendo tu <strong>objetivo base</strong>) que no sea un <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>señuelo</strong>.",
+                    limit: "Ilimitado. Cada unidad que inicie esta acción en esta fase debe estar a rango de un <strong>objetivo</strong> diferente.",
+                    completes: "Al final de tu turno, si tu unidad controla ese <strong>objetivo</strong>.",
+                    effect: "Ese <strong>objetivo</strong> se convierte en un <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>señuelo</strong> — coloca uno de tus marcadores de operación a rango de ese <strong>objetivo</strong>."
+                }
+            },
+            "Disruption_Priority Assets": {
+                name: "LOCATE AND DENY", type: "Disruption", opponent: "PRIORITY ASSETS",
+                intro: "<strong>INICIO DE LA BATALLA:</strong> Selecciona cinco áreas de terreno que no estén en tu zona de despliegue y coloca uno de tus marcadores de operación en cada una. Si esto no es posible, coloca uno en cada área de terreno fuera de tu zona de despliegue.",
+                rules: [
+                    { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Al menos una unidad enemiga que comenzó su turno a rango de un <strong>objetivo</strong> ha sido <strong>destruida</strong>.", vp: ["4"], hr: "Solo queda uno de tus marcadores de operación (ver acción), con una unidad tuya en esa área de terreno y ninguna unidad enemiga allí.", hrVp: "4" },
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu fase de Mando (o al final de tu turno en la 5ta ronda)", desc: "Controlas al menos un <strong>objetivo</strong> (excluyendo tu <strong>objetivo base</strong>).", vp: ["4"] },
+                    { title: "Fin de la Batalla", when: "", desc: "Solo queda uno de tus marcadores de operación, con una unidad tuya en esa área de terreno y ninguna unidad enemiga allí.", vp: ["5"] }
+                ],
+                action: {
+                    name: "BARRIDO DE SENSORES (SENSOR SWEEP)",
+                    type: "ACCIÓN DE OBJETIVO",
+                    starts: "Tu fase de Disparo.",
+                    units: "Una unidad aliada a rango de un <strong>objetivo central</strong>.",
+                    limit: "Una vez por turno.",
+                    completes: "Al final de tu turno, si tu unidad controla ese <strong>objetivo</strong>.",
+                    effect: "Tu unidad realiza un <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>barrido de sensores</strong> — retira un marcador de operación del campo de batalla.",
+                    restrictions: "Una unidad no puede iniciar esta acción si solo queda un marcador de operación en el campo de batalla."
+                }
+            },
+            // ==== RECONNAISSANCE COMBINATIONS ====
+            "Reconnaissance_Take and Hold": {
+                name: "RECONNAISSANCE SWEEP", type: "Reconnaissance", opponent: "TAKE AND HOLD",
+                rules: [
+                    { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Tres o más unidades aliadas están completamente dentro de tres cuadrantes diferentes, y no a menos de 6\" del centro del campo de batalla.", vp: ["3"], or: "Cuatro o más unidades aliadas están completamente dentro de cuatro cuadrantes diferentes, y no a menos de 6\" del centro del campo de batalla.", orVp: "6" },
+                    { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Por cada unidad enemiga <strong>destruida</strong> este turno.", vp: ["1"] },
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu fase de Mando (o al final de tu turno en la 5ta ronda)", desc: "Controlas uno o más <strong>objetivos</strong> (excluyendo tu <strong>objetivo base</strong>).", vp: ["3"] }
+                ]
+            },
+            "Reconnaissance_Purge the Foe": {
+                name: "TRIANGULATION", type: "Reconnaissance", opponent: "PURGE THE FOE",
+                rules: [
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu fase de Mando (o al final de tu turno en la 5ta ronda)", desc: "Controlas uno o más <strong>objetivos</strong> (excluyendo tu <strong>objetivo base</strong>).", vp: ["4"] },
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu turno", desc: "Un <strong>objetivo</strong> está <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>triangulado</strong> (ver acción).", vp: ["3"], or: "Dos <strong>objetivos</strong> están <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>triangulados</strong>.", orVp: "6", or2: "Tres o más <strong>objetivos</strong> están <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>triangulados</strong>.", or2Vp: "10" },
+                    { title: "Fin de la Batalla", when: "", desc: "Controlas <strong>cuatro o más objetivos</strong>.", vp: ["10"] }
+                ],
+                action: {
+                    name: "TRIANGULAR (TRIANGULATE)",
+                    type: "ACCIÓN DE OBJETIVO",
+                    starts: "Tu fase de Disparo, de la segunda ronda de batalla en adelante.",
+                    units: "Una unidad aliada a rango de un <strong>objetivo</strong> (excluyendo tu <strong>objetivo base</strong>).",
+                    limit: "Una vez por turno.",
+                    completes: "Al final de tu turno, si tu unidad controla ese <strong>objetivo</strong>.",
+                    effect: "Ese <strong>objetivo</strong> queda <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>triangulado</strong> — coloca uno de tus marcadores de operación a rango de ese <strong>objetivo</strong>."
+                }
+            },
+            "Reconnaissance_Disruption": {
+                name: "SURVEIL THE FOE", type: "Reconnaissance", opponent: "DISRUPTION",
+                intro: "Cada vez que una unidad aliada termine un movimiento a rango de un <strong>objetivo</strong> que tenga marcadores de operación enemigos a rango de él, retira esos <strong>marcadores de operación</strong> del campo de batalla.",
+                rules: [
+                    { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Una o más unidades enemigas fueron <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>vigiladas (surveilled)</strong> este turno (ver acción), a menos que cada una de esas unidades esté a rango de uno o más <strong>objetivos</strong> que tengan uno o más <strong>marcadores de operación</strong> a rango de ellos.", vp: ["4"] },
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu fase de Mando (o al final de tu turno en la 5ta ronda)", desc: "Controlas uno o más <strong>objetivos</strong> (excluyendo tu <strong>objetivo base</strong>).", vp: ["4"], hr: "Controlas más <strong>objetivos</strong> que tu oponente.", hrVp: "4" },
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu turno", desc: "No hay <strong>marcadores de operación</strong> enemigos en el campo de batalla.", vp: ["5"] }
+                ],
+                action: {
+                    name: "VIGILAR AL ENEMIGO (SURVEIL THE FOE)",
+                    type: "ACCIÓN DE OBJETIVO",
+                    starts: "Tu fase de Disparo.",
+                    units: "Una unidad aliada.",
+                    limit: "Ilimitado.",
+                    completes: "Inmediatamente.",
+                    effect: "Selecciona una unidad enemiga a 18\" o menos de tu unidad que sea visible para ella y que aún no haya sido <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>vigilada</strong> este turno. Hasta el final del turno, esa unidad enemiga está <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>vigilada</strong>."
+                }
+            },
+            "Reconnaissance_Reconnaissance": {
+                name: "GATHER INTEL", type: "Reconnaissance", opponent: "RECONNAISSANCE - MIRROR",
+                rules: [
+                    { title: "1ra Ronda de Batalla", when: "Al final de tu turno", desc: "Controlas uno o más <strong>objetivos centrales</strong>.", vp: ["6"] },
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu fase de Mando (o al final de tu turno en la 5ta ronda)", desc: "Controlas uno o más <strong>objetivos</strong> (excluyendo tu <strong>objetivo base</strong>).", vp: ["4"] },
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu turno", desc: "Por cada unidad aliada que haya <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>extraído inteligencia</strong> este turno (ver acción).", vp: ["7"] },
+                    { title: "Fin de la Batalla", when: "", desc: "Hay tres o más de tus <strong>marcadores de operación</strong> en el campo de batalla.", vp: ["5"], hr: "Uno de tus <strong>marcadores de operación</strong> está a rango del <strong>objetivo base</strong> de tu oponente.", hrVp: "5" }
+                ],
+                action: {
+                    name: "EXTRAER INTELIGENCIA (EXTRACT INTELLIGENCE)",
+                    type: "ACCIÓN DE OBJETIVO",
+                    starts: "Tu fase de Disparo, de la 2da ronda de batalla en adelante.",
+                    units: "Una unidad aliada a rango de un <strong>objetivo</strong> (excluyendo tu <strong>objetivo base</strong>) que no tenga ninguno de tus <strong>marcadores de operación</strong> a rango de él.",
+                    limit: "Ilimitado. Cada unidad que inicie esta acción en esta fase debe estar a rango de un <strong>objetivo</strong> diferente.",
+                    completes: "Al final de tu turno, si tu unidad controla ese <strong>objetivo</strong>.",
+                    effect: "Tu unidad <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>extrae inteligencia</strong> — coloca uno de tus <strong>marcadores de operación</strong> a rango de ese <strong>objetivo</strong>."
+                }
+            },
+            "Reconnaissance_Priority Assets": {
+                name: "SEARCH AND SCOUR", type: "Reconnaissance", opponent: "PRIORITY ASSETS",
+                rules: [
+                    { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Controlas uno o más <strong>objetivos centrales</strong>.", vp: ["3"], hr: "Una o más unidades enemigas que comenzaron el turno dentro de un <strong>área de terreno</strong> han sido <strong>destruidas</strong>.", hrVp: "2" },
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu fase de Mando (o al final de tu turno en la 5ta ronda)", desc: "Controlas uno o más <strong>objetivos</strong> (excluyendo tu <strong>objetivo base</strong>).", vp: ["4"] },
+                    { title: "Fin de la Batalla", when: "", desc: "Ninguna unidad enemiga está completamente dentro de tu territorio.", vp: ["5"] }
+                ]
+            },
+            // ==== PRIORITY ASSETS COMBINATIONS ====
+            "Priority Assets_Take and Hold": {
+                name: "SECURE ASSET", type: "Priority Assets", opponent: "TAKE AND HOLD",
+                rules: [
+                    { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Una unidad aliada <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>aseguró el activo</strong> este turno (ver acción).", vp: ["4"], hr: "Al menos una unidad enemiga que comenzó el turno a rango de uno o más <strong>objetivos centrales</strong> fue <strong>destruida</strong>.", hrVp: "2" },
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu fase de Mando (o al final de tu turno en la 5ta ronda)", desc: "Controlas uno o más <strong>objetivos</strong> (excluyendo tu <strong>objetivo base</strong>).", vp: ["4"], hr: "Controlas <strong>tres o más objetivos</strong>.", hrVp: "4" }
+                ],
+                action: {
+                    name: "ASEGURAR ACTIVO (SECURE ASSET)",
+                    type: "ACCIÓN DE OBJETIVO",
+                    starts: "Tu fase de Disparo.",
+                    units: "Una unidad aliada a rango de un <strong>objetivo</strong> (excluyendo tu <strong>objetivo base</strong>).",
+                    limit: "Una vez por turno.",
+                    completes: "Al final de tu turno, si tu unidad controla ese <strong>objetivo</strong>.",
+                    effect: "Tu unidad <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>asegura el activo</strong>."
+                }
+            },
+            "Priority Assets_Purge the Foe": {
+                name: "VITAL LINK", type: "Priority Assets", opponent: "PURGE THE FOE",
+                rules: [
+                    { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Controlas uno o más <strong>objetivos centrales</strong>.", vp: ["2"], cumulative: { desc: "Por cada uno de tus <strong>marcadores de operación</strong> a rango de uno de esos <strong>objetivos</strong> (ver acción).", vp: "+1" } },
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu fase de Mando (o al final de tu turno en la 5ta ronda)", desc: "Controlas uno o más <strong>objetivos</strong> (excluyendo tu <strong>objetivo base</strong>).", vp: ["4"], cumulative: { desc: "Uno o más de esos <strong>objetivos</strong> es un <strong>objetivo central</strong>.", vp: "+4" } },
+                    { title: "Fin de la Batalla", when: "", desc: "Controlas el <strong>objetivo base</strong> de tu oponente.", vp: ["10"] }
+                ],
+                action: {
+                    name: "MANTENER CONTROL (MAINTAIN CONTROL)",
+                    type: "ACCIÓN DE OBJETIVO",
+                    starts: "Tu fase de Disparo.",
+                    units: "Una unidad aliada a rango de un <strong>objetivo central</strong>.",
+                    limit: "Una vez por turno.",
+                    completes: "Al final de tu turno, si tu unidad controla ese <strong>objetivo</strong>.",
+                    effect: "Coloca uno de tus <strong>marcadores de operación</strong> a rango de ese <strong>objetivo</strong>."
+                }
+            },
+            "Priority Assets_Disruption": {
+                name: "EXTRACT RELIC", type: "Priority Assets", opponent: "DISRUPTION",
+                rules: [
+                    { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Una unidad aliada realizó un <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>barrido de sensores</strong> este turno (ver acción).", vp: ["4"], hr: "Una o más unidades enemigas que comenzaron el turno a rango de uno o más <strong>objetivos</strong> han sido <strong>destruidas</strong>.", hrVp: "3", hr2: "Solo queda uno de los <strong>marcadores de operación</strong> de tu oponente en el campo de batalla, si una o más de tus unidades están dentro de la misma área de terreno que ese <strong>marcador de operación</strong>, y no hay unidades enemigas dentro de esa área de terreno.", hr2Vp: "4" },
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu fase de Mando (o al final de tu turno en la 5ta ronda)", desc: "Controlas uno o más <strong>objetivos</strong> (excluyendo tu <strong>objetivo base</strong>).", vp: ["4"] },
+                    { title: "Fin de la Batalla", when: "", desc: "Solo queda uno de los <strong>marcadores de operación</strong> de tu oponente en el campo de batalla, si una o más de tus unidades están dentro de la misma área de terreno que ese <strong>marcador de operación</strong>, y no hay unidades enemigas dentro de esa área de terreno.", vp: ["5"] }
+                ],
+                action: {
+                    name: "BARRIDO DE SENSORES (SENSOR SWEEP)",
+                    type: "ACCIÓN DE OBJETIVO",
+                    starts: "Tu fase de Disparo.",
+                    units: "Una unidad aliada a rango de un <strong>objetivo central</strong>.",
+                    limit: "Una vez por turno.",
+                    completes: "Al final de tu turno, si tu unidad controla ese <strong>objetivo</strong>.",
+                    effect: "Tu unidad realiza un <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>barrido de sensores</strong> — retira un marcador de operación del campo de batalla.",
+                    restrictions: "Una unidad no puede iniciar esta acción si solo queda un marcador de operación en el campo de batalla."
+                }
+            },
+            "Priority Assets_Reconnaissance": {
+                name: "VANGUARD OPERATION", type: "Priority Assets", opponent: "RECONNAISSANCE",
+                rules: [
+                    { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Una unidad aliada realizó una <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>operación de vanguardia</strong> este turno (ver acción).", vp: ["4"], hr: "Una o más unidades enemigas fueron <strong>destruidas</strong> este turno.", hrVp: "2" },
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu fase de Mando (o al final de tu turno en la 5ta ronda)", desc: "Controlas uno o más <strong>objetivos</strong> (excluyendo tu <strong>objetivo base</strong>).", vp: ["4"] },
+                    { title: "Fin de la Batalla", when: "", desc: "Controlas el <strong>objetivo base</strong> de tu oponente.", vp: ["10"] }
+                ],
+                action: {
+                    name: "OPERACIÓN DE VANGUARDIA (VANGUARD OPERATION)",
+                    type: "ACCIÓN DE OBJETIVO",
+                    starts: "Tu fase de Disparo.",
+                    units: "Una unidad aliada dentro de un área de terreno ubicada en territorio enemigo.",
+                    limit: "Una vez por turno.",
+                    completes: "Al final de tu turno, siempre que no haya unidades enemigas dentro de esa área de terreno.",
+                    effect: "Tu unidad realiza una <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>operación de vanguardia</strong>."
+                }
+            },
+            "Priority Assets_Priority Assets": {
+                name: "SABOTAGE", type: "Priority Assets", opponent: "PRIORITY ASSETS - MIRROR",
+                rules: [
+                    { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Por cada unidad aliada que haya <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>cometido sabotaje</strong> este turno (ver acción).", vp: ["3"], cumulative: { desc: "Por cada una de esas <strong>unidades</strong> que esté a rango de uno o más <strong>objetivos</strong> en el territorio de tu oponente.", vp: "+2" } },
+                    { title: "De la 2da Ronda en adelante", when: "Al final de tu fase de Mando (o al final de tu turno en la 5ta ronda)", desc: "Controlas uno o más <strong>objetivos</strong> (excluyendo tu <strong>objetivo base</strong>).", vp: ["4"] }
+                ],
+                action: {
+                    name: "SABOTAJE (SABOTAGE)",
+                    type: "ACCIÓN DE OBJETIVO",
+                    starts: "Tu fase de Disparo.",
+                    units: "Una unidad a rango de un <strong>objetivo</strong> (excluyendo tu <strong>objetivo base</strong>).",
+                    limit: "Ilimitado. Cada unidad que inicie esta acción en esta fase debe estar a rango de un <strong>objetivo</strong> diferente.",
+                    completes: "Al final de tu turno, si esa unidad controla ese <strong>objetivo</strong>.",
+                    effect: "Tu unidad <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>comete sabotaje</strong>."
+                }
+            }
+        };
+
+        /* ============================================================
+           ESTADO DEL TRACKER Y LÓGICA
            ============================================================ */
         let tkState = {
             step: 1,
             maxSteps: 6,
-            p1: { name: 'PLAYER 1', faction: '', battleReady: false, vp: 0, cp: 0 },
-            p2: { name: 'PLAYER 2', faction: '', battleReady: false, vp: 0, cp: 0 }
+            p1: { name: 'JUGADOR 1', faction: '', detachments: [], forceDisposition: '', role: '', secType: '', battleReady: false, vp: 0, cp: 0 },
+            p2: { name: 'JUGADOR 2', faction: '', detachments: [], forceDisposition: '', role: '', secType: '', battleReady: false, vp: 0, cp: 0 },
+            rollOffWinner: 0,
+            firstTurn: 0
         };
-
-        const tkFactions = [
-            "Adepta Sororitas", "Adeptus Custodes", "Adeptus Mechanicus", "Aeldari", 
-            "Astra Militarum", "Blood Angels", "Chaos Daemons", "Chaos Knights", 
-            "Chaos Space Marines", "Dark Angels", "Death Guard", "Drukhari", 
-            "Genestealer Cults", "Grey Knights", "Imperial Knights", "Leagues of Votann", 
-            "Necrons", "Orks", "Space Marines", "Space Wolves", "T'au Empire", 
-            "Thousand Sons", "Tyranids", "World Eaters", "Cities of Sigmar", "Stormcast Eternals", "Slaves to Darkness"
-        ].sort();
 
         function initTracker() {
             const p1Select = document.getElementById('tk-p1-faction');
             const p2Select = document.getElementById('tk-p2-faction');
-            
-            let options = '<option value="">Faction (optional)</option>';
-            tkFactions.forEach(f => {
-                options += `<option value="${f}">${f}</option>`;
-            });
-
+            let options = '<option value="">Facción (obligatorio)</option>';
+            tkFactionsList.forEach(f => options += `<option value="${f}">${f}</option>`);
             p1Select.innerHTML = options;
             p2Select.innerHTML = options;
+            checkNextButtonState();
         }
 
         window.toggleBattleReady = function(playerNum) {
@@ -232,9 +882,392 @@
             }
         };
 
+        /* ---------------- LOGICA DE DESTACAMENTOS (PASO 2) ---------------- */
+        
+        function renderDetachments(playerNum) {
+            const player = playerNum === 1 ? tkState.p1 : tkState.p2;
+            const faction = player.faction;
+            const detList = player.detachments;
+            const totalDp = detList.reduce((sum, d) => sum + d.dp, 0);
+            const availableDp = 3 - totalDp;
+
+            const badge = document.getElementById(`badge-p${playerNum}-dp`);
+            badge.textContent = `DP: ${totalDp} / 3`;
+            if(totalDp === 3) badge.classList.add('full');
+            else badge.classList.remove('full');
+
+            const listEl = document.getElementById(`p${playerNum}-detachment-list`);
+            listEl.innerHTML = detList.map((d, index) => `
+                <div class="selected-detachment">
+                    <div class="sd-info">
+                        <strong>${d.name}</strong>
+                        <span><span class="sd-dp">${d.dp} DP</span> <i class="fas fa-crosshairs"></i> ${d.force}</span>
+                    </div>
+                    <button class="sd-remove" onclick="removeDetachment(${playerNum}, ${index})"><i class="fas fa-trash-alt"></i></button>
+                </div>
+            `).join('');
+
+            const selectEl = document.getElementById(`tk-p${playerNum}-detachment-select`);
+            let options = '<option value="">+ Añadir Destacamento...</option>';
+            
+            if (availableDp > 0) {
+                if (tkDetachments[faction]) {
+                    tkDetachments[faction].forEach(d => {
+                        const alreadySelected = detList.some(sel => sel.name === d.name);
+                        if (!alreadySelected && d.dp <= availableDp) {
+                            options += `<option value="${d.name}">${d.name} (${d.dp} DP)</option>`;
+                        }
+                    });
+                } else {
+                    if (!detList.some(sel => sel.name === "Destacamento Index")) {
+                        options += `<option value="Destacamento Index">Destacamento Index (1 DP)</option>`;
+                    }
+                }
+                selectEl.disabled = false;
+            } else {
+                options = '<option value="">Límite de 3 DP alcanzado</option>';
+                selectEl.disabled = true;
+            }
+            selectEl.innerHTML = options;
+            checkNextButtonState();
+        }
+
+        window.addDetachment = function(playerNum) {
+            const selectEl = document.getElementById(`tk-p${playerNum}-detachment-select`);
+            const name = selectEl.value;
+            if(!name) return;
+
+            const faction = playerNum === 1 ? tkState.p1.faction : tkState.p2.faction;
+            const detList = playerNum === 1 ? tkState.p1.detachments : tkState.p2.detachments;
+            
+            let detObj = null;
+            if(tkDetachments[faction]) {
+                detObj = tkDetachments[faction].find(d => d.name === name);
+            } else {
+                detObj = { name: "Destacamento Index", force: "Take and Hold", dp: 1 };
+            }
+
+            if(detObj) {
+                detList.push(detObj);
+                renderDetachments(playerNum);
+            }
+            selectEl.value = "";
+        }
+
+        window.removeDetachment = function(playerNum, index) {
+            const detList = playerNum === 1 ? tkState.p1.detachments : tkState.p2.detachments;
+            detList.splice(index, 1); 
+            renderDetachments(playerNum);
+        }
+
+        /* ---------------- LOGICA DE MISIONES (PASO 3) ---------------- */
+
+        function setupForceDispositionButtons() {
+            document.getElementById('label-p1-force').textContent = tkState.p1.name;
+            document.getElementById('label-p2-force').textContent = tkState.p2.name;
+
+            const p1Forces = tkState.p1.detachments.map(d => d.force);
+            const p2Forces = tkState.p2.detachments.map(d => d.force);
+
+            document.querySelectorAll('#p1-force-col .fd-btn').forEach(btn => {
+                if(p1Forces.includes(btn.dataset.force)) btn.classList.add('available');
+                else { btn.classList.remove('available'); btn.classList.remove('selected'); }
+            });
+
+            document.querySelectorAll('#p2-force-col .fd-btn').forEach(btn => {
+                if(p2Forces.includes(btn.dataset.force)) btn.classList.add('available');
+                else { btn.classList.remove('available'); btn.classList.remove('selected'); }
+            });
+
+            const p1UniqueForces = [...new Set(p1Forces)];
+            const p2UniqueForces = [...new Set(p2Forces)];
+            
+            if(p1UniqueForces.length === 1 && !tkState.p1.forceDisposition) selectForce(1, p1UniqueForces[0]);
+            if(p2UniqueForces.length === 1 && !tkState.p2.forceDisposition) selectForce(2, p2UniqueForces[0]);
+            
+            updateMissionSummary();
+        }
+
+        window.selectForce = function(playerNum, forceType) {
+            if(playerNum === 1) tkState.p1.forceDisposition = forceType;
+            else tkState.p2.forceDisposition = forceType;
+
+            document.querySelectorAll(`#p${playerNum}-force-col .fd-btn`).forEach(btn => btn.classList.remove('selected'));
+            document.querySelector(`#p${playerNum}-force-col .fd-btn[data-force="${forceType}"]`).classList.add('selected');
+            
+            updateMissionSummary();
+            checkNextButtonState();
+        }
+
+        function updateMissionSummary() {
+            const f1 = tkState.p1.forceDisposition;
+            const f2 = tkState.p2.forceDisposition;
+
+            const summaryArea = document.getElementById('mission-summary-area');
+            if(!f1 || !f2) { summaryArea.style.display = 'none'; return; }
+
+            summaryArea.style.display = 'grid';
+
+            const m1 = MISSION_MATRIX[`${f1}_${f2}`];
+            const m2 = MISSION_MATRIX[`${f2}_${f1}`];
+
+            document.getElementById('ms-p1-label').textContent = `${tkState.p1.name} · PRIMARIA`;
+            document.getElementById('ms-p2-label').textContent = `${tkState.p2.name} · PRIMARIA`;
+
+            document.getElementById('ms-p1-title').textContent = m1 ? m1.name : "EN CONSTRUCCIÓN";
+            document.getElementById('ms-p2-title').textContent = m2 ? m2.name : "EN CONSTRUCCIÓN";
+        }
+
+        function generateCardHTML(playerName, playerColorClass, missionData) {
+            if (!missionData) {
+                return `
+                <div class="m-card">
+                    <div class="m-header" style="background:#333;">
+                        <div class="m-header-info">
+                            <span class="m-header-sub">PRIMARY MISSION</span>
+                            <span class="m-header-title">PRÓXIMAMENTE</span>
+                        </div>
+                    </div>
+                    <div class="m-rules">
+                        <p style="text-align:center; padding: 20px;">Esta combinación de misiones se añadirá en la próxima actualización del sistema.</p>
+                    </div>
+                </div>`;
+            }
+
+            const style = UI_STYLES[missionData.type];
+            let rulesHTML = '';
+            
+            let introHTML = '';
+            if (missionData.intro) {
+                introHTML = `<div style="background:#fff; border:1px solid #112; padding:12px; font-size:0.85rem; line-height:1.4; color:#222; margin-bottom: 16px;">${missionData.intro}</div>`;
+            }
+
+            missionData.rules.forEach(r => {
+                let inner = `
+                    <div class="m-rule-cond">
+                        <div class="m-rule-desc">${r.desc}</div>
+                        <div class="m-vp-box"><span class="m-vp-num">${r.vp[0]}</span><span class="m-vp-lbl">VP</span></div>
+                    </div>
+                `;
+
+                if (r.or) {
+                    inner += `
+                        <div class="m-split-or">O</div>
+                        <div class="m-rule-cond">
+                            <div class="m-rule-desc">${r.or}</div>
+                            <div class="m-vp-box"><span class="m-vp-num">${r.orVp}</span><span class="m-vp-lbl">VP</span></div>
+                        </div>
+                    `;
+                }
+                
+                if (r.or2) {
+                    inner += `
+                        <div class="m-split-or">O</div>
+                        <div class="m-rule-cond">
+                            <div class="m-rule-desc">${r.or2}</div>
+                            <div class="m-vp-box"><span class="m-vp-num">${r.or2Vp}</span><span class="m-vp-lbl">VP</span></div>
+                        </div>
+                    `;
+                }
+
+                if (r.hr) {
+                    inner += `
+                        <hr style="border:none; border-top:1px dashed #ccc; margin:12px 0;">
+                        <div class="m-rule-cond">
+                            <div class="m-rule-desc">${r.hr}</div>
+                            <div class="m-vp-box"><span class="m-vp-num">${r.hrVp}</span><span class="m-vp-lbl">VP</span></div>
+                        </div>
+                    `;
+                }
+                
+                if (r.hr2) {
+                    inner += `
+                        <hr style="border:none; border-top:1px dashed #ccc; margin:12px 0;">
+                        <div class="m-rule-cond">
+                            <div class="m-rule-desc">${r.hr2}</div>
+                            <div class="m-vp-box"><span class="m-vp-num">${r.hr2Vp}</span><span class="m-vp-lbl">VP</span></div>
+                        </div>
+                    `;
+                }
+
+                if (r.cumulative) {
+                    inner += `
+                        <div class="m-cumulative-bar"><span class="m-cumulative-text">+ ACUMULATIVO</span></div>
+                        <div class="m-rule-cond">
+                            <div class="m-rule-desc">${r.cumulative.desc}</div>
+                            <div class="m-vp-box" style="background:#4a90e2;"><span class="m-vp-num" style="font-size:1.2rem;">${r.cumulative.vp}</span><span class="m-vp-lbl">VP</span></div>
+                        </div>
+                    `;
+                }
+
+                rulesHTML += `
+                    <div class="m-rule-box">
+                        <div class="m-rule-header"><span>${r.title}</span> <span class="m-rule-header-vp">VP</span></div>
+                        <div class="m-rule-body">
+                            ${r.when ? `<div class="m-rule-when">CUÁNDO</div> <strong>${r.when}</strong>` : ''}
+                            ${inner}
+                        </div>
+                    </div>
+                `;
+            });
+
+            let actionHTML = '';
+            if (missionData.action) {
+                const a = missionData.action;
+                actionHTML = `
+                    <div class="m-action-box">
+                        <div class="m-action-header">
+                            <span>${a.name}</span>
+                            <span class="m-action-badge">${a.type}</span>
+                        </div>
+                        <div class="m-action-body">
+                            <div class="m-action-row"><div class="m-action-lbl">INICIA</div> <div>${a.starts}</div></div>
+                            <div class="m-action-row"><div class="m-action-lbl">UNIDADES</div> <div>${a.units}</div></div>
+                            <div class="m-action-row"><div class="m-action-lbl">LÍMITE USO</div> <div>${a.limit}</div></div>
+                            <div class="m-action-row"><div class="m-action-lbl">SE COMPLETA</div> <div>${a.completes}</div></div>
+                            <div class="m-action-row"><div class="m-action-lbl">EFECTO</div> <div>${a.effect}</div></div>
+                            ${a.restrictions ? `<div class="m-action-row"><div class="m-action-lbl restr">RESTRICCIÓN</div> <div>${a.restrictions}</div></div>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+
+            const oppStyle = UI_STYLES[missionData.opponent.split(' - ')[0]] || { icon: 'fa-shield-alt' };
+
+            return `
+                <div class="mission-player-label ${playerColorClass}">${playerName}</div>
+                <div class="m-card">
+                    <div class="m-header ${style.bg}">
+                        <div class="m-header-info">
+                            <span class="m-header-sub">Misión Primaria</span>
+                            <span class="m-header-title">${missionData.name}</span>
+                        </div>
+                        <div class="m-header-icon"><i class="fas ${style.icon}"></i></div>
+                    </div>
+                    <div class="m-rules">
+                        ${introHTML}
+                        ${rulesHTML}
+                        ${actionHTML}
+                    </div>
+                    <div class="m-footer">
+                        <span class="m-footer-lbl">OPONENTE</span>
+                        <div class="m-footer-icon ${oppStyle.bg}"><i class="fas ${oppStyle.icon}"></i></div>
+                        <span>${missionData.opponent}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.viewMission = function(playerNum) {
+            const f1 = tkState.p1.forceDisposition;
+            const f2 = tkState.p2.forceDisposition;
+            const key = playerNum === 1 ? `${f1}_${f2}` : `${f2}_${f1}`;
+            const m = MISSION_MATRIX[key];
+            
+            const pName = playerNum === 1 ? tkState.p1.name : tkState.p2.name;
+            const pColor = playerNum === 1 ? 'p1-color' : 'p2-color';
+            
+            document.getElementById('mission-modal-content').innerHTML = generateCardHTML(pName, pColor, m);
+            document.getElementById('mission-modal').classList.add('open');
+        }
+
+        window.closeMission = function() {
+            document.getElementById('mission-modal').classList.remove('open');
+        }
+
+        /* ---------------- LOGICA DE ROLES Y SECUNDARIAS (PASO 4, 5 Y 6) ---------------- */
+        
+        window.setRole = function(pNum, role) {
+            if (role === 'attacker') {
+                tkState.p1.role = pNum === 1 ? 'attacker' : 'defender';
+                tkState.p2.role = pNum === 1 ? 'defender' : 'attacker';
+            } else {
+                tkState.p1.role = pNum === 1 ? 'defender' : 'attacker';
+                tkState.p2.role = pNum === 1 ? 'attacker' : 'defender';
+            }
+            
+            document.getElementById('btn-p1-atk').classList.toggle('selected', tkState.p1.role === 'attacker');
+            document.getElementById('btn-p1-def').classList.toggle('selected', tkState.p1.role === 'defender');
+            document.getElementById('btn-p2-atk').classList.toggle('selected', tkState.p2.role === 'attacker');
+            document.getElementById('btn-p2-def').classList.toggle('selected', tkState.p2.role === 'defender');
+            
+            checkNextButtonState();
+        }
+
+        window.setSecType = function(pNum, type) {
+            if(pNum === 1) tkState.p1.secType = type;
+            else tkState.p2.secType = type;
+            
+            document.getElementById('btn-p1-tac').classList.toggle('selected', tkState.p1.secType === 'tactical');
+            document.getElementById('btn-p1-fix').classList.toggle('selected', tkState.p1.secType === 'fixed');
+            document.getElementById('btn-p2-tac').classList.toggle('selected', tkState.p2.secType === 'tactical');
+            document.getElementById('btn-p2-fix').classList.toggle('selected', tkState.p2.secType === 'fixed');
+            
+            checkNextButtonState();
+        }
+
+        window.setRollWinner = function(pNum) {
+            tkState.rollOffWinner = pNum;
+            document.getElementById('btn-roll-p1').classList.toggle('selected', pNum === 1);
+            document.getElementById('btn-roll-p2').classList.toggle('selected', pNum === 2);
+            
+            const winnerName = pNum === 1 ? tkState.p1.name : tkState.p2.name;
+            const qText = document.getElementById('first-turn-question');
+            qText.textContent = `${winnerName.toUpperCase()} GANÓ LA TIRADA - ¿QUIÉN TOMA EL PRIMER TURNO?`;
+            
+            document.getElementById('first-turn-container').style.display = 'block';
+            checkNextButtonState();
+        }
+
+        window.setFirstTurn = function(pNum) {
+            tkState.firstTurn = pNum;
+            document.getElementById('btn-first-p1').classList.toggle('selected', pNum === 1);
+            document.getElementById('btn-first-p2').classList.toggle('selected', pNum === 2);
+            checkNextButtonState();
+        }
+
+        /* ---------------- NAVEGACIÓN Y VISTAS ---------------- */
+
+        function checkNextButtonState() {
+            const btn = document.getElementById('tk-next-btn');
+            let disable = false;
+
+            if (tkState.step === 1) {
+                const f1 = document.getElementById('tk-p1-faction').value;
+                const f2 = document.getElementById('tk-p2-faction').value;
+                if (!f1 || !f2) disable = true;
+            } 
+            else if (tkState.step === 2) {
+                if (tkState.p1.detachments.length === 0 || tkState.p2.detachments.length === 0) disable = true;
+            }
+            else if (tkState.step === 3) {
+                if (!tkState.p1.forceDisposition || !tkState.p2.forceDisposition) disable = true;
+            }
+            else if (tkState.step === 4) {
+                if (!tkState.p1.role || !tkState.p2.role) disable = true;
+            }
+            else if (tkState.step === 5) {
+                if (!tkState.p1.secType || !tkState.p2.secType) disable = true;
+            }
+            else if (tkState.step === 6) {
+                if (!tkState.rollOffWinner || !tkState.firstTurn) disable = true;
+                btn.innerHTML = disable ? 'INICIAR PARTIDA <i class="fas fa-play"></i>' : 'INICIAR PARTIDA <i class="fas fa-play"></i>';
+            }
+
+            // Regresar el botón a "SIGUIENTE" si estamos en un paso anterior al 6
+            if(tkState.step < 6) {
+                btn.innerHTML = 'SIGUIENTE <i class="fas fa-arrow-right"></i>';
+            }
+
+            btn.disabled = disable;
+        }
+
+        document.getElementById('tk-p1-faction').addEventListener('change', checkNextButtonState);
+        document.getElementById('tk-p2-faction').addEventListener('change', checkNextButtonState);
+
         window.goBack = function() {
             if (tkState.step === 1) {
-                if(confirm('¿Salir del tracker y volver a la comunidad?')) {
+                if(confirm('¿Salir del rastreador y volver a la comunidad?')) {
                     window.location.href = 'comunidad.html';
                 }
             } else {
@@ -245,46 +1278,115 @@
 
         window.nextTrackerStep = function() {
             if (tkState.step === 1) {
-                // Guardar nombres temporalmente
-                tkState.p1.name = document.getElementById('tk-p1-name').value || 'PLAYER 1';
-                tkState.p2.name = document.getElementById('tk-p2-name').value || 'PLAYER 2';
-                tkState.p1.faction = document.getElementById('tk-p1-faction').value;
-                tkState.p2.faction = document.getElementById('tk-p2-faction').value;
+                const f1 = document.getElementById('tk-p1-faction').value;
+                const f2 = document.getElementById('tk-p2-faction').value;
+                if (!f1 || !f2) return;
+
+                tkState.p1.name = document.getElementById('tk-p1-name').value || 'JUGADOR 1';
+                tkState.p2.name = document.getElementById('tk-p2-name').value || 'JUGADOR 2';
+                
+                if(tkState.p1.faction !== f1) { tkState.p1.faction = f1; tkState.p1.detachments = []; tkState.p1.forceDisposition = ''; }
+                if(tkState.p2.faction !== f2) { tkState.p2.faction = f2; tkState.p2.detachments = []; tkState.p2.forceDisposition = ''; }
+
+                document.getElementById('label-p1-detachment').textContent = tkState.p1.name;
+                document.getElementById('label-p2-detachment').textContent = tkState.p2.name;
+
+                renderDetachments(1);
+                renderDetachments(2);
             }
             
-            if (tkState.step < tkState.maxSteps) {
+            else if (tkState.step === 2) {
+                if (tkState.p1.detachments.length === 0 || tkState.p2.detachments.length === 0) return;
+                setupForceDispositionButtons();
+            }
+
+            else if (tkState.step === 3) {
+                if (!tkState.p1.forceDisposition || !tkState.p2.forceDisposition) return;
+                
+                // Actualizar nombres en los siguientes pasos
+                document.getElementById('label-p1-role').textContent = tkState.p1.name;
+                document.getElementById('label-p2-role').textContent = tkState.p2.name;
+                document.getElementById('label-p1-sec').textContent = tkState.p1.name;
+                document.getElementById('label-p2-sec').textContent = tkState.p2.name;
+                document.getElementById('btn-roll-p1').textContent = tkState.p1.name;
+                document.getElementById('btn-roll-p2').textContent = tkState.p2.name;
+                document.getElementById('btn-first-p1').textContent = tkState.p1.name;
+                document.getElementById('btn-first-p2').textContent = tkState.p2.name;
+            }
+            else if (tkState.step === 4) {
+                if (!tkState.p1.role || !tkState.p2.role) return;
+            }
+            else if (tkState.step === 5) {
+                if (!tkState.p1.secType || !tkState.p2.secType) return;
+            }
+            else if (tkState.step === 6) {
+                if (!tkState.rollOffWinner || !tkState.firstTurn) return;
+            }
+            
+            if (tkState.step < tkState.maxSteps + 1) {
                 tkState.step++;
                 updateView();
             }
         };
 
         function updateView() {
-            // Actualizar vista activa
             document.querySelectorAll('.tracker-view').forEach(el => el.classList.remove('active'));
             const nextView = document.getElementById(`tracker-step-${tkState.step}`);
             if (nextView) nextView.classList.add('active');
 
-            // Actualizar indicadores (bolitas)
             const steps = document.querySelectorAll('.t-step');
             steps.forEach((el, index) => {
-                if (index + 1 === tkState.step) el.classList.add('active');
-                else el.classList.remove('active');
+                if (index + 1 === tkState.step) {
+                    el.classList.add('active'); el.classList.remove('completed'); el.innerHTML = tkState.step;
+                } else if (index + 1 < tkState.step) {
+                    el.classList.remove('active'); el.classList.add('completed'); el.innerHTML = '<i class="fas fa-check"></i>';
+                } else {
+                    el.classList.remove('active'); el.classList.remove('completed'); el.innerHTML = index + 1;
+                }
             });
 
-            // Actualizar Header
-            document.getElementById('header-subtitle').textContent = `STEP ${tkState.step} OF ${tkState.maxSteps}`;
+            document.getElementById('header-subtitle').textContent = `PASO ${Math.min(tkState.step, 6)} DE 6`;
             
             if (tkState.step === 1) {
-                document.getElementById('header-title').textContent = "PLAYERS";
-                document.getElementById('header-desc').textContent = "Name the players and pick their faction. These are used throughout the tracker.";
-                document.getElementById('tk-back-btn').textContent = "CANCEL";
-            } else if (tkState.step === 2) {
-                document.getElementById('header-title').textContent = "PRIMARY MISSION";
-                document.getElementById('header-desc').textContent = "Select the Primary Mission for this battle.";
-                document.getElementById('tk-back-btn').textContent = "BACK";
+                document.getElementById('header-title').textContent = "JUGADORES";
+                document.getElementById('header-desc').textContent = "Nombra a los jugadores y elige su facción.";
+                document.getElementById('tk-back-btn').textContent = "CANCELAR";
+            } 
+            else if (tkState.step === 2) {
+                document.getElementById('header-title').textContent = "DESTACAMENTOS";
+                document.getElementById('header-desc').textContent = "Elige tus destacamentos. Puedes combinar varios hasta un máximo de 3 Puntos (DP).";
+                document.getElementById('tk-back-btn').textContent = "ATRÁS";
+            }
+            else if (tkState.step === 3) {
+                document.getElementById('header-title').textContent = "DISPOSICIÓN DE FUERZAS";
+                document.getElementById('header-desc').textContent = "Selecciona la disposición de fuerzas principal de tu ejército (según tus destacamentos).";
+                document.getElementById('tk-back-btn').textContent = "ATRÁS";
+            }
+            else if (tkState.step === 4) {
+                document.getElementById('header-title').textContent = "ATACANTE / DEFENSOR";
+                document.getElementById('header-desc').textContent = "AMBOS JUGADORES TIRAN 1D6 · GANA EL MAYOR · REPETIR EMPATES";
+                document.getElementById('tk-back-btn').textContent = "ATRÁS";
+            }
+            else if (tkState.step === 5) {
+                document.getElementById('header-title').textContent = "TIPO DE MISIÓN SECUNDARIA";
+                document.getElementById('header-desc').textContent = "Elige si jugarás con objetivos tácticos (dinámicos) o fijos.";
+                document.getElementById('tk-back-btn').textContent = "ATRÁS";
+            }
+            else if (tkState.step === 6) {
+                document.getElementById('header-title').textContent = "PRIMER TURNO";
+                document.getElementById('header-desc').textContent = "AMBOS JUGADORES TIRAN 1D6 · GANA EL MAYOR · REPETIR EMPATES";
+                document.getElementById('tk-back-btn').textContent = "ATRÁS";
+            }
+            else if (tkState.step === 7) {
+                document.getElementById('header-subtitle').style.display = 'none';
+                document.getElementById('header-title').textContent = "INICIO DE PARTIDA";
+                document.getElementById('header-desc').textContent = "A jugar...";
+                document.getElementById('step-indicators').style.display = 'none';
+                document.getElementById('tk-next-btn').style.display = 'none';
+                document.getElementById('tk-back-btn').style.display = 'none';
             }
 
-            console.log("State:", tkState);
+            checkNextButtonState();
         }
 
         document.addEventListener('DOMContentLoaded', initTracker);
