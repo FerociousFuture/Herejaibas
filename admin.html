@@ -190,9 +190,7 @@
         }
 
         /* ---- FACTION PICKER ---- */
-        .faction-picker-wrap {
-            position: relative;
-        }
+        .faction-picker-wrap { position: relative; }
 
         .faction-search-input {
             width: 100%;
@@ -273,10 +271,7 @@
             background: var(--bg-deep);
         }
 
-        .faction-option-name {
-            font-size: 0.82rem;
-            color: var(--text-main);
-        }
+        .faction-option-name { font-size: 0.82rem; color: var(--text-main); }
 
         .faction-selected-preview {
             display: flex;
@@ -317,9 +312,7 @@
         .faction-selected-preview .clear-faction:hover { color: #ff6644; }
 
         /* ---- PLAYER AUTOCOMPLETE ---- */
-        .player-input-wrap {
-            position: relative;
-        }
+        .player-input-wrap { position: relative; }
 
         .player-suggestions {
             position: absolute;
@@ -364,9 +357,7 @@
         }
 
         /* Custom link override row */
-        .img-link-override {
-            margin-top: 4px;
-        }
+        .img-link-override { margin-top: 4px; }
 
         @media (max-width: 640px) {
             .admin-table td:nth-child(1), .admin-table th:nth-child(1) { display: none; }
@@ -376,10 +367,8 @@
 </head>
 <body>
 
-<!-- ========= TOAST ========= -->
 <div class="toast" id="toast"></div>
 
-<!-- ========= LOGIN ========= -->
 <div id="login-screen">
     <div class="login-card">
         <div style="text-align:center; margin-bottom:8px;">
@@ -397,7 +386,6 @@
     </div>
 </div>
 
-<!-- ========= DASHBOARD ========= -->
 <div id="dashboard-screen">
     <div class="admin-header">
         <div class="admin-header-left">
@@ -412,17 +400,36 @@
 
     <div class="admin-wrap">
 
-        <!-- Tabs -->
         <div class="admin-tabs">
-            <button class="tab-btn active" data-tab="galeria"><i class="fas fa-images"></i> Galería</button>
+            <button class="tab-btn active" data-tab="banners"><i class="fas fa-images"></i> Banners</button>
+            <button class="tab-btn" data-tab="galeria"><i class="fas fa-paint-brush"></i> Galería</button>
             <button class="tab-btn" data-tab="torneos"><i class="fas fa-trophy"></i> Torneos</button>
             <button class="tab-btn" data-tab="partidas"><i class="fas fa-shield-alt"></i> Partidas</button>
         </div>
 
-        <!-- ===== TAB GALERÍA ===== -->
-        <div class="tab-panel active" id="tab-galeria">
+        <div class="tab-panel active" id="tab-banners">
             <div class="panel-section-header">
-                <h3><i class="fas fa-images" style="color:var(--accent-gold);margin-right:8px;"></i>Miniaturas</h3>
+                <h3><i class="fas fa-images" style="color:var(--accent-gold);margin-right:8px;"></i>Banners Principales</h3>
+                <button class="add-btn" id="add-banner-btn"><i class="fas fa-plus"></i> Agregar banner</button>
+            </div>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Imagen (Link)</th>
+                        <th>Título Principal</th>
+                        <th>Texto descriptivo</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="banner-tbody">
+                    <tr><td colspan="4"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i>Cargando...</div></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tab-panel" id="tab-galeria">
+            <div class="panel-section-header">
+                <h3><i class="fas fa-paint-brush" style="color:var(--accent-gold);margin-right:8px;"></i>Miniaturas</h3>
                 <button class="add-btn" id="add-gallery-btn"><i class="fas fa-plus"></i> Agregar miniatura</button>
             </div>
             <table class="admin-table">
@@ -441,7 +448,6 @@
             </table>
         </div>
 
-        <!-- ===== TAB TORNEOS ===== -->
         <div class="tab-panel" id="tab-torneos">
             <div class="panel-section-header">
                 <h3><i class="fas fa-trophy" style="color:var(--accent-gold);margin-right:8px;"></i>Torneos y Eventos</h3>
@@ -463,14 +469,12 @@
             </table>
         </div>
 
-        <!-- ===== TAB PARTIDAS ===== -->
         <div class="tab-panel" id="tab-partidas">
             <div class="panel-section-header">
                 <h3><i class="fas fa-shield-alt" style="color:var(--accent-gold);margin-right:8px;"></i>Libro de Batallas</h3>
                 <button class="add-btn" id="add-match-btn"><i class="fas fa-plus"></i> Registrar partida</button>
             </div>
 
-            <!-- Stats mini -->
             <div class="admin-stats-mini" id="admin-match-stats">
                 <div class="admin-stat-card"><span class="admin-stat-num">—</span><span class="admin-stat-label">Partidas</span></div>
                 <div class="admin-stat-card"><span class="admin-stat-num">—</span><span class="admin-stat-label">40K</span></div>
@@ -499,7 +503,50 @@
     </div>
 </div>
 
-<!-- ========= MODAL GALERÍA ========= -->
+<div class="modal-overlay" id="banner-modal">
+    <div class="modal-box">
+        <h3 id="banner-modal-title">Nuevo Banner</h3>
+        <div class="form-group">
+            <label class="form-label">URL de la Imagen (Link) *</label>
+            <input class="admin-input" type="url" id="b-image" placeholder="https://ejemplo.com/imagen.jpg">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Eyebrow (Texto pequeño superior)</label>
+            <input class="admin-input" type="text" id="b-eyebrow" placeholder="Ej: Club de Wargames">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="form-group">
+                <label class="form-label">Título 1era Parte</label>
+                <input class="admin-input" type="text" id="b-title1" placeholder="Ej: ÚNETE A LA">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Título Resaltado</label>
+                <input class="admin-input" type="text" id="b-accent" placeholder="Ej: LEGIÓN">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Texto descriptivo</label>
+            <textarea class="admin-textarea" id="b-text" placeholder="Prepara a tu ejército..."></textarea>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="form-group">
+                <label class="form-label">Botón 1 (Texto / Link)</label>
+                <input class="admin-input" type="text" id="b-btn1-text" placeholder="Texto: Unirse" style="margin-bottom:8px;">
+                <input class="admin-input" type="text" id="b-btn1-link" placeholder="Link: comunidad.html">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Botón 2 (Texto / Link)</label>
+                <input class="admin-input" type="text" id="b-btn2-text" placeholder="Texto: Torneos" style="margin-bottom:8px;">
+                <input class="admin-input" type="text" id="b-btn2-link" placeholder="Link: torneos.html">
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="modal-cancel" id="banner-modal-cancel">Cancelar</button>
+            <button class="modal-save" id="banner-modal-save">Guardar Banner</button>
+        </div>
+    </div>
+</div>
+
 <div class="modal-overlay" id="gallery-modal">
     <div class="modal-box">
         <h3 id="gallery-modal-title">Nueva Miniatura</h3>
@@ -540,7 +587,6 @@
     </div>
 </div>
 
-<!-- ========= MODAL TORNEOS ========= -->
 <div class="modal-overlay" id="tour-modal">
     <div class="modal-box">
         <h3 id="tour-modal-title">Nuevo Torneo</h3>
@@ -594,12 +640,10 @@
     </div>
 </div>
 
-<!-- ========= MODAL PARTIDAS ========= -->
 <div class="modal-overlay" id="match-modal">
     <div class="modal-box" style="max-width:700px;">
         <h3 id="match-modal-title">Registrar Partida</h3>
 
-        <!-- Fecha y Sistema -->
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
             <div class="form-group">
                 <label class="form-label">Fecha *</label>
@@ -615,7 +659,6 @@
             </div>
         </div>
 
-        <!-- Jugador 1 -->
         <div class="match-section-divider">
             <i class="fas fa-user"></i> Jugador 1
         </div>
@@ -649,7 +692,6 @@
             <input class="admin-input img-link-override" type="url" id="m-img1-override" placeholder="https://... (dejar vacío para usar la imagen predeterminada)">
         </div>
 
-        <!-- Jugador 2 -->
         <div class="match-section-divider">
             <i class="fas fa-user"></i> Jugador 2
         </div>
@@ -683,7 +725,6 @@
             <input class="admin-input img-link-override" type="url" id="m-img2-override" placeholder="https://... (dejar vacío para usar la imagen predeterminada)">
         </div>
 
-        <!-- Resultado -->
         <div class="match-section-divider">
             <i class="fas fa-trophy"></i> Resultado final
         </div>
@@ -704,7 +745,6 @@
             </div>
         </div>
 
-        <!-- Notas -->
         <div class="form-group">
             <label class="form-label">Crónica / Notas <span style="color:var(--text-dim);font-size:0.7rem;">(opcional)</span></label>
             <textarea class="admin-textarea" id="m-notas" placeholder="Momento épico, narrativa de la partida, observaciones..."></textarea>
@@ -720,7 +760,6 @@
 <script>
 /* ============================================================
    FACCIONES – Warhammer 40K y Age of Sigmar 2026
-   img: logo oficial de Games Workshop (Warhammer Community / wiki)
    ============================================================ */
 const FACTIONS = {
     "Warhammer 40K": [
@@ -791,11 +830,9 @@ const FACTIONS = {
     ]
 };
 
-/* Función genérica: obtiene todas las facciones según el sistema seleccionado */
 function getFactionList(sistema) {
     if (sistema === 'Warhammer 40K') return FACTIONS['Warhammer 40K'];
     if (sistema === 'Age of Sigmar')  return FACTIONS['Age of Sigmar'];
-    // Si es "Otro", devuelve ambas listas
     return [...FACTIONS['Warhammer 40K'], ...FACTIONS['Age of Sigmar']];
 }
 
@@ -803,7 +840,6 @@ function getFactionList(sistema) {
    FACTION PICKER – helpers
    ============================================================ */
 
-// Estado actual de cada picker (1 y 2)
 const factionState = {
     1: { name: '', img: '' },
     2: { name: '', img: '' }
@@ -813,7 +849,6 @@ function buildFactionDropdown(dropdownEl, searchEl, playerNum) {
     const sistema = document.getElementById('m-sistema').value;
     const query   = (searchEl.value || '').toLowerCase();
 
-    // Agrupa facciones
     let groups;
     if (sistema === 'Otro') {
         groups = [
@@ -849,11 +884,9 @@ window.selectFaction = function(playerNum, el) {
     const img  = el.dataset.img;
     factionState[playerNum] = { name, img };
 
-    // Guarda en los hidden inputs
     document.getElementById(`m-e${playerNum}`).value   = name;
     document.getElementById(`m-img${playerNum}`).value = img;
 
-    // Muestra preview
     const preview    = document.getElementById(`m-e${playerNum}-preview`);
     const previewImg = document.getElementById(`m-e${playerNum}-preview-img`);
     const previewName= document.getElementById(`m-e${playerNum}-preview-name`);
@@ -861,7 +894,6 @@ window.selectFaction = function(playerNum, el) {
     previewImg.src         = img;
     previewName.textContent= name;
 
-    // Cierra dropdown y limpia búsqueda
     document.getElementById(`m-e${playerNum}-search`).value = '';
     document.getElementById(`m-e${playerNum}-dropdown`).classList.remove('open');
 
@@ -890,7 +922,6 @@ function initFactionPicker(playerNum) {
         dropdownEl.classList.add('open');
     });
 
-    // Cierra al hacer click fuera
     document.addEventListener('click', e => {
         if (!searchEl.contains(e.target) && !dropdownEl.contains(e.target)) {
             dropdownEl.classList.remove('open');
@@ -899,7 +930,7 @@ function initFactionPicker(playerNum) {
 }
 
 /* ============================================================
-   PLAYER AUTOCOMPLETE – construye sugerencias desde partidas
+   PLAYER AUTOCOMPLETE – construye sugerencias
    ============================================================ */
 let knownPlayers = [];
 
@@ -948,7 +979,7 @@ const { createClient } = supabase;
 const sb = createClient(window._sbUrl, window._sbAnon);
 
 /* ============================================================
-   AUTH
+   AUTH Y DASHBOARD
    ============================================================ */
 async function checkSession() {
     const { data: { session } } = await sb.auth.getSession();
@@ -980,6 +1011,7 @@ function showDashboard(user) {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('dashboard-screen').style.display = 'block';
     document.getElementById('admin-user-label').textContent = user.email;
+    loadBanners(); // <-- Cargar Banners
     loadGallery();
     loadTournaments();
     loadMatches();
@@ -1009,6 +1041,98 @@ function toast(msg, type = 'ok') {
     setTimeout(() => t.classList.remove('show'), 3000);
 }
 
+
+/* ============================================================
+   BANNERS CAROUSEL
+   ============================================================ */
+let bannerEditId = null;
+
+async function loadBanners() {
+    const { data, error } = await sb.from('banners').select('*').order('id', { ascending: true });
+    const tbody = document.getElementById('banner-tbody');
+    if (error || !data || data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state">No hay banners configurados.</div></td></tr>`;
+        return;
+    }
+    tbody.innerHTML = data.map(row => `
+        <tr>
+            <td><img src="${row.image}" class="td-img" alt="banner" style="width:100px; height:50px; object-fit:cover; border-radius:4px;"></td>
+            <td class="td-title">${row.title_line1 || ''} <span style="color:var(--accent-gold)">${row.title_accent || ''}</span></td>
+            <td><span style="font-size:0.8rem; display:block; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${row.text || ''}</span></td>
+            <td>
+                <div class="action-row">
+                    <button class="edit-btn" onclick='editBanner(${JSON.stringify(row).replace(/'/g, "&#39;")})'>Editar</button>
+                    <button class="del-btn" onclick="deleteBanner('${row.id}')">Borrar</button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+}
+
+document.getElementById('add-banner-btn').addEventListener('click', () => {
+    bannerEditId = null;
+    document.getElementById('banner-modal-title').textContent = 'Nuevo Banner';
+    ['b-image','b-eyebrow','b-title1','b-accent','b-text','b-btn1-text','b-btn1-link','b-btn2-text','b-btn2-link'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('banner-modal').classList.add('open');
+});
+
+window.editBanner = function(row) {
+    bannerEditId = row.id;
+    document.getElementById('banner-modal-title').textContent = 'Editar Banner';
+    document.getElementById('b-image').value = row.image || '';
+    document.getElementById('b-eyebrow').value = row.eyebrow || '';
+    document.getElementById('b-title1').value = row.title_line1 || '';
+    document.getElementById('b-accent').value = row.title_accent || '';
+    document.getElementById('b-text').value = row.text || '';
+    document.getElementById('b-btn1-text').value = row.btn1_text || '';
+    document.getElementById('b-btn1-link').value = row.btn1_link || '';
+    document.getElementById('b-btn2-text').value = row.btn2_text || '';
+    document.getElementById('b-btn2-link').value = row.btn2_link || '';
+    document.getElementById('banner-modal').classList.add('open');
+};
+
+document.getElementById('banner-modal-cancel').addEventListener('click', () => {
+    document.getElementById('banner-modal').classList.remove('open');
+});
+
+document.getElementById('banner-modal-save').addEventListener('click', async () => {
+    const image = document.getElementById('b-image').value.trim();
+    if (!image) { toast('El enlace de la imagen es obligatorio', 'err'); return; }
+
+    const payload = {
+        image,
+        eyebrow: document.getElementById('b-eyebrow').value.trim(),
+        title_line1: document.getElementById('b-title1').value.trim(),
+        title_accent: document.getElementById('b-accent').value.trim(),
+        text: document.getElementById('b-text').value.trim(),
+        btn1_text: document.getElementById('b-btn1-text').value.trim(),
+        btn1_link: document.getElementById('b-btn1-link').value.trim(),
+        btn2_text: document.getElementById('b-btn2-text').value.trim(),
+        btn2_link: document.getElementById('b-btn2-link').value.trim()
+    };
+
+    let error;
+    if (bannerEditId) {
+        ({ error } = await sb.from('banners').update(payload).eq('id', bannerEditId));
+    } else {
+        ({ error } = await sb.from('banners').insert([payload]));
+    }
+
+    if (error) { toast('Error: ' + error.message, 'err'); return; }
+    toast(bannerEditId ? 'Banner actualizado' : 'Banner agregado');
+    document.getElementById('banner-modal').classList.remove('open');
+    loadBanners();
+});
+
+window.deleteBanner = async function(id) {
+    if (!confirm('¿Eliminar este banner?')) return;
+    const { error } = await sb.from('banners').delete().eq('id', id);
+    if (error) { toast('Error: ' + error.message, 'err'); return; }
+    toast('Banner eliminado');
+    loadBanners();
+};
+
+
 /* ============================================================
    GALERÍA
    ============================================================ */
@@ -1032,7 +1156,7 @@ async function loadGallery() {
             <td>${row.autor || '—'}</td>
             <td>
                 <div class="action-row">
-                    <button class="edit-btn" onclick="editGallery(${JSON.stringify(row).replace(/"/g,'&quot;')})">Editar</button>
+                    <button class="edit-btn" onclick='editGallery(${JSON.stringify(row).replace(/'/g, "&#39;")})'>Editar</button>
                     <button class="del-btn" onclick="deleteGallery('${row.id}')">Borrar</button>
                 </div>
             </td>
@@ -1151,7 +1275,7 @@ async function loadTournaments() {
                 <td>${badge}</td>
                 <td>
                     <div class="action-row">
-                        <button class="edit-btn" onclick="editTour(${JSON.stringify(row).replace(/"/g,'&quot;')})">Editar</button>
+                        <button class="edit-btn" onclick='editTour(${JSON.stringify(row).replace(/'/g, "&#39;")})'>Editar</button>
                         <button class="del-btn" onclick="deleteTour('${row.id}')">Borrar</button>
                     </div>
                 </td>
@@ -1226,7 +1350,6 @@ window.deleteTour = async function(id) {
    ============================================================ */
 let matchEditId = null;
 
-/* Actualiza select de ganador según los nombres escritos */
 function updateGanadorSelect() {
     const j1  = document.getElementById('m-j1').value.trim();
     const j2  = document.getElementById('m-j2').value.trim();
@@ -1243,13 +1366,11 @@ function updateGanadorSelect() {
 document.getElementById('m-j1').addEventListener('input', updateGanadorSelect);
 document.getElementById('m-j2').addEventListener('input', updateGanadorSelect);
 
-/* Cuando cambia el sistema, reconstruir los dropdowns abiertos */
 document.getElementById('m-sistema').addEventListener('change', () => {
     clearFaction(1);
     clearFaction(2);
 });
 
-/* Init pickers (se llama una vez, al cargar) */
 initFactionPicker(1);
 initFactionPicker(2);
 initPlayerAutocomplete('m-j1', 'm-j1-suggestions');
@@ -1322,7 +1443,7 @@ async function loadMatches() {
                 <td>${ganadorCell}</td>
                 <td>
                     <div class="action-row">
-                        <button class="edit-btn" onclick="editMatch(${JSON.stringify(row).replace(/"/g,'&quot;')})">Editar</button>
+                        <button class="edit-btn" onclick='editMatch(${JSON.stringify(row).replace(/'/g, "&#39;")})'>Editar</button>
                         <button class="del-btn" onclick="deleteMatch('${row.id}')">Borrar</button>
                     </div>
                 </td>
@@ -1331,7 +1452,6 @@ async function loadMatches() {
     }).join('');
 }
 
-/* ---- Helpers para resetear/pre-llenar el modal ---- */
 function resetMatchModal() {
     clearFaction(1);
     clearFaction(2);
@@ -1360,7 +1480,6 @@ function prefillFaction(playerNum, name, img) {
     previewName.textContent = name;
 }
 
-/* Abrir modal nuevo */
 document.getElementById('add-match-btn').addEventListener('click', () => {
     matchEditId = null;
     document.getElementById('match-modal-title').textContent = 'Registrar Partida';
@@ -1368,7 +1487,6 @@ document.getElementById('add-match-btn').addEventListener('click', () => {
     document.getElementById('match-modal').classList.add('open');
 });
 
-/* Editar */
 window.editMatch = function(row) {
     matchEditId = row.id;
     document.getElementById('match-modal-title').textContent = 'Editar Partida';
@@ -1382,13 +1500,11 @@ window.editMatch = function(row) {
     document.getElementById('m-p2').value      = row.puntos2  ?? 0;
     document.getElementById('m-notas').value   = row.notas    || '';
 
-    // Intentar re-seleccionar la facción desde la lista
     const allFactions = [...FACTIONS['Warhammer 40K'], ...FACTIONS['Age of Sigmar']];
 
     const faction1 = allFactions.find(f => f.name === row.ejercito1);
     if (faction1) {
         prefillFaction(1, faction1.name, faction1.img);
-        // Si hay override guardado
         if (row.faccion1_img && row.faccion1_img !== faction1.img) {
             document.getElementById('m-img1-override').value = row.faccion1_img;
         }
@@ -1413,12 +1529,10 @@ window.editMatch = function(row) {
     document.getElementById('match-modal').classList.add('open');
 };
 
-/* Cancelar */
 document.getElementById('match-modal-cancel').addEventListener('click', () => {
     document.getElementById('match-modal').classList.remove('open');
 });
 
-/* Guardar */
 document.getElementById('match-modal-save').addEventListener('click', async () => {
     const j1    = document.getElementById('m-j1').value.trim();
     const j2    = document.getElementById('m-j2').value.trim();
@@ -1430,7 +1544,6 @@ document.getElementById('match-modal-save').addEventListener('click', async () =
     if (!e1 || !e2) { toast('Selecciona el ejército de ambos jugadores', 'err'); return; }
     if (!fecha)     { toast('La fecha es obligatoria', 'err'); return; }
 
-    // La imagen final: override si está, si no, la automática de la facción
     const override1 = document.getElementById('m-img1-override').value.trim();
     const override2 = document.getElementById('m-img2-override').value.trim();
     const finalImg1 = override1 || document.getElementById('m-img1').value || null;
@@ -1464,7 +1577,6 @@ document.getElementById('match-modal-save').addEventListener('click', async () =
     loadMatches();
 });
 
-/* Borrar */
 window.deleteMatch = async function(id) {
     if (!confirm('¿Eliminar esta partida del libro de batallas?')) return;
     const { error } = await sb.from('partidas').delete().eq('id', id);

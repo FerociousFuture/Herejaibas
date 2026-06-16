@@ -2,43 +2,8 @@
    HEREJAIBAS | Script Principal
    ============================================ */
 
-// ---- CAROUSEL ----
-const slides = [
-    {
-        image: "https://4kwallpapers.com/images/wallpapers/warhammer-40k-space-3840x2160-22638.jpg",
-        eyebrow: "Club de Wargames · Veracruz",
-        titleLine1: "ÚNETE A LA",
-        titleAccent: "LEGIÓN",
-        text: "Prepara a tu ejército para la guerra en el Puerto de Veracruz. Partidas, torneos y comunidad.",
-        btn1Text: "Unirse ahora",
-        btn1Link: "comunidad.html",
-        btn2Text: "Ver torneos",
-        btn2Link: "torneos.html"
-    },
-    {
-        image: "https://images.unsplash.com/photo-1542352467-f2730635d971?q=80&w=1600",
-        eyebrow: "Pintura y Modelismo",
-        titleLine1: "FORJA TUS",
-        titleAccent: "TROPAS",
-        text: "El arte de la miniatura es tan importante como la táctica. Comparte tus progresos con la comunidad.",
-        btn1Text: "Ver galería",
-        btn1Link: "galeria.html",
-        btn2Text: "Nuestra comunidad",
-        btn2Link: "comunidad.html"
-    },
-    {
-        image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1600",
-        eyebrow: "Torneos y Competencias",
-        titleLine1: "HEREJÍA EN",
-        titleAccent: "EL GOLFO",
-        text: "Encuentra rivales, organiza campañas y defiende el honor de tu facción en Veracruz.",
-        btn1Text: "Ver torneos",
-        btn1Link: "torneos.html",
-        btn2Text: "Unirse",
-        btn2Link: "comunidad.html"
-    }
-];
-
+// ---- CAROUSEL DINÁMICO DESDE SUPABASE ----
+let slides = [];
 let currentIndex = 0;
 let autoplayTimer = null;
 
@@ -49,21 +14,63 @@ const eyebrowEl       = document.getElementById("carousel-eyebrow");
 const textEl          = document.getElementById("carousel-text");
 const btn1El          = document.getElementById("carousel-btn-primary");
 const btn2El          = document.getElementById("carousel-btn-secondary");
-const dots            = document.querySelectorAll(".dot");
+
+// Inicializar cliente de Supabase
+const { createClient } = supabase;
+const sb = createClient(window._sbUrl, window._sbAnon);
+
+async function loadCarouselFromDB() {
+    const { data, error } = await sb.from('banners').select('*').order('id', { ascending: true });
+    
+    // Si hay error o no hay banners, ponemos un fallback por defecto
+    if (error || !data || data.length === 0) {
+        slides = [{
+            image: "https://4kwallpapers.com/images/wallpapers/warhammer-40k-space-3840x2160-22638.jpg",
+            eyebrow: "Club de Wargames · Veracruz",
+            title_line1: "ÚNETE A LA",
+            title_accent: "LEGIÓN",
+            text: "Prepara a tu ejército para la guerra en el Puerto de Veracruz. Partidas, torneos y comunidad.",
+            btn1_text: "Unirse ahora", btn1_link: "comunidad.html",
+            btn2_text: "Ver torneos", btn2_link: "torneos.html"
+        }];
+    } else {
+        slides = data;
+    }
+    
+    // Generar los botones de puntos de navegación dinámicamente
+    const indicatorsContainer = document.querySelector(".carousel-indicators");
+    if (indicatorsContainer) {
+        indicatorsContainer.innerHTML = slides.map((_, i) => 
+            `<button class="dot ${i === 0 ? 'active' : ''}" onclick="goToSlide(${i})" aria-label="Slide ${i+1}"></button>`
+        ).join('');
+    }
+    
+    // Mostrar la primera diapositiva
+    updateSlide(0);
+    resetAutoplay();
+}
 
 function updateSlide(index) {
+    if (!slides[index]) return;
     const s = slides[index];
     if (!bgElement) return;
 
     bgElement.style.backgroundImage = `url('${s.image}')`;
-    if (eyebrowEl) eyebrowEl.textContent = s.eyebrow;
-    if (titleEl) titleEl.childNodes[0].textContent = s.titleLine1 + " ";
-    if (titleAccentEl) titleAccentEl.textContent = s.titleAccent;
-    if (textEl) textEl.textContent = s.text;
-    if (btn1El) { btn1El.textContent = s.btn1Text; btn1El.href = s.btn1Link; }
-    if (btn2El) { btn2El.textContent = s.btn2Text; btn2El.href = s.btn2Link; }
+    if (eyebrowEl) eyebrowEl.textContent = s.eyebrow || '';
+    if (titleEl) titleEl.childNodes[0].textContent = (s.title_line1 || '') + " ";
+    if (titleAccentEl) titleAccentEl.textContent = s.title_accent || '';
+    if (textEl) textEl.textContent = s.text || '';
+    
+    if (btn1El) { 
+        if (s.btn1_text) { btn1El.style.display = 'inline-flex'; btn1El.textContent = s.btn1_text; btn1El.href = s.btn1_link || '#'; } 
+        else { btn1El.style.display = 'none'; }
+    }
+    if (btn2El) { 
+        if (s.btn2_text) { btn2El.style.display = 'inline-flex'; btn2El.textContent = s.btn2_text; btn2El.href = s.btn2_link || '#'; } 
+        else { btn2El.style.display = 'none'; }
+    }
 
-    dots.forEach((d, i) => d.classList.toggle("active", i === index));
+    document.querySelectorAll(".dot").forEach((d, i) => d.classList.toggle("active", i === index));
 }
 
 window.goToSlide = function(index) {
@@ -73,6 +80,7 @@ window.goToSlide = function(index) {
 };
 
 function nextSlide() {
+    if(slides.length === 0) return;
     currentIndex = (currentIndex + 1) % slides.length;
     updateSlide(currentIndex);
 }
@@ -82,9 +90,11 @@ function resetAutoplay() {
     autoplayTimer = setInterval(nextSlide, 6000);
 }
 
-// Init
-updateSlide(0);
-resetAutoplay();
+// Iniciar la carga de Banners
+document.addEventListener('DOMContentLoaded', () => {
+    loadCarouselFromDB();
+});
+
 
 // ---- MOBILE NAV ----
 const navToggle = document.getElementById("nav-toggle");

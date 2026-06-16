@@ -6,12 +6,15 @@
     <title>Herejaibas | Club de Wargames · Veracruz</title>
     <meta name="description" content="Comunidad de wargames en el Puerto de Veracruz. Warhammer 40K, Age of Sigmar y más. Torneos, partidas y pintura de miniaturas.">
     <link rel="icon" type="image/png" href="jaiba.png">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
-    <!-- NAVBAR -->
     <header class="navbar">
         <a href="index.html" class="logo-container">
             <div class="logo-emblem">
@@ -36,32 +39,27 @@
         <div class="nav-spacer"></div>
     </header>
 
-    <!-- HERO CAROUSEL -->
     <section class="hero-carousel">
         <div id="carousel-bg" class="carousel-bg">
             <div class="carousel-overlay"></div>
             <div class="carousel-content">
-                <div class="carousel-eyebrow" id="carousel-eyebrow">Club de Wargames · Veracruz</div>
-                <h1 id="carousel-title">ÚNETE A LA <span id="carousel-title-accent">LEGIÓN</span></h1>
-                <p id="carousel-text">Prepara a tu ejército para la guerra en el Puerto de Veracruz. Partidas, torneos y comunidad.</p>
+                <div class="carousel-eyebrow" id="carousel-eyebrow">Cargando...</div>
+                <h1 id="carousel-title"> <span id="carousel-title-accent"></span></h1>
+                <p id="carousel-text"></p>
                 <div class="carousel-actions">
-                    <a href="comunidad.html" id="carousel-btn-primary" class="btn-primary">Unirse ahora</a>
-                    <a href="torneos.html" id="carousel-btn-secondary" class="btn-outline">Ver torneos</a>
+                    <a href="#" id="carousel-btn-primary" class="btn-primary" style="display:none;"></a>
+                    <a href="#" id="carousel-btn-secondary" class="btn-outline" style="display:none;"></a>
                 </div>
             </div>
         </div>
         <div class="carousel-indicators">
-            <button class="dot active" onclick="goToSlide(0)" aria-label="Slide 1"></button>
-            <button class="dot" onclick="goToSlide(1)" aria-label="Slide 2"></button>
-            <button class="dot" onclick="goToSlide(2)" aria-label="Slide 3"></button>
-        </div>
+            </div>
         <div class="scroll-hint">
             <div class="scroll-line"></div>
             <span>Scroll</span>
         </div>
     </section>
 
-    <!-- STATS BAR -->
     <div class="stats-bar">
         <div class="stats-inner">
             <div class="stat-item">
@@ -79,7 +77,6 @@
         </div>
     </div>
 
-    <!-- UBICACIÓN -->
     <section id="ubicacion" class="location-section">
         <div class="section-header">
             <div class="section-eyebrow">Base de Operaciones</div>
@@ -133,7 +130,6 @@
         </div>
     </section>
 
-    <!-- JOIN STRIP -->
     <div class="join-strip">
         <div class="join-inner">
             <h2>¿Listo para la batalla?</h2>
@@ -145,7 +141,6 @@
         </div>
     </div>
 
-    <!-- FOOTER -->
     <footer class="site-footer">
         <div class="footer-inner">
             <div class="footer-brand">
@@ -184,5 +179,3 @@
     </footer>
 
     <script src="script.js"></script>
-</body>
-</html>
