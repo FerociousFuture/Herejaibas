@@ -6,7 +6,6 @@
     <title>Comunidad | Herejaibas</title>
     <link rel="icon" type="image/png" href="jaiba.png">
     
-    <!-- Fuentes y Estilos base -->
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Exo+2:wght@400;600;800&display=swap" rel="stylesheet">
@@ -32,12 +31,14 @@
             font-size: 1.1rem; color: var(--text-muted); line-height: 1.6;
         }
 
-        /* Sección del Tracker */
+        /* Sección de Herramientas */
         .tools-section {
             padding: 60px 20px;
             max-width: 1000px;
             margin: 0 auto;
         }
+        
+        /* Tarjeta Principal: Tracker */
         .tracker-promo-card {
             background: var(--bg-card);
             border: 1px solid var(--border-gold);
@@ -47,8 +48,8 @@
             position: relative;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            margin-bottom: 24px;
         }
-        /* Brillo de fondo para la tarjeta */
         .tracker-promo-card::before {
             content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
             background: radial-gradient(circle, rgba(200, 168, 75, 0.05) 0%, transparent 60%);
@@ -75,6 +76,46 @@
             background: #ffb845; transform: translateY(-3px); box-shadow: 0 6px 20px rgba(200, 168, 75, 0.3);
         }
 
+        /* Tarjetas Secundarias: Marcadores y Leaderboards */
+        .secondary-tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        .tool-card {
+            background: var(--bg-deep); 
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--radius); 
+            padding: 40px 30px; 
+            text-align: center; 
+            text-decoration: none; 
+            transition: all 0.3s;
+            display: block;
+        }
+        .tool-card:hover {
+            border-color: var(--accent-gold); 
+            background: rgba(200, 168, 75, 0.05); 
+            transform: translateY(-5px); 
+        }
+        .tool-card i {
+            font-size: 2.5rem; 
+            color: var(--accent-gold); 
+            margin-bottom: 15px; 
+        }
+        .tool-card h3 {
+            font-family: 'Cinzel', serif; 
+            font-size: 1.3rem; 
+            color: var(--text-main); 
+            margin-bottom: 10px; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .tool-card p {
+            color: var(--text-dim); 
+            font-size: 0.95rem; 
+            line-height: 1.5;
+        }
+
         /* Redes Sociales Grid */
         .social-grid {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; padding: 0 20px 80px; max-width: 1000px; margin: 0 auto;
@@ -93,7 +134,6 @@
 </head>
 <body>
 
-    <!-- NAVBAR -->
     <header class="navbar">
         <a href="index.html" class="logo-container">
             <div class="logo-emblem">
@@ -118,7 +158,6 @@
         <div class="nav-spacer"></div>
     </header>
 
-    <!-- HEADER COMUNIDAD -->
     <section class="community-header">
         <div class="community-header-content">
             <h1>Nuestra Comunidad</h1>
@@ -126,7 +165,6 @@
         </div>
     </section>
 
-    <!-- HERRAMIENTAS / TRACKER -->
     <section class="tools-section">
         <div class="section-header" style="text-align: center; margin-bottom: 30px;">
             <div class="section-eyebrow">Herramientas de Juego</div>
@@ -141,31 +179,40 @@
                 </div>
                 <h2>Match Tracker 11th Ed</h2>
                 <p>Olvida el papel y el lápiz. Lleva el control de tus Puntos de Mando (CP), Puntos de Victoria (VP), Misiones Primarias y Secundarias directamente desde tu celular en tiempo real.</p>
-                <!-- ENLACE AL TRACKER -->
                 <a href="tracker.html" class="tracker-btn">
                     <i class="fas fa-play"></i> Iniciar Partida
                 </a>
             </div>
         </div>
+
+        <div class="secondary-tools-grid">
+            <a href="ranking.html" class="tool-card">
+                <i class="fas fa-trophy"></i>
+                <h3>Leaderboards</h3>
+                <p>Consulta la clasificación general de la comunidad. Revisa quién lidera la cruzada y cómo se posiciona tu facción.</p>
+            </a>
+            
+            <a href="partidas.html" class="tool-card">
+                <i class="fas fa-clipboard-list"></i>
+                <h3>Marcadores</h3>
+                <p>Revisa el historial de enfrentamientos, resultados recientes de la liga y estadísticas de partidas anteriores.</p>
+            </a>
+        </div>
     </section>
 
-    <!-- REDES SOCIALES -->
     <section class="social-grid">
-        <!-- Discord -->
         <a href="https://discord.gg/HbMyzKFqzc" target="_blank" class="social-card discord">
             <i class="fab fa-discord"></i>
             <h3>Servidor de Discord</h3>
             <p>El cuartel general virtual. Encuentra oponentes, discute reglas, listas y comparte memes herejes.</p>
         </a>
         
-        <!-- WhatsApp (Pon tu link real) -->
         <a href="#" target="_blank" class="social-card whatsapp">
             <i class="fab fa-whatsapp"></i>
             <h3>Grupo de WhatsApp</h3>
             <p>Comunícate rápidamente con los miembros locales para organizar partidas de fin de semana.</p>
         </a>
 
-        <!-- Instagram -->
         <a href="https://www.instagram.com/herejaibas/" target="_blank" class="social-card instagram">
             <i class="fab fa-instagram"></i>
             <h3>Instagram</h3>
@@ -173,7 +220,6 @@
         </a>
     </section>
 
-    <!-- FOOTER -->
     <footer class="site-footer">
         <div class="footer-inner">
             <div class="footer-brand">
@@ -203,7 +249,6 @@
         </div>
     </footer>
 
-    <!-- Lógica del Nav móvil -->
     <script>
         const navToggle = document.getElementById("nav-toggle");
         const mainNav   = document.getElementById("main-nav");
