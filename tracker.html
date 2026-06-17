@@ -447,6 +447,15 @@
                                     <span class="tb-vp-sub">TOTAL VP</span>
                                 </div>
                             </div>
+
+                            <div class="tb-cp-control" style="background: #23262f; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2a2e38;">
+                                <span style="font-weight: 800; font-size: 0.85rem; color: #888; letter-spacing: 1px;">COMMAND POINTS</span>
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <button onclick="updateCP(1, -1)" style="background:none; border:1px solid #3a3f4b; color:#fff; border-radius:4px; width:30px; height:30px; cursor:pointer;"><i class="fas fa-minus"></i></button>
+                                    <span id="tb-cp-p2" style="font-family: 'Oswald', sans-serif; font-size: 1.6rem; width: 25px; text-align: center;">0</span>
+                                    <button onclick="updateCP(1, 1)" style="background:#4a90e2; border:none; color:#fff; border-radius:4px; width:30px; height:30px; cursor:pointer;"><i class="fas fa-plus"></i></button>
+                                </div>
+                            </div>
                             
                             <!-- P1 Primary -->
                             <div class="tb-section">
@@ -486,6 +495,22 @@
                                     <span class="tb-vp-big" id="tb-col-tot-p2">10</span>
                                     <span class="tb-vp-sub">TOTAL VP</span>
                                 </div>
+                            </div>
+
+                            <div class="tb-cp-control" style="background: #23262f; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2a2e38;">
+
+                                <span style="font-weight: 800; font-size: 0.85rem; color: #888; letter-spacing: 1px;">COMMAND POINTS</span>
+
+                                <div style="display: flex; align-items: center; gap: 15px;">
+
+                                    <button onclick="updateCP(2, -1)" style="background:none; border:1px solid #3a3f4b; color:#fff; border-radius:4px; width:30px; height:30px; cursor:pointer;"><i class="fas fa-minus"></i></button>
+
+                                    <span id="tb-cp-p1" style="font-family: 'Oswald', sans-serif; font-size: 1.6rem; width: 25px; text-align: center;">0</span>
+
+                                    <button onclick="updateCP(2, 1)" style="background:#e24a4a; border:none; color:#fff; border-radius:4px; width:30px; height:30px; cursor:pointer;"><i class="fas fa-plus"></i></button>
+
+                                </div>
+
                             </div>
                             
                             <!-- P2 Primary -->
@@ -565,6 +590,7 @@
             <button class="am-btn" id="settings-br-p1" onclick="toggleBattleReady(1); refreshSettingsModal();"><i class="fas fa-star"></i> BATTLE READY — <span id="settings-br-p1-name">J1</span></button>
             <button class="am-btn" id="settings-br-p2" onclick="toggleBattleReady(2); refreshSettingsModal();"><i class="fas fa-star"></i> BATTLE READY — <span id="settings-br-p2-name">J2</span></button>
             <button class="am-btn return" onclick="goToSetupFromBoard()"><i class="fas fa-undo"></i> VOLVER A CONFIGURACIÓN</button>
+            <button class="am-btn score" id="btn-end-match" onclick="finalizarYSubir()"><i class="fas fa-cloud-upload-alt"></i> FINALIZAR Y SUBIR RESULTADO</button>
             <button class="am-btn discard" onclick="cancelGame()"><i class="fas fa-flag"></i> CANCELAR PARTIDA</button>
         </div>
     </div>
@@ -592,6 +618,9 @@
             <button class="am-btn score" onclick="confirmVpModal()"><i class="fas fa-check"></i> CONFIRMAR</button>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
 
     <script>
         /* ============================================================
@@ -778,12 +807,24 @@
            ============================================================ */
         let tkState = {
             step: 1, maxSteps: 7, round: 1,
-            p1: { name: 'JUGADOR 1', faction: '', detachments: [], forceDisposition: '', role: '', secType: '', battleReady: false, vpPrimary: 0, vpSecondary: 0, deck: [], activeSecs: [], discardedSecs: [] },
-            p2: { name: 'JUGADOR 2', faction: '', detachments: [], forceDisposition: '', role: '', secType: '', battleReady: false, vpPrimary: 0, vpSecondary: 0, deck: [], activeSecs: [], discardedSecs: [] },
+            p1: { name: 'JUGADOR 1', cp: 0, faction: '', detachments: [], forceDisposition: '', role: '', secType: '', battleReady: false, vpPrimary: 0, vpSecondary: 0, deck: [], activeSecs: [], discardedSecs: [] },
+            p2: { name: 'JUGADOR 2', cp: 0, faction: '', detachments: [], forceDisposition: '', role: '', secType: '', battleReady: false, vpPrimary: 0, vpSecondary: 0, deck: [], activeSecs: [], discardedSecs: [] },
             rollOffWinner: 0, firstTurn: 0
         };
 
         function initTracker() {
+            const savedState = localStorage.getItem('herejaibas_tkPartida');
+            if (savedState) {
+                tkState = JSON.parse(savedState);
+                if (tkState.step === 7) {
+                    document.getElementById('setup-header').style.display = 'none';
+                    document.getElementById('setup-footer').style.display = 'none';
+                    renderTrackerBoard();
+                }
+                updateView();
+                return; // Evita inicializar desde cero si ya hay datos
+                }
+
             const p1Select = document.getElementById('tk-p1-faction');
             const p2Select = document.getElementById('tk-p2-faction');
             let options = '<option value="">Facción (obligatorio)</option>';
@@ -963,8 +1004,11 @@
             
             document.getElementById('tb-p1-prim-score').textContent = tkState.p1.vpPrimary; document.getElementById('tb-p2-prim-score').textContent = tkState.p2.vpPrimary;
             document.getElementById('tb-p1-sec-score').textContent = tkState.p1.vpSecondary; document.getElementById('tb-p2-sec-score').textContent = tkState.p2.vpSecondary;
-
+            document.getElementById('tb-cp-p1').textContent = tkState.p1.cp;
+            
+            document.getElementById('tb-cp-p2').textContent = tkState.p2.cp;
             document.getElementById('tb-cur-round').textContent = tkState.round;
+
             document.querySelectorAll('.btn-r-text').forEach(el => el.textContent = tkState.round);
 
             const p1SecsBox = document.getElementById('tb-p1-active-secs');
@@ -994,6 +1038,7 @@
             }
             document.getElementById('tb-p2-deck-count').textContent = tkState.p2.deck.length;
             document.getElementById('tb-p2-draw').disabled = tkState.p2.deck.length === 0 || tkState.p2.activeSecs.length >= 2;
+            localStorage.setItem('herejaibas_tkPartida', JSON.stringify(tkState));
         }
 
         window.changeRound = function(delta) {
@@ -1001,6 +1046,12 @@
             if(tkState.round < 1) tkState.round = 1; if(tkState.round > 5) tkState.round = 5;
             renderTrackerBoard();
         }
+
+        window.updateCP = function(pNum, delta) {
+            const player = pNum === 1 ? tkState.p1 : tkState.p2;
+            player.cp = Math.max(0, player.cp + delta); // Evita que los CP bajen de 0
+            document.getElementById(`tb-cp-p${pNum}`).textContent = player.cp;
+}
 
         window.scorePrimary = function(pNum) {
             const pName = pNum === 1 ? tkState.p1.name : tkState.p2.name;
@@ -1271,6 +1322,7 @@
             document.getElementById('setup-header').style.display = 'block';
             document.getElementById('setup-footer').style.display = 'flex';
             updateView();
+            localStorage.removeItem('herejaibas_tkPartida');
         }
 
         /* ---------------- FLUJO PRINCIPAL ---------------- */
@@ -1352,6 +1404,7 @@
                 else if (tkState.step === 6) { document.getElementById('header-title').textContent = "PRIMER TURNO"; document.getElementById('header-desc').textContent = "AMBOS JUGADORES TIRAN 1D6 · GANA EL MAYOR · REPETIR EMPATES"; document.getElementById('tk-back-btn').textContent = "ATRÁS"; }
                 checkNextButtonState();
             }
+            localStorage.setItem('herejaibas_tkPartida', JSON.stringify(tkState));
         }
 
         /* Cerrar modales con la tecla ESC, para que el usuario nunca quede "atrapado" en un submenú */
@@ -1365,6 +1418,51 @@
         });
 
         document.addEventListener('DOMContentLoaded', initTracker);
+
+        window.finalizarYSubir = async function() {
+            if(!confirm('¿Finalizar partida y subir resultado al Leaderboard?')) return;
+
+            const btn = document.getElementById('btn-end-match');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> SUBIENDO...';
+            btn.disabled = true;
+
+            // Calcular totales
+            const p1Total = tkState.p1.vpPrimary + tkState.p1.vpSecondary + (tkState.p1.battleReady ? 10 : 0);
+            const p2Total = tkState.p2.vpPrimary + tkState.p2.vpSecondary + (tkState.p2.battleReady ? 10 : 0);
+
+            // Unir destacamentos en un string (ej: "Gladius Task Force, Ironstorm")
+            const p1Det = tkState.p1.detachments.map(d => d.name).join(', ');
+            const p2Det = tkState.p2.detachments.map(d => d.name).join(', ');
+
+            try {
+                // Asume que tu variable exportada en supabase-config.js se llama "supabase"
+                const { error } = await supabase
+                    .from('partidas') // <-- Cambia al nombre real de tu tabla
+                    .insert([{
+                        jugador1_nombre: tkState.p1.name,
+                        jugador1_faccion: tkState.p1.faction,
+                        jugador1_destacamento: p1Det,
+                        jugador1_score: p1Total,
+                        jugador2_nombre: tkState.p2.name,
+                        jugador2_faccion: tkState.p2.faction,
+                        jugador2_destacamento: p2Det,
+                        jugador2_score: p2Total,
+                        fecha: new Date().toISOString()
+                    }]);
+
+                if (error) throw error;
+
+                alert('¡Partida registrada con éxito!');
+                localStorage.removeItem('herejaibas_tkPartida'); // Borra la memoria local
+                window.location.href = 'ranking.html'; // Redirige a la página de Leaderboard
+
+            } catch (err) {
+                console.error("Error al subir a Supabase:", err);
+                alert('Hubo un error al subir la partida. Intenta de nuevo.');
+                btn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> FINALIZAR Y SUBIR RESULTADO';
+                btn.disabled = false;
+            }
+        };
     </script>
 </body>
 </html>
