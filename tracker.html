@@ -813,23 +813,37 @@
         };
 
         function initTracker() {
+            // 1. PRIMERO: Rellenamos siempre los select de las facciones (haya o no guardado)
+            const p1Select = document.getElementById('tk-p1-faction');
+            const p2Select = document.getElementById('tk-p2-faction');
+            let options = '<option value="">Facción (obligatorio)</option>';
+            tkFactionsList.forEach(f => options += `<option value="${f}">${f}</option>`);
+            p1Select.innerHTML = options; p2Select.innerHTML = options;
+
+            // 2. LUEGO: Revisamos si hay partida en memoria
             const savedState = localStorage.getItem('herejaibas_tkPartida');
             if (savedState) {
                 tkState = JSON.parse(savedState);
+                
+                // 3. Restauramos los datos visuales en los inputs del Paso 1
+                document.getElementById('tk-p1-name').value = tkState.p1.name === 'JUGADOR 1' ? '' : tkState.p1.name;
+                document.getElementById('tk-p2-name').value = tkState.p2.name === 'JUGADOR 2' ? '' : tkState.p2.name;
+                p1Select.value = tkState.p1.faction;
+                p2Select.value = tkState.p2.faction;
+                
+                if (tkState.p1.battleReady) document.getElementById('tk-p1-br').classList.add('active');
+                if (tkState.p2.battleReady) document.getElementById('tk-p2-br').classList.add('active');
+
                 if (tkState.step === 7) {
                     document.getElementById('setup-header').style.display = 'none';
                     document.getElementById('setup-footer').style.display = 'none';
                     renderTrackerBoard();
                 }
                 updateView();
-                return; // Evita inicializar desde cero si ya hay datos
-                }
-
-            const p1Select = document.getElementById('tk-p1-faction');
-            const p2Select = document.getElementById('tk-p2-faction');
-            let options = '<option value="">Facción (obligatorio)</option>';
-            tkFactionsList.forEach(f => options += `<option value="${f}">${f}</option>`);
-            p1Select.innerHTML = options; p2Select.innerHTML = options;
+                checkNextButtonState();
+                return; // Ahora sí cortamos
+            }
+            
             checkNextButtonState();
         }
 
@@ -996,6 +1010,12 @@
         }
 
         function renderTrackerBoard() {
+
+            document.getElementById('tb-name-p1').textContent = tkState.p1.name;
+            document.getElementById('tb-col-name-p1').textContent = tkState.p1.name;
+            document.getElementById('tb-name-p2').textContent = tkState.p2.name;
+            document.getElementById('tb-col-name-p2').textContent = tkState.p2.name;    
+
             const p1Total = tkState.p1.vpPrimary + tkState.p1.vpSecondary + (tkState.p1.battleReady ? 10 : 0);
             const p2Total = tkState.p2.vpPrimary + tkState.p2.vpSecondary + (tkState.p2.battleReady ? 10 : 0);
             
