@@ -1071,6 +1071,8 @@
             const player = pNum === 1 ? tkState.p1 : tkState.p2;
             player.cp = Math.max(0, player.cp + delta); // Evita que los CP bajen de 0
             document.getElementById(`tb-cp-p${pNum}`).textContent = player.cp;
+            // AGREGA ESTA LÍNEA PARA GUARDAR:
+            localStorage.setItem('herejaibas_tkPartida', JSON.stringify(tkState));
 }
 
         window.scorePrimary = function(pNum) {
@@ -1274,10 +1276,11 @@
             document.getElementById('vp-modal').classList.remove('open');
             vpModalCallback = null;
         }
+        // CÁMBIALA PARA QUE QUEDE ASÍ:
         window.vpAdjust = function(delta) {
             const input = document.getElementById('vp-modal-input');
             let val = parseInt(input.value) || 0;
-            val = Math.max(0, val + delta);
+            val = val + delta; // <-- Se quitó el Math.max(0, ...)
             input.value = val;
         }
         window.vpAdd = function(val) {
@@ -1287,12 +1290,13 @@
         window.vpReset = function() {
             document.getElementById('vp-modal-input').value = 0;
         }
+        // CÁMBIALA PARA QUE QUEDE ASÍ:
         window.confirmVpModal = function() {
-            const val = Math.max(0, parseInt(document.getElementById('vp-modal-input').value) || 0);
+            const val = parseInt(document.getElementById('vp-modal-input').value) || 0; // <-- Se quitó el Math.max(0, ...)
             const cb = vpModalCallback;
             closeVpModal();
             if (cb) cb(val);
-        }
+}
 
         /* ---------------- MODAL DE CONFIGURACIÓN / PAUSA ---------------- */
         window.openSettingsModal = function() {
@@ -1450,31 +1454,39 @@
             const p1Total = tkState.p1.vpPrimary + tkState.p1.vpSecondary + (tkState.p1.battleReady ? 10 : 0);
             const p2Total = tkState.p2.vpPrimary + tkState.p2.vpSecondary + (tkState.p2.battleReady ? 10 : 0);
 
-            // Unir destacamentos en un string (ej: "Gladius Task Force, Ironstorm")
+            // Calcular ganador para las coronas en la UI
+            let nombreGanador = null;
+            if (p1Total > p2Total) nombreGanador = tkState.p1.name;
+            else if (p2Total > p1Total) nombreGanador = tkState.p2.name;
+
+            // Unir destacamentos
             const p1Det = tkState.p1.detachments.map(d => d.name).join(', ');
             const p2Det = tkState.p2.detachments.map(d => d.name).join(', ');
 
             try {
-                // Asume que tu variable exportada en supabase-config.js se llama "supabase"
-                const { error } = await supabase
-                    .from('partidas') // <-- Cambia al nombre real de tu tabla
+                // Inicializar el cliente de Supabase
+                const sb = supabase.createClient(window._sbUrl, window._sbAnon);
+
+                // Enviar con los nombres exactos que espera partidas.html
+                const { error } = await sb
+                    .from('partidas') 
                     .insert([{
-                        jugador1_nombre: tkState.p1.name,
-                        jugador1_faccion: tkState.p1.faction,
-                        jugador1_destacamento: p1Det,
-                        jugador1_score: p1Total,
-                        jugador2_nombre: tkState.p2.name,
-                        jugador2_faccion: tkState.p2.faction,
-                        jugador2_destacamento: p2Det,
-                        jugador2_score: p2Total,
-                        fecha: new Date().toISOString()
+                        sistema: 'Warhammer 40K', // Para que funcione el filtro de sistema
+                        jugador1: tkState.p1.name,
+                        ejercito1: tkState.p1.faction + (p1Det ? ` - ${p1Det}` : ''),
+                        puntos1: p1Total,
+                        jugador2: tkState.p2.name,
+                        ejercito2: tkState.p2.faction + (p2Det ? ` - ${p2Det}` : ''),
+                        puntos2: p2Total,
+                        ganador: nombreGanador,
+                        fecha: new Date().toISOString().split('T')[0] // Formato de fecha esperado YYYY-MM-DD
                     }]);
 
                 if (error) throw error;
 
                 alert('¡Partida registrada con éxito!');
-                localStorage.removeItem('herejaibas_tkPartida'); // Borra la memoria local
-                window.location.href = 'ranking.html'; // Redirige a la página de Leaderboard
+                localStorage.removeItem('herejaibas_tkPartida'); 
+                window.location.href = 'partidas.html'; // Redirige a partidas
 
             } catch (err) {
                 console.error("Error al subir a Supabase:", err);
