@@ -260,6 +260,34 @@
         .am-btn.return { background: #1a1c23; border-style: dashed; } .am-btn.return:hover { background: #3a3f4b; }
         .am-btn.view { background: #4a90e2; border-color: #4a90e2; } .am-btn.view:hover { background: #5ca0ed; }
         .am-btn-cp { font-size: 0.8rem; background: #fff; color: #112; padding: 3px 8px; border-radius: 4px; margin-left: auto;}
+    
+        /* ==========================================
+           NUEVOS ESTILOS PARA PRIMARIAS (TOGGLES EN TIEMPO REAL)
+           ========================================== */
+        .pri-toggle-box {
+            display: flex; justify-content: space-between; align-items: center;
+            background: #23262f; border: 1px solid #3a3f4b; border-radius: 8px; padding: 16px;
+            cursor: pointer; transition: all 0.2s; margin-bottom: 8px;
+        }
+        .pri-toggle-box.active { background: #27ae60; border-color: #27ae60; }
+        .pri-toggle-text {
+            flex: 1; font-size: 0.95rem; line-height: 1.3; color: #fff; font-weight: 700; padding-right: 10px; text-align: left;
+        }
+        .pri-vp-badge {
+            background: #fff; color: #27ae60; font-weight: 900; padding: 6px 12px; border-radius: 6px; font-size: 1rem; flex-shrink: 0;
+        }
+        .pri-toggle-box:not(.active) .pri-vp-badge { color: #888; background: #1a1c23; }
+        
+        .pri-cum-container {
+            display: flex; flex-direction: column; gap: 12px; margin-bottom: 8px; margin-top: 8px;
+            background: #1a1c23; border: 1px dashed #f5a623; border-radius: 8px; padding: 16px;
+        }
+        .pri-cum-top { display: flex; justify-content: space-between; align-items: center; }
+        .pri-cum-text { flex: 1; font-size: 0.95rem; color: #f5a623; font-weight: 700; text-align: left; padding-right: 10px;}
+        .pri-cum-badge { background: #f5a623; color: #112; font-weight: 900; padding: 6px 12px; border-radius: 6px; font-size: 1rem; flex-shrink: 0; }
+        .pri-cum-controls { display: flex; align-items: center; justify-content: center; gap: 20px; background: #23262f; border-radius: 6px; padding: 8px 15px; border: 1px solid #3a3f4b;}
+        .pri-cum-btn { background: none; border: none; color: #f5a623; font-size: 1.8rem; cursor: pointer; padding: 0 15px; font-weight: bold;}
+
     </style>
 </head>
 <body>
@@ -457,10 +485,12 @@
                                 </div>
                             </div>
                             
-                            <!-- P1 Primary -->
                             <div class="tb-section">
                                 <div class="tb-sec-header">
-                                    <span class="tb-sec-title">PRIMARIA</span>
+                                    <div style="display: flex; flex-direction: column; gap: 2px;">
+                                        <span class="tb-sec-title">PRIMARIA</span>
+                                        <span onclick="editScore(1, 'primary')" style="color: #f5a623; font-size: 0.65rem; font-weight: 800; letter-spacing: 1px; cursor: pointer; text-transform: uppercase;"><i class="fas fa-edit"></i> Corregir Puntos</span>
+                                    </div>
                                     <span class="tb-sec-score"><span id="tb-p1-prim-score">0</span>/45</span>
                                 </div>
                                 <div class="tb-primary-row">
@@ -469,10 +499,12 @@
                                 </div>
                             </div>
 
-                            <!-- P1 Secondary -->
                             <div class="tb-section">
                                 <div class="tb-sec-header">
-                                    <span class="tb-sec-title">SECUNDARIAS · <span id="tb-p1-sec-type">TÁCTICA</span></span>
+                                    <div style="display: flex; flex-direction: column; gap: 2px;">
+                                        <span class="tb-sec-title">SECUNDARIAS · <span id="tb-p1-sec-type">TÁCTICA</span></span>
+                                        <span onclick="editScore(1, 'secondary')" style="color: #f5a623; font-size: 0.65rem; font-weight: 800; letter-spacing: 1px; cursor: pointer; text-transform: uppercase;"><i class="fas fa-edit"></i> Corregir Puntos</span>
+                                    </div>
                                     <span class="tb-sec-score"><span id="tb-p1-sec-score">0</span>/45</span>
                                 </div>
                                 
@@ -516,7 +548,10 @@
                             <!-- P2 Primary -->
                             <div class="tb-section">
                                 <div class="tb-sec-header">
-                                    <span class="tb-sec-title">PRIMARIA</span>
+                                    <div style="display: flex; flex-direction: column; gap: 2px;">
+                                        <span class="tb-sec-title">PRIMARIA</span>
+                                        <span onclick="editScore(2, 'primary')" style="color: #f5a623; font-size: 0.65rem; font-weight: 800; letter-spacing: 1px; cursor: pointer; text-transform: uppercase;"><i class="fas fa-edit"></i> Corregir Puntos</span>
+                                    </div>
                                     <span class="tb-sec-score"><span id="tb-p2-prim-score">0</span>/45</span>
                                 </div>
                                 <div class="tb-primary-row">
@@ -525,10 +560,12 @@
                                 </div>
                             </div>
 
-                            <!-- P2 Secondary -->
                             <div class="tb-section">
                                 <div class="tb-sec-header">
-                                    <span class="tb-sec-title">SECUNDARIAS · <span id="tb-p2-sec-type">TÁCTICA</span></span>
+                                    <div style="display: flex; flex-direction: column; gap: 2px;">
+                                        <span class="tb-sec-title">SECUNDARIAS · <span id="tb-p2-sec-type">TÁCTICA</span></span>
+                                        <span onclick="editScore(2, 'secondary')" style="color: #f5a623; font-size: 0.65rem; font-weight: 800; letter-spacing: 1px; cursor: pointer; text-transform: uppercase;"><i class="fas fa-edit"></i> Corregir Puntos</span>
+                                    </div>
                                     <span class="tb-sec-score"><span id="tb-p2-sec-score">0</span>/45</span>
                                 </div>
                                 
@@ -565,19 +602,18 @@
 
     <!-- MODAL DE MENÚ ACCIÓN SECUNDARIA -->
     <div id="action-modal" class="modal-overlay" onclick="if(event.target===this) closeActionModal()">
-        <div class="modal-box" style="max-width: 450px; text-align:center;">
-            <button class="modal-close" style="top: 15px; right: 15px;" onclick="closeActionModal()"><i class="fas fa-times"></i></button>
-            <h3 class="am-title" id="am-name">NOMBRE SECUNDARIA</h3>
-            <p class="am-subtitle">Opciones de Misión</p>
-            
-            <button class="am-btn view" onclick="executeSecAction('view')"><i class="fas fa-eye"></i> VER CARTA</button>
-            <button class="am-btn score" onclick="executeSecAction('score')"><i class="fas fa-check-circle"></i> PUNTUAR (+ VP)</button>
-            <button class="am-btn discard" onclick="executeSecAction('discard')"><i class="fas fa-trash"></i> DESCARTAR</button>
-            <button class="am-btn return" id="btn-return-deck" onclick="executeSecAction('return')"><i class="fas fa-undo"></i> REGRESAR AL MAZO <span class="am-btn-cp" id="btn-return-cp">1 CP</span></button>
-            <input type="hidden" id="am-pnum" value="">
-            <input type="hidden" id="am-index" value="">
+            <div class="modal-box" style="max-width: 450px; text-align:center;">
+                <button class="modal-close" style="top: 15px; right: 15px;" onclick="closeActionModal()"><i class="fas fa-times"></i></button>
+                <h3 class="am-title" id="am-name">NOMBRE SECUNDARIA</h3>
+                <p class="am-subtitle">Opciones de Misión</p>
+                
+                <div id="dynamic-action-buttons">
+                    </div>
+
+                <input type="hidden" id="am-pnum" value="">
+                <input type="hidden" id="am-index" value="">
+            </div>
         </div>
-    </div>
 
     <!-- MODAL DE CONFIGURACIÓN / PAUSA -->
     <div id="settings-modal" class="modal-overlay" onclick="if(event.target===this) closeSettingsModal()">
@@ -683,7 +719,7 @@
             "Reconnaissance_Priority Assets": { name: "SEARCH AND SCOUR", type: "Reconnaissance", opponent: "PRIORITY ASSETS", rules: [ { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Controlas uno o más <strong>objetivos centrales</strong>.", vp: ["3"], hr: "Una o más unidades enemigas que comenzaron el turno dentro de un <strong>área de terreno</strong> han sido <strong>destruidas</strong>.", hrVp: "2" }, { title: "De la 2da Ronda en adelante", when: "Al final de tu fase de Mando (o al final de tu turno en la 5ta ronda)", desc: "Controlas uno o más <strong>objetivos</strong> (excluyendo tu <strong>objetivo base</strong>).", vp: ["4"] }, { title: "Fin de la Batalla", when: "", desc: "Ninguna unidad enemiga está completamente dentro de tu territorio.", vp: ["5"] } ] },
             "Priority Assets_Take and Hold": { name: "SECURE ASSET", type: "Priority Assets", opponent: "TAKE AND HOLD", rules: [ { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Una unidad aliada <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>aseguró el activo</strong> este turno (ver acción).", vp: ["4"], hr: "Al menos una unidad enemiga que comenzó el turno a rango de uno o más <strong>objetivos centrales</strong> fue <strong>destruida</strong>.", hrVp: "2" }, { title: "De la 2da Ronda en adelante", when: "Al final de tu fase de Mando (o al final de tu turno en la 5ta ronda)", desc: "Controlas uno o más <strong>objetivos</strong> (excluyendo tu <strong>objetivo base</strong>).", vp: ["4"], hr: "Controlas <strong>tres o más objetivos</strong>.", hrVp: "4" } ], action: { name: "ASEGURAR ACTIVO (SECURE ASSET)", type: "ACCIÓN DE OBJETIVO", starts: "Tu fase de Disparo.", units: "Una unidad aliada a rango de un <strong>objetivo</strong> (excluyendo tu <strong>objetivo base</strong>).", limit: "Una vez por turno.", completes: "Al final de tu turno, si tu unidad controla ese <strong>objetivo</strong>.", effect: "Tu unidad <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>asegura el activo</strong>." } },
             "Priority Assets_Purge the Foe": { name: "VITAL LINK", type: "Priority Assets", opponent: "PURGE THE FOE", rules: [ { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Controlas uno o más <strong>objetivos centrales</strong>.", vp: ["2"], cumulative: { desc: "Por cada uno de tus <strong>marcadores de operación</strong> a rango de uno de esos <strong>objetivos</strong> (ver acción).", vp: "+1" } }, { title: "De la 2da Ronda en adelante", when: "Al final de tu fase de Mando (o al final de tu turno en la 5ta ronda)", desc: "Controlas uno o más <strong>objetivos</strong> (excluyendo tu <strong>objetivo base</strong>).", vp: ["4"], cumulative: { desc: "Uno o más de esos <strong>objetivos</strong> es un <strong>objetivo central</strong>.", vp: "+4" } }, { title: "Fin de la Batalla", when: "", desc: "Controlas el <strong>objetivo base</strong> de tu oponente.", vp: ["10"] } ], action: { name: "MANTENER CONTROL (MAINTAIN CONTROL)", type: "ACCIÓN DE OBJETIVO", starts: "Tu fase de Disparo.", units: "Una unidad aliada a rango de un <strong>objetivo central</strong>.", limit: "Una vez por turno.", completes: "Al final de tu turno, si tu unidad controla ese <strong>objetivo</strong>.", effect: "Coloca uno de tus <strong>marcadores de operación</strong> a rango de ese <strong>objetivo</strong>." } },
-            "Priority Assets_Disruption": { name: "EXTRACT RELIC", type: "Priority Assets", opponent: "DISRUPTION", rules: [ { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Una unidad aliada realizó un <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>barrido de sensores</strong> este turno (ver acción).", vp: ["4"], hr: "Una o más unidades enemigas que comenzaron el turno a rango de uno o más <strong>objetivos</strong> han sido <strong>destruidas</strong>.", hrVp: "3", hr2: "Solo queda uno de los <strong>marcadores de operación</strong> de tu oponente en el campo de batalla, si una o más de tus unidades están dentro de la misma área de terreno que ese <strong>marcador de operación</strong>, y no hay unidades enemigas dentro de esa área de terreno.", hr2Vp: "4" }, { title: "De la 2da Ronda en adelante", when: "Al final de tu fase de Mando (o al final de tu turno en la 5ta ronda)", desc: "Controlas uno o más <strong>objetivos</strong> (excluyendo tu <strong>objetivo base</strong>).", vp: ["4"] }, { title: "Fin de la Batalla", when: "", desc: "Solo queda uno de los <strong>marcadores de operación</strong> de tu oponente en el campo de batalla, si una o más de tus unidades están dentro de la misma área de terreno que ese <strong>marcador de operación</strong>, y no hay unidades enemigas dentro de esa área de terreno.", vp: ["5"] } ], action: { name: "BARRIDO DE SENSORES (SENSOR SWEEP)", type: "ACCIÓN DE OBJETIVO", starts: "Tu fase de Disparo.", units: "Una unidad aliada a rango de un <strong>objetivo central</strong>.", limit: "Una vez por turno.", completes: "Al final de tu turno, si tu unidad controla ese <strong>objetivo</strong>.", effect: "Tu unidad realiza un <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>barrido de sensores</strong> — retira un marcador de operación del campo de batalla.", restrictions: "Una unidad no puede iniciar esta acción si solo queda un marcador de operación en el campo de batalla." } },
+            "Priority Assets_Disruption": { name: "EXTRACT RELIC", type: "Priority Assets", opponent: "DISRUPTION", rules: [ { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Una unidad aliada realizó un <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>barrido de sensores</strong> este turno (ver acción).", vp: ["4"], hr: "Una o más unidades enemigas que comenzó el turno a rango de uno o más <strong>objetivos</strong> han sido <strong>destruidas</strong>.", hrVp: "3", hr2: "Solo queda uno de los <strong>marcadores de operación</strong> de tu oponente en el campo de batalla, si una o más de tus unidades están dentro de la misma área de terreno que ese <strong>marcador de operación</strong>, y no hay unidades enemigas dentro de esa área de terreno.", hr2Vp: "4" }, { title: "De la 2da Ronda en adelante", when: "Al final de tu fase de Mando (o al final de tu turno en la 5ta ronda)", desc: "Controlas uno o más <strong>objetivos</strong> (excluyendo tu <strong>objetivo base</strong>).", vp: ["4"] }, { title: "Fin de la Batalla", when: "", desc: "Solo queda uno de los <strong>marcadores de operación</strong> de tu oponente en el campo de batalla, si una o más de tus unidades están dentro de la misma área de terreno que ese <strong>marcador de operación</strong>, y no hay unidades enemigas dentro de esa área de terreno.", vp: ["5"] } ], action: { name: "BARRIDO DE SENSORES (SENSOR SWEEP)", type: "ACCIÓN DE OBJETIVO", starts: "Tu fase de Disparo.", units: "Una unidad aliada a rango de un <strong>objetivo central</strong>.", limit: "Una vez por turno.", completes: "Al final de tu turno, si tu unidad controla ese <strong>objetivo</strong>.", effect: "Tu unidad realiza un <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>barrido de sensores</strong> — retira un marcador de operación del campo de batalla.", restrictions: "Una unidad no puede iniciar esta acción si solo queda un marcador de operación en el campo de batalla." } },
             "Priority Assets_Reconnaissance": { name: "VANGUARD OPERATION", type: "Priority Assets", opponent: "RECONNAISSANCE", rules: [ { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Una unidad aliada realizó una <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>operación de vanguardia</strong> este turno (ver acción).", vp: ["4"], hr: "Una o más unidades enemigas fueron <strong>destruidas</strong> este turno.", hrVp: "2" }, { title: "De la 2da Ronda en adelante", when: "Al final de tu fase de Mando (o al final de tu turno en la 5ta ronda)", desc: "Controlas uno o más <strong>objetivos</strong> (excluyendo tu <strong>objetivo base</strong>).", vp: ["4"] }, { title: "Fin de la Batalla", when: "", desc: "Controlas el <strong>objetivo base</strong> de tu oponente.", vp: ["10"] } ], action: { name: "OPERACIÓN DE VANGUARDIA (VANGUARD OPERATION)", type: "ACCIÓN DE OBJETIVO", starts: "Tu fase de Disparo.", units: "Una unidad aliada dentro de un área de terreno ubicada en territorio enemigo.", limit: "Una vez por turno.", completes: "Al final de tu turno, siempre que no haya unidades enemigas dentro de esa área de terreno.", effect: "Tu unidad realiza una <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>operación de vanguardia</strong>." } },
             "Priority Assets_Priority Assets": { name: "SABOTAGE", type: "Priority Assets", opponent: "PRIORITY ASSETS - MIRROR", rules: [ { title: "Cualquier Ronda de Batalla", when: "Al final de tu turno", desc: "Por cada unidad aliada que haya <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>cometido sabotaje</strong> este turno (ver acción).", vp: ["3"], cumulative: { desc: "Por cada una de esas <strong>unidades</strong> que esté a rango de uno o más <strong>objetivos</strong> en el territorio de tu oponente.", vp: "+2" } }, { title: "De la 2da Ronda en adelante", when: "Al final de tu fase de Mando (o al final de tu turno en la 5ta ronda)", desc: "Controlas uno o más <strong>objetivos</strong> (excluyendo tu <strong>objetivo base</strong>).", vp: ["4"] } ], action: { name: "SABOTAJE (SABOTAGE)", type: "ACCIÓN DE OBJETIVO", starts: "Tu fase de Disparo.", units: "Una unidad a rango de un <strong>objetivo</strong> (excluyendo tu <strong>objetivo base</strong>).", limit: "Ilimitado. Cada unidad que inicie esta acción en esta fase debe estar a rango de un <strong>objetivo</strong> diferente.", completes: "Al final de tu turno, si esa unidad controla ese <strong>objetivo</strong>.", effect: "Tu unidad <strong style='background:rgba(245,166,35,0.3);padding:0 4px;border-radius:3px;'>comete sabotaje</strong>." } }
         };
@@ -1009,11 +1045,30 @@
         }
 
         function renderTrackerBoard() {
+            // Aseguramos que la estructura por rondas exista y sumamos el gran total dinámicamente
+            [tkState.p1, tkState.p2].forEach(p => {
+                if (!p.roundScores) p.roundScores = {1:{}, 2:{}, 3:{}, 4:{}, 5:{}};
+                let pTot = 0, sTot = 0;
+                for(let r=1; r<=5; r++) {
+                    if(p.roundScores[r]) {
+                        pTot += (p.roundScores[r].primary || 0);
+                        sTot += (p.roundScores[r].secondary || 0);
+                    }
+                }
+                p.vpPrimary = Math.min(pTot, 45); // Máximo 45 VP primarios en total
+                p.vpSecondary = Math.min(sTot, 40); // Máximo 40 VP secundarios en total
+            });
 
             document.getElementById('tb-name-p1').textContent = tkState.p1.name;
             document.getElementById('tb-col-name-p1').textContent = tkState.p1.name;
             document.getElementById('tb-name-p2').textContent = tkState.p2.name;
-            document.getElementById('tb-col-name-p2').textContent = tkState.p2.name;    
+            document.getElementById('tb-col-name-p2').textContent = tkState.p2.name;  
+
+            // FIX: Actualizar los nombres de misión dinámicamente
+            const m1 = MISSION_MATRIX[`${tkState.p1.forceDisposition}_${tkState.p2.forceDisposition}`];
+            const m2 = MISSION_MATRIX[`${tkState.p2.forceDisposition}_${tkState.p1.forceDisposition}`];
+            document.getElementById('tb-p1-prim-name').textContent = m1 ? m1.name : "MISIÓN";
+            document.getElementById('tb-p2-prim-name').textContent = m2 ? m2.name : "MISIÓN";
 
             const p1Total = tkState.p1.vpPrimary + tkState.p1.vpSecondary + (tkState.p1.battleReady ? 10 : 0);
             const p2Total = tkState.p2.vpPrimary + tkState.p2.vpSecondary + (tkState.p2.battleReady ? 10 : 0);
@@ -1070,18 +1125,178 @@
             const player = pNum === 1 ? tkState.p1 : tkState.p2;
             player.cp = Math.max(0, player.cp + delta); // Evita que los CP bajen de 0
             document.getElementById(`tb-cp-p${pNum}`).textContent = player.cp;
-            // AGREGA ESTA LÍNEA PARA GUARDAR:
-            localStorage.setItem('herejaibas_tkPartida', JSON.stringify(tkState));
-}
+            renderTrackerBoard(); // ACTUALIZA LA UI Y GUARDA
+        };
 
+        /* ---------------- FORMULARIO INTELIGENTE DE PRIMARIAS (TIEMPO REAL) ---------------- */
         window.scorePrimary = function(pNum) {
-            const pName = pNum === 1 ? tkState.p1.name : tkState.p2.name;
-            openVpModal('ANOTAR PRIMARIA', `${pName} · Ronda ${tkState.round}`, function(pts) {
-                if(pNum === 1) tkState.p1.vpPrimary += pts; else tkState.p2.vpPrimary += pts;
-                renderTrackerBoard();
+            const pState = pNum === 1 ? tkState.p1 : tkState.p2;
+            const oppState = pNum === 1 ? tkState.p2 : tkState.p1;
+            const missionData = MISSION_MATRIX[`${pState.forceDisposition}_${oppState.forceDisposition}`];
+            
+            if (!missionData) { alert('Misión no encontrada'); return; }
+            if (!pState.roundScores) pState.roundScores = {1:{}, 2:{}, 3:{}, 4:{}, 5:{}};
+            if (!pState.roundScores[tkState.round]) pState.roundScores[tkState.round] = {};
+            if (!pState.roundScores[tkState.round].inputs) pState.roundScores[tkState.round].inputs = {};
+            
+            const savedInputs = pState.roundScores[tkState.round].inputs;
+
+            document.getElementById('am-name').textContent = missionData.name;
+            document.getElementById('am-pnum').value = pNum;
+            document.querySelector('#action-modal .am-subtitle').textContent = `FORMULARIO · RONDA ${tkState.round}`;
+
+            let html = `<div id="pri-form-${pNum}" style="text-align:left; display:flex; flex-direction:column; gap:6px; margin-bottom:20px; max-height: 55vh; overflow-y:auto; padding-right:5px;">`;
+            
+            missionData.rules.forEach((r, idx) => {
+                html += `<div style="margin-bottom: 12px; border-bottom: 1px solid #2a2e38; padding-bottom: 12px;">
+                            <div style="font-weight:900; color:#4a90e2; margin-bottom:8px; font-size:0.8rem; text-transform:uppercase; letter-spacing:1px;">${r.title}</div>`;
+                
+                // Toggle Base o Contador Base
+                const val = parseInt(r.vp[0]);
+                const cleanDesc = r.desc.replace(/<\/?[^>]+(>|$)/g, "");
+                const isMult = cleanDesc.toLowerCase().includes('por cada');
+                
+                if (isMult) {
+                    const count = savedInputs[`r${idx}_base`] || 0;
+                    html += `<div class="pri-cum-container">
+                                <div class="pri-cum-top">
+                                    <span class="pri-cum-text">${cleanDesc}</span>
+                                    <span class="pri-cum-badge">+${val} c/u</span>
+                                </div>
+                                <div class="pri-cum-controls">
+                                    <button type="button" class="pri-cum-btn" onclick="adjCum(${pNum}, '${idx}_base', -1)">-</button>
+                                    <span id="pri_${pNum}_r${idx}_base_disp" style="font-weight:900; font-size:1.8rem; color:#fff; min-width:30px; text-align:center;">${count}</span>
+                                    <input type="hidden" class="pri-cum-input" id="pri_${pNum}_r${idx}_base" data-key="r${idx}_base" data-val="${val}" value="${count}">
+                                    <button type="button" class="pri-cum-btn" onclick="adjCum(${pNum}, '${idx}_base', 1)">+</button>
+                                </div>
+                             </div>`;
+                } else {
+                    const isActiveBase = savedInputs[`r${idx}_base`] ? 'active' : '';
+                    html += `   <div class="pri-toggle-box ${isActiveBase}" data-key="r${idx}_base" data-val="${val}" onclick="togglePriBtn(this, ${pNum})">
+                                    <span class="pri-toggle-text">${cleanDesc}</span>
+                                    <span class="pri-vp-badge">+${val} VP</span>
+                                </div>`;
+                }
+                
+                // Toggles Opcionales (OR, OR2, HR, HR2)
+                ['or', 'or2', 'hr', 'hr2'].forEach(opt => {
+                    if (r[opt]) {
+                        const optVal = parseInt(r[opt + 'Vp']);
+                        const cleanOptDesc = r[opt].replace(/<\/?[^>]+(>|$)/g, "");
+                        const isOptMult = cleanOptDesc.toLowerCase().includes('por cada');
+                        
+                        if (isOptMult) {
+                            const count = savedInputs[`r${idx}_${opt}`] || 0;
+                            html += `<div class="pri-cum-container">
+                                        <div class="pri-cum-top">
+                                            <span class="pri-cum-text">Opcional: ${cleanOptDesc}</span>
+                                            <span class="pri-cum-badge">+${optVal} c/u</span>
+                                        </div>
+                                        <div class="pri-cum-controls">
+                                            <button type="button" class="pri-cum-btn" onclick="adjCum(${pNum}, '${idx}_${opt}', -1)">-</button>
+                                            <span id="pri_${pNum}_r${idx}_${opt}_disp" style="font-weight:900; font-size:1.8rem; color:#fff; min-width:30px; text-align:center;">${count}</span>
+                                            <input type="hidden" class="pri-cum-input" id="pri_${pNum}_r${idx}_${opt}" data-key="r${idx}_${opt}" data-val="${optVal}" value="${count}">
+                                            <button type="button" class="pri-cum-btn" onclick="adjCum(${pNum}, '${idx}_${opt}', 1)">+</button>
+                                        </div>
+                                     </div>`;
+                        } else {
+                            const isActiveOpt = savedInputs[`r${idx}_${opt}`] ? 'active' : '';
+                            html += `<div class="pri-toggle-box ${isActiveOpt}" data-key="r${idx}_${opt}" data-val="${optVal}" onclick="togglePriBtn(this, ${pNum})">
+                                        <span class="pri-toggle-text">Opcional: ${cleanOptDesc}</span>
+                                        <span class="pri-vp-badge">+${optVal} VP</span>
+                                    </div>`;
+                        }
+                    }
+                });
+
+                // Contador Acumulativo (Este siempre es contador)
+                if (r.cumulative) {
+                    const cumVal = parseInt(r.cumulative.vp.replace('+',''));
+                    const cumCount = savedInputs[`r${idx}_cum`] || 0;
+                    html += `<div class="pri-cum-container">
+                                <div class="pri-cum-top">
+                                    <span class="pri-cum-text">Adicional: ${r.cumulative.desc.replace(/<\/?[^>]+(>|$)/g, "")}</span>
+                                    <span class="pri-cum-badge">+${cumVal} c/u</span>
+                                </div>
+                                <div class="pri-cum-controls">
+                                    <button type="button" class="pri-cum-btn" onclick="adjCum(${pNum}, '${idx}_cum', -1)">-</button>
+                                    <span id="pri_${pNum}_r${idx}_cum_disp" style="font-weight:900; font-size:1.8rem; color:#fff; min-width:30px; text-align:center;">${cumCount}</span>
+                                    <input type="hidden" class="pri-cum-input" id="pri_${pNum}_r${idx}_cum" data-key="r${idx}_cum" data-val="${cumVal}" value="${cumCount}">
+                                    <button type="button" class="pri-cum-btn" onclick="adjCum(${pNum}, '${idx}_cum', 1)">+</button>
+                                </div>
+                             </div>`;
+                }
+                html += `</div>`;
             });
+
+            html += `</div>
+            <div style="background:#1a1c23; padding:15px 20px; border-radius:8px; border:2px solid #f5a623; display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:1.1rem; color:#fff; font-weight:900; text-transform:uppercase;">TOTAL RONDA ${tkState.round}</span>
+                <span style="font-size:2.5rem; font-weight:900; color:#f5a623; font-family:'Oswald',sans-serif;"><span id="pri_${pNum}_live_total">${pState.roundScores[tkState.round].primary || 0}</span><span style="font-size:1rem; color:#888;"> VP</span></span>
+            </div>
+            
+            <button class="am-btn view" style="margin-top:15px;" onclick="closeActionModal(); editScore(${pNum}, 'primary');"><i class="fas fa-edit"></i> PUNTUAR MANUAL (CORRECCIÓN)</button>`;
+
+            document.getElementById('dynamic-action-buttons').innerHTML = html;
+            document.getElementById('action-modal').classList.add('open');
         }
 
+        window.togglePriBtn = function(element, pNum) {
+            element.classList.toggle('active');
+            syncPrimaryRealTime(pNum);
+        }
+
+        window.adjCum = function(pNum, key, delta) {
+            const input = document.getElementById(`pri_${pNum}_r${key}`);
+            const disp = document.getElementById(`pri_${pNum}_r${key}_disp`);
+            let val = parseInt(input.value) + delta;
+            if(val < 0) val = 0;
+            input.value = val;
+            disp.textContent = val;
+            syncPrimaryRealTime(pNum);
+        }
+
+        window.syncPrimaryRealTime = function(pNum) {
+            const pState = pNum === 1 ? tkState.p1 : tkState.p2;
+            const form = document.getElementById(`pri-form-${pNum}`);
+            if(!form) return;
+            
+            if (!pState.roundScores) pState.roundScores = {1:{}, 2:{}, 3:{}, 4:{}, 5:{}};
+            if (!pState.roundScores[tkState.round]) pState.roundScores[tkState.round] = {};
+            if (!pState.roundScores[tkState.round].inputs) pState.roundScores[tkState.round].inputs = {};
+            
+            const rData = pState.roundScores[tkState.round];
+            let total = 0;
+            
+            // Leer todos los Toggles activados
+            form.querySelectorAll('.pri-toggle-box').forEach(box => {
+                const key = box.getAttribute('data-key');
+                const val = parseInt(box.getAttribute('data-val')) || 0;
+                const isActive = box.classList.contains('active');
+                
+                rData.inputs[key] = isActive;
+                if(isActive) total += val;
+            });
+            
+            // Leer todos los contadores
+            form.querySelectorAll('.pri-cum-input').forEach(input => {
+                const key = input.getAttribute('data-key');
+                const valPerUnit = parseInt(input.getAttribute('data-val')) || 0;
+                const count = parseInt(input.value) || 0;
+                
+                rData.inputs[key] = count;
+                total += (count * valPerUnit);
+            });
+
+            // Guardar total y actualizar UI maestra inmediatamente
+            rData.primary = total;
+            document.getElementById(`pri_${pNum}_live_total`).textContent = total;
+            
+            renderTrackerBoard();
+            localStorage.setItem('herejaibas_tkPartida', JSON.stringify(tkState));
+        }
+
+        /* ---------------- ACTUALIZACIÓN DE SECUNDARIAS POR RONDA ---------------- */
         window.drawSecondary = function(pNum) {
             const pState = pNum === 1 ? tkState.p1 : tkState.p2;
             if(pState.deck.length > 0 && pState.activeSecs.length < 2) {
@@ -1091,7 +1306,6 @@
             }
         }
 
-        /* -- Lógica Modal Secundarias -- */
         window.openActionModal = function(pNum, index) {
             const pState = pNum === 1 ? tkState.p1 : tkState.p2;
             const sec = pState.activeSecs[index];
@@ -1099,32 +1313,66 @@
             document.getElementById('am-name').textContent = sec.name;
             document.getElementById('am-pnum').value = pNum;
             document.getElementById('am-index').value = index;
+            document.querySelector('#action-modal .am-subtitle').textContent = "Opciones de Misión";
             
-            const btnReturn = document.getElementById('btn-return-deck');
-            const cpLabel = document.getElementById('btn-return-cp');
-            
-            // Mulligan Gratis Conditions
             let isFree = false;
-            if(sec.name === "Behind Enemy Lines" && tkState.round === 1) isFree = true;
-            if(sec.name === "Defend Stronghold" && tkState.round === 1) isFree = true;
-            if(sec.name === "Forward Position" && tkState.round === 1) isFree = true;
-            if(sec.name === "A Grievous Blow") isFree = true; 
-            if(sec.name === "Bring it Down") isFree = true; 
-            if(sec.name === "Cleanse") isFree = true; 
-            if(sec.name === "Plunder") isFree = true; 
+            const freeMissions = ["Behind Enemy Lines", "Defend Stronghold", "Forward Position"];
+            if (freeMissions.includes(sec.name) && tkState.round === 1) isFree = true;
+            const alwaysFree = ["A Grievous Blow", "Bring it Down", "Cleanse", "Plunder"];
+            if (alwaysFree.includes(sec.name)) isFree = true;
             
-            if(isFree) {
-                cpLabel.textContent = "GRATIS";
-                cpLabel.style.background = "#27ae60";
-                cpLabel.style.color = "#fff";
+            const cpText = isFree ? '<span class="am-btn-cp" style="background:#27ae60; color:#fff;">GRATIS</span>' : '<span class="am-btn-cp" id="btn-return-cp" style="background:#fff; color:#112;">1 CP</span>';
+
+            const currentType = pState.secType.toUpperCase();
+            const rule = secData.rules.find(r => r.typeLabel === currentType);
+            
+            let scoreButtonsHTML = '';
+            if (rule) {
+                const baseVp = parseInt(rule.vp[0]);
+                if (rule.orVp) { 
+                    const orVp = parseInt(rule.orVp);
+                    scoreButtonsHTML += `<button class="am-btn score" onclick="autoScoreSec(${baseVp})"><i class="fas fa-check-circle"></i> COMPLETADO (+${baseVp} VP)</button>`;
+                    if (baseVp !== orVp) scoreButtonsHTML += `<button class="am-btn score" onclick="autoScoreSec(${orVp})"><i class="fas fa-check-circle"></i> COMPLETADO (+${orVp} VP)</button>`;
+                } else if (rule.maxVp) { 
+                    scoreButtonsHTML += `<button class="am-btn score" onclick="executeSecAction('score')"><i class="fas fa-edit"></i> PUNTUAR MANUAL (MAX ${rule.maxVp} VP)</button>`;
+                } else { 
+                    scoreButtonsHTML += `<button class="am-btn score" onclick="autoScoreSec(${baseVp})"><i class="fas fa-check-circle"></i> COMPLETADO (+${baseVp} VP)</button>`;
+                }
             } else {
-                cpLabel.textContent = "1 CP";
-                cpLabel.style.background = "#fff";
-                cpLabel.style.color = "#112";
+                scoreButtonsHTML += `<button class="am-btn score" onclick="executeSecAction('score')"><i class="fas fa-check-circle"></i> PUNTUAR (+ VP)</button>`;
             }
+
+            document.getElementById('dynamic-action-buttons').innerHTML = `
+                <button class="am-btn view" onclick="executeSecAction('view')"><i class="fas fa-eye"></i> VER CARTA</button>
+                ${scoreButtonsHTML}
+                <button class="am-btn discard" onclick="executeSecAction('discard')"><i class="fas fa-trash"></i> DESCARTAR</button>
+                <button class="am-btn return" onclick="executeSecAction('return')"><i class="fas fa-undo"></i> REGRESAR AL MAZO ${cpText}</button>
+            `;
 
             document.getElementById('action-modal').classList.add('open');
         }
+
+        window.autoScoreSec = function(pts) {
+            const pNum = parseInt(document.getElementById('am-pnum').value);
+            const index = parseInt(document.getElementById('am-index').value);
+            const pState = pNum === 1 ? tkState.p1 : tkState.p2;
+            const sec = pState.activeSecs[index];
+
+            if (!pState.roundScores) pState.roundScores = {1:{}, 2:{}, 3:{}, 4:{}, 5:{}};
+            if (!pState.roundScores[tkState.round]) pState.roundScores[tkState.round] = { primary:0, secondary:0, inputs:{} };
+
+            // Añadir puntos a LA RONDA ACTUAL
+            pState.roundScores[tkState.round].secondary = (pState.roundScores[tkState.round].secondary || 0) + pts;
+            
+            pState.discardedSecs.push(sec);
+            pState.activeSecs.splice(index, 1);
+            
+            closeActionModal();
+            renderTrackerBoard();
+            
+            // Guardar en memoria local
+            localStorage.setItem('herejaibas_tkPartida', JSON.stringify(tkState));
+        };
 
         window.closeActionModal = function() { document.getElementById('action-modal').classList.remove('open'); }
 
@@ -1242,10 +1490,15 @@
             if(action === 'score') {
                 closeActionModal();
                 openVpModal('ANOTAR SECUNDARIA', sec.name, function(pts) {
-                    pState.vpSecondary += pts;
+                    if (!pState.roundScores) pState.roundScores = {1:{}, 2:{}, 3:{}, 4:{}, 5:{}};
+                    if (!pState.roundScores[tkState.round]) pState.roundScores[tkState.round] = { primary:0, secondary:0, inputs:{} };
+                    
+                    pState.roundScores[tkState.round].secondary = (pState.roundScores[tkState.round].secondary || 0) + pts;
+                    
                     pState.discardedSecs.push(sec);
                     pState.activeSecs.splice(index, 1);
                     renderTrackerBoard();
+                    localStorage.setItem('herejaibas_tkPartida', JSON.stringify(tkState));
                 });
                 return;
             } else if (action === 'discard') {
@@ -1275,11 +1528,10 @@
             document.getElementById('vp-modal').classList.remove('open');
             vpModalCallback = null;
         }
-        // CÁMBIALA PARA QUE QUEDE ASÍ:
         window.vpAdjust = function(delta) {
             const input = document.getElementById('vp-modal-input');
             let val = parseInt(input.value) || 0;
-            val = val + delta; // <-- Se quitó el Math.max(0, ...)
+            val = val + delta; 
             input.value = val;
         }
         window.vpAdd = function(val) {
@@ -1289,13 +1541,44 @@
         window.vpReset = function() {
             document.getElementById('vp-modal-input').value = 0;
         }
-        // CÁMBIALA PARA QUE QUEDE ASÍ:
         window.confirmVpModal = function() {
-            const val = parseInt(document.getElementById('vp-modal-input').value) || 0; // <-- Se quitó el Math.max(0, ...)
+            const val = parseInt(document.getElementById('vp-modal-input').value) || 0; 
             const cb = vpModalCallback;
             closeVpModal();
             if (cb) cb(val);
-}
+        }
+
+        window.editScore = function(pNum, type) {
+            const pState = pNum === 1 ? tkState.p1 : tkState.p2;
+            if (!pState.roundScores) pState.roundScores = {1:{}, 2:{}, 3:{}, 4:{}, 5:{}};
+            const rData = pState.roundScores[tkState.round] || {};
+            
+            const currentVal = type === 'primary' ? (rData.primary || 0) : (rData.secondary || 0);
+            const title = type === 'primary' ? `CORREGIR PRIMARIA (R${tkState.round})` : `CORREGIR SEC. (R${tkState.round})`;
+            
+            const customHTML = `
+                <div style="display:flex; gap:8px; justify-content:center; margin-bottom:10px; width:100%;">
+                    <button type="button" class="am-btn discard" style="padding: 12px; flex:1; font-size: 1rem;" onclick="vpAdjust(-5)">-5 VP</button>
+                    <button type="button" class="am-btn discard" style="padding: 12px; flex:1; font-size: 1rem;" onclick="vpAdjust(-1)">-1 VP</button>
+                </div>
+                <div style="display:flex; gap:8px; justify-content:center; margin-bottom:10px; width:100%;">
+                    <button type="button" class="am-btn score" style="padding: 12px; flex:1; font-size: 1rem;" onclick="vpAdjust(1)">+1 VP</button>
+                    <button type="button" class="am-btn score" style="padding: 12px; flex:1; font-size: 1rem;" onclick="vpAdjust(5)">+5 VP</button>
+                </div>
+                <button type="button" class="am-btn return" style="padding: 12px; width:100%; margin-top:5px; font-size: 0.9rem;" onclick="vpReset()"><i class="fas fa-undo"></i> REINICIAR A 0</button>
+            `;
+            
+            openVpModal(title, `${pState.name} - Valor para esta ronda`, function(newTotal) {
+                if (!pState.roundScores[tkState.round]) pState.roundScores[tkState.round] = {};
+                
+                // Sobrescribimos en la ronda actual
+                if (type === 'primary') pState.roundScores[tkState.round].primary = newTotal;
+                else pState.roundScores[tkState.round].secondary = newTotal;
+                
+                renderTrackerBoard();
+                localStorage.setItem('herejaibas_tkPartida', JSON.stringify(tkState));
+            }, currentVal, customHTML);
+        };
 
         /* ---------------- MODAL DE CONFIGURACIÓN / PAUSA ---------------- */
         window.openSettingsModal = function() {
