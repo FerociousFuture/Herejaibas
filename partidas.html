@@ -514,8 +514,7 @@
     /* ============================================================
        PARTIDAS PÚBLICAS
     ============================================================ */
-    const { createClient } = supabase;
-    const sb = createClient(window._sbUrl, window._sbAnon);
+    const sb = window.sb || supabase.createClient(window._sbUrl, window._sbAnon);
 
     let allMatches = [];
 
