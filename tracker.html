@@ -1096,8 +1096,10 @@
                         </div>
                     </div>`).join('');
             }
+
             document.getElementById('tb-p1-deck-count').textContent = tkState.p1.deck.length;
-            document.getElementById('tb-p1-draw').disabled = tkState.p1.deck.length === 0 || tkState.p1.activeSecs.length >= 2;
+            const p1RobadasRonda = tkState.p1.activeSecs.filter(s => s.drawnRound === tkState.round).length + tkState.p1.discardedSecs.filter(s => s.drawnRound === tkState.round).length;
+            document.getElementById('tb-p1-draw').disabled = tkState.p1.deck.length === 0 || p1RobadasRonda >= 2;
 
             const p2SecsBox = document.getElementById('tb-p2-active-secs');
             if(tkState.p2.activeSecs.length === 0) p2SecsBox.innerHTML = `<div class="tb-empty-sec">Sin misiones secundarias activas</div>`;
@@ -1110,8 +1112,11 @@
                         </div>
                     </div>`).join('');
             }
+
             document.getElementById('tb-p2-deck-count').textContent = tkState.p2.deck.length;
-            document.getElementById('tb-p2-draw').disabled = tkState.p2.deck.length === 0 || tkState.p2.activeSecs.length >= 2;
+            const p2RobadasRonda = tkState.p2.activeSecs.filter(s => s.drawnRound === tkState.round).length + tkState.p2.discardedSecs.filter(s => s.drawnRound === tkState.round).length;
+            document.getElementById('tb-p2-draw').disabled = tkState.p2.deck.length === 0 || p2RobadasRonda >= 2;
+            
             localStorage.setItem('herejaibas_tkPartida', JSON.stringify(tkState));
         }
 
@@ -1299,7 +1304,13 @@
         /* ---------------- ACTUALIZACIÓN DE SECUNDARIAS POR RONDA ---------------- */
         window.drawSecondary = function(pNum) {
             const pState = pNum === 1 ? tkState.p1 : tkState.p2;
-            if(pState.deck.length > 0 && pState.activeSecs.length < 2) {
+            
+            // Calcula cuántas cartas se han robado EXCLUSIVAMENTE en esta ronda
+            const robadasEstaRonda = pState.activeSecs.filter(s => s.drawnRound === tkState.round).length + 
+                                     pState.discardedSecs.filter(s => s.drawnRound === tkState.round).length;
+
+            // Permite robar si hay mazo y si no ha robado ya 2 en esta misma ronda
+            if(pState.deck.length > 0 && robadasEstaRonda < 2) {
                 const drawn = pState.deck.pop();
                 pState.activeSecs.push({ name: drawn, drawnRound: tkState.round });
                 renderTrackerBoard();
