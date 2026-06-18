@@ -474,7 +474,6 @@
 
     <main class="main-content">
 
-        <!-- RESUMEN GENERAL -->
         <section>
             <div class="content-section-header">
                 <h2>Estadísticas <span>del Club</span></h2>
@@ -487,7 +486,6 @@
             </div>
         </section>
 
-        <!-- PODIO TOP 3 -->
         <section id="section-podium">
             <div class="content-section-header">
                 <h2>El <span>Podio</span></h2>
@@ -500,7 +498,6 @@
             </div>
         </section>
 
-        <!-- RANKING COMPLETO -->
         <section>
             <div class="content-section-header">
                 <h2>Ranking <span>Completo</span></h2>
@@ -535,7 +532,6 @@
             </div>
         </section>
 
-        <!-- NOTA -->
         <section>
             <div class="notice-box" style="max-width:700px;margin:0 auto;">
                 <div class="notice-box-title"><i class="fas fa-info-circle"></i> ¿Cómo se calcula el ranking?</div>
@@ -589,8 +585,7 @@
     /* ============================================================
        RANKING PÚBLICO - calcula stats desde la tabla "partidas"
     ============================================================ */
-    const { createClient } = supabase;
-    const sb = createClient(window._sbUrl, window._sbAnon);
+    const sb = window.sb || supabase.createClient(window._sbUrl, window._sbAnon);
 
     let allMatches  = [];
     let activeFilter = 'Todos';
