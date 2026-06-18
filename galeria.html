@@ -117,9 +117,9 @@
 
     <script src="script.js"></script>
     <script>
-    /* ---- GALERÍA DINÁMICA ---- */
-    const { createClient } = supabase;
-    const sb = createClient(window._sbUrl, window._sbAnon);
+        
+/* ---- GALERÍA DINÁMICA ---- */
+const sb = window.sb || supabase.createClient(window._sbUrl, window._sbAnon);
 
     let allItems = [];
     let activeFilter = 'Todos';

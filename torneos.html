@@ -151,9 +151,9 @@
 
     <script src="script.js"></script>
     <script>
+        
     /* ---- TORNEOS DINÁMICOS ---- */
-    const { createClient } = supabase;
-    const sb = createClient(window._sbUrl, window._sbAnon);
+    const sb = window.sb || supabase.createClient(window._sbUrl, window._sbAnon);
 
     function formatFecha(fechaStr) {
         if (!fechaStr) return { dia: '?', mes: '??' };
