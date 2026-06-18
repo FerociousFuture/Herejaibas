@@ -15,12 +15,11 @@ const textEl          = document.getElementById("carousel-text");
 const btn1El          = document.getElementById("carousel-btn-primary");
 const btn2El          = document.getElementById("carousel-btn-secondary");
 
-// Inicializar cliente de Supabase
-const { createClient } = supabase;
-const sb = createClient(window._sbUrl, window._sbAnon);
+// Inicializar cliente de Supabase de forma global (Evita choques con otras páginas)
+window.sb = window.sb || supabase.createClient(window._sbUrl, window._sbAnon);
 
 async function loadCarouselFromDB() {
-    const { data, error } = await sb.from('banners').select('*').order('id', { ascending: true });
+    const { data, error } = await window.sb.from('banners').select('*').order('id', { ascending: true });
     
     // Si hay error o no hay banners, ponemos un fallback por defecto
     if (error || !data || data.length === 0) {
