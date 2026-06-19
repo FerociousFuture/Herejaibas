@@ -1326,14 +1326,6 @@
             document.getElementById('am-index').value = index;
             document.querySelector('#action-modal .am-subtitle').textContent = "Opciones de Misión";
             
-            let isFree = false;
-            const freeMissions = ["Behind Enemy Lines", "Defend Stronghold", "Forward Position"];
-            if (freeMissions.includes(sec.name) && tkState.round === 1) isFree = true;
-            const alwaysFree = ["A Grievous Blow", "Bring it Down", "Cleanse", "Plunder"];
-            if (alwaysFree.includes(sec.name)) isFree = true;
-            
-            const cpText = isFree ? '<span class="am-btn-cp" style="background:#27ae60; color:#fff;">GRATIS</span>' : '<span class="am-btn-cp" id="btn-return-cp" style="background:#fff; color:#112;">1 CP</span>';
-
             const currentType = pState.secType.toUpperCase();
             const rule = secData.rules.find(r => r.typeLabel === currentType);
             
@@ -1357,7 +1349,7 @@
                 <button class="am-btn view" onclick="executeSecAction('view')"><i class="fas fa-eye"></i> VER CARTA</button>
                 ${scoreButtonsHTML}
                 <button class="am-btn discard" onclick="executeSecAction('discard')"><i class="fas fa-trash"></i> DESCARTAR</button>
-                <button class="am-btn return" onclick="executeSecAction('return')"><i class="fas fa-undo"></i> REGRESAR AL MAZO ${cpText}</button>
+                <button class="am-btn return" onclick="executeSecAction('return')"><i class="fas fa-undo"></i> REGRESAR AL MAZO</button>
             `;
 
             document.getElementById('action-modal').classList.add('open');
