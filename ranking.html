@@ -317,31 +317,6 @@
             color: var(--text-muted);
         }
 
-        /* Streaks */
-        .streak-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 0.62rem;
-            font-weight: 700;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            padding: 3px 8px;
-            border-radius: 2px;
-        }
-
-        .streak-hot {
-            background: rgba(200,168,75,0.12);
-            color: var(--accent-gold);
-            border: 1px solid var(--border-gold);
-        }
-
-        .streak-cold {
-            background: rgba(74,85,114,0.15);
-            color: var(--text-dim);
-            border: 1px solid rgba(74,85,114,0.3);
-        }
-
         /* Filtros */
         .ranking-filters {
             display: flex;
@@ -429,10 +404,13 @@
         }
 
         @media (max-width: 640px) {
+            /* Ocultamos las columnas D, E y Dif. Pts en móviles para evitar scroll excesivo */
             .ranking-table th:nth-child(5),
             .ranking-table td:nth-child(5),
             .ranking-table th:nth-child(6),
-            .ranking-table td:nth-child(6) {
+            .ranking-table td:nth-child(6),
+            .ranking-table th:nth-child(7),
+            .ranking-table td:nth-child(7) {
                 display: none;
             }
         }
@@ -482,7 +460,7 @@
                 <div class="rs-card"><span class="rs-num" id="rs-jugadores">—</span><span class="rs-label">Comandantes</span></div>
                 <div class="rs-card"><span class="rs-num" id="rs-partidas">—</span><span class="rs-label">Batallas libradas</span></div>
                 <div class="rs-card"><span class="rs-num" id="rs-lider">—</span><span class="rs-label">Líder actual</span></div>
-                <div class="rs-card"><span class="rs-num" id="rs-avg-pct">—</span><span class="rs-label">% Promedio victorias</span></div>
+                <div class="rs-card"><span class="rs-num" id="rs-leader-pct">—</span><span class="rs-label">% Victorias (Líder)</span></div>
             </div>
         </section>
 
@@ -517,11 +495,12 @@
                             <th class="center">V</th>
                             <th class="center">D</th>
                             <th class="center">E</th>
+                            <th class="center" title="Diferencia de Puntos de Victoria">Dif. Pts</th>
                             <th style="min-width:160px;">% Victoria</th>
                         </tr>
                     </thead>
                     <tbody id="ranking-tbody">
-                        <tr><td colspan="7">
+                        <tr><td colspan="8">
                             <div class="rank-empty">
                                 <i class="fas fa-spinner fa-spin"></i>
                                 <p>Cargando el registro de honor...</p>
@@ -535,7 +514,7 @@
         <section>
             <div class="notice-box" style="max-width:700px;margin:0 auto;">
                 <div class="notice-box-title"><i class="fas fa-info-circle"></i> ¿Cómo se calcula el ranking?</div>
-                <p>El ranking se basa en el <strong style="color:var(--accent-gold);">porcentaje de victorias</strong> (victorias ÷ partidas jugadas). En caso de empate en porcentaje, se desempata por número total de victorias. Solo se consideran partidas registradas en el Libro de Batallas. Los empates no cuentan ni como victoria ni como derrota.</p>
+                <p>El ranking se basa principalmente en el <strong style="color:var(--accent-gold);">número total de victorias</strong> (ganar te hace subir). En caso de empate, se evalúa el <strong>porcentaje de victorias (Winrate)</strong>. Si el empate persiste, el desempate definitivo se realiza mediante la <strong>Diferencia de Puntos</strong> (puntos a favor menos puntos en contra). Los empates no suman ni restan al porcentaje de victorias.</p>
             </div>
         </section>
 
@@ -590,13 +569,13 @@
     let allMatches  = [];
     let activeFilter = 'Todos';
 
-    /* ---- Construye mapa de jugadores desde partidas ---- */
+    /* ---- Construye mapa de jugadores desde partidas (NUEVA LÓGICA) ---- */
     function buildPlayers(matches) {
         const map = {};
 
         function ensure(name) {
             if (!map[name]) {
-                map[name] = { name, wins: 0, losses: 0, draws: 0, games: 0 };
+                map[name] = { name, wins: 0, losses: 0, draws: 0, games: 0, pointsScored: 0, pointsConceded: 0, vpDiff: 0 };
             }
         }
 
@@ -606,6 +585,17 @@
 
             map[m.jugador1].games++;
             map[m.jugador2].games++;
+
+            // Convertimos los puntos a números enteros
+            let p1 = parseInt(m.puntos1) || 0;
+            let p2 = parseInt(m.puntos2) || 0;
+
+            // Sumamos los puntos a favor y en contra
+            map[m.jugador1].pointsScored += p1;
+            map[m.jugador1].pointsConceded += p2;
+
+            map[m.jugador2].pointsScored += p2;
+            map[m.jugador2].pointsConceded += p1;
 
             if (!m.ganador) {
                 // Empate
@@ -620,12 +610,20 @@
             }
         });
 
-        // Calcular porcentaje (solo partidas decididas)
+        // Calcular porcentaje y diferencia de puntos, y ORDENAR
         return Object.values(map).map(p => {
             const decided = p.wins + p.losses;
             p.pct = decided > 0 ? Math.round((p.wins / decided) * 100) : 0;
+            p.vpDiff = p.pointsScored - p.pointsConceded;
             return p;
-        }).sort((a, b) => b.pct - a.pct || b.wins - a.wins || a.losses - b.losses);
+        }).sort((a, b) => {
+            // 1. Total Victorias (Ganar sube)
+            if (b.wins !== a.wins) return b.wins - a.wins;
+            // 2. Winrate (% Victorias)
+            if (b.pct !== a.pct) return b.pct - a.pct;
+            // 3. Diferencia de Puntos
+            return b.vpDiff - a.vpDiff;
+        });
     }
 
     /* ---- Inicial de nombre ---- */
@@ -680,7 +678,7 @@
                         <div class="podium-pos">${label}</div>
                         <div class="podium-name">${p.name}</div>
                         <div class="podium-pct">${p.pct}%</div>
-                        <div class="podium-sub">Victorias</div>
+                        <div class="podium-sub">Winrate</div>
                         <div class="podium-wins-row">
                             <i class="fas fa-sword"></i> ${p.wins}V &nbsp; ${p.losses}D &nbsp;
                             <span style="color:var(--accent-cyan);">${p.draws}E</span>
@@ -691,18 +689,22 @@
         }).join('');
     }
 
-    /* ---- Render tabla ---- */
+    /* ---- Render tabla (ACTUALIZADO PARA DIF. PTS) ---- */
     function renderTable(players) {
         const tbody = document.getElementById('ranking-tbody');
 
         if (players.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7"><div class="rank-empty"><i class="fas fa-scroll"></i><p>No hay datos para este filtro todavía.</p></div></td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8"><div class="rank-empty"><i class="fas fa-scroll"></i><p>No hay datos para este filtro todavía.</p></div></td></tr>`;
             return;
         }
 
+        const bestPct = players.reduce((max, p) => Math.max(max, p.pct), 0);
+
         tbody.innerHTML = players.map((p, i) => {
             const pc = posClass(i);
-            const barWidth = players[0].pct > 0 ? Math.round((p.pct / players[0].pct) * 100) : 0;
+            const barWidth = bestPct > 0 ? Math.round((p.pct / bestPct) * 100) : 0;
+            const vpFormatted = p.vpDiff > 0 ? `+${p.vpDiff}` : p.vpDiff;
+
             return `
                 <tr>
                     <td><span class="rank-pos ${pc}">${i + 1}</span></td>
@@ -716,6 +718,7 @@
                     <td class="center"><span class="wins-num">${p.wins}</span></td>
                     <td class="center"><span class="losses-num">${p.losses}</span></td>
                     <td class="center"><span class="draws-num">${p.draws}</span></td>
+                    <td class="center"><span style="color:var(--text-main); font-size:0.85rem;">${vpFormatted}</span></td>
                     <td class="pct-cell">
                         <div class="pct-bar-wrap">
                             <div class="pct-bar-bg">
@@ -729,15 +732,19 @@
         }).join('');
     }
 
-    /* ---- Render summary ---- */
+    /* ---- Render summary (ACTUALIZADO PARA EL LÍDER) ---- */
     function renderSummary(players, totalMatches) {
         document.getElementById('rs-jugadores').textContent = players.length;
         document.getElementById('rs-partidas').textContent  = totalMatches;
-        document.getElementById('rs-lider').textContent     = players.length ? players[0].name.split(' ')[0] : '—';
-        const avg = players.length
-            ? Math.round(players.reduce((s, p) => s + p.pct, 0) / players.length)
-            : 0;
-        document.getElementById('rs-avg-pct').textContent   = players.length ? avg + '%' : '—';
+        
+        if (players.length > 0) {
+            const leader = players[0];
+            document.getElementById('rs-lider').textContent = leader.name.split(' ')[0];
+            document.getElementById('rs-leader-pct').textContent = leader.pct + '%';
+        } else {
+            document.getElementById('rs-lider').textContent = '—';
+            document.getElementById('rs-leader-pct').textContent = '—';
+        }
     }
 
     /* ---- Filtrado y render ---- */
@@ -756,7 +763,7 @@
         const { data, error } = await sb.from('partidas').select('*').order('fecha', { ascending: false });
 
         if (error || !data) {
-            document.getElementById('ranking-tbody').innerHTML = `<tr><td colspan="7"><div class="rank-empty"><i class="fas fa-exclamation-circle"></i><p>Error cargando el ranking. Intenta de nuevo.</p></div></td></tr>`;
+            document.getElementById('ranking-tbody').innerHTML = `<tr><td colspan="8"><div class="rank-empty"><i class="fas fa-exclamation-circle"></i><p>Error cargando el ranking. Intenta de nuevo.</p></div></td></tr>`;
             return;
         }
 
